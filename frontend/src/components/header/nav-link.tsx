@@ -1,5 +1,5 @@
-import { ComponentProps } from "react";
 import { Link } from "@tanstack/react-router";
+import { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
 type NavLinkProps = ComponentProps<typeof Link>;
