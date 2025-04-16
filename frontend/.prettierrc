@@ -12,6 +12,7 @@
   "importOrder": [
     "^[^./@]",
     "^@/components/ui/(.*)$",
+    "^@/components/layouts/(.*)$",
     "^@/components/(.*)$",
     "^@/(.*)$",
     "^[./]"

@@ -6,7 +6,7 @@ export function Header() {
     <header className="bg-secondary flex w-full justify-center py-4">
       <div className="flex w-11/12 max-w-7xl items-center justify-between">
         <nav>
-          <NavLink to="/" className="text-xl font-black uppercase">
+          <NavLink to="/" className="font-black uppercase md:text-xl">
             Inter
           </NavLink>
         </nav>
