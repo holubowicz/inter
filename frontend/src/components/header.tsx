@@ -1,12 +1,17 @@
 import { Link } from "@tanstack/react-router";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
   return (
-    <header className="flex w-full justify-center bg-zinc-700 py-4">
-      <div className="w-11/12">
-        <Link to="/">
-          <h1 className="text-xl font-black uppercase">Inter</h1>
-        </Link>
+    <header className="bg-secondary flex w-full justify-center py-4">
+      <div className="flex w-11/12 max-w-7xl items-center justify-between">
+        <nav>
+          <Link to="/">
+            <span className="text-xl font-black uppercase">Inter</span>
+          </Link>
+        </nav>
+
+        <ThemeToggle />
       </div>
     </header>
   );
