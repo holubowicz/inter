@@ -1,3 +1,4 @@
 node_modules
 dist
 pnpm*.yaml
+*.gen.ts
