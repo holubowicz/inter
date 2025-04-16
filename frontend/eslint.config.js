@@ -1,17 +1,18 @@
 import js from "@eslint/js";
+import pluginRouter from "@tanstack/eslint-plugin-router";
+import prettierConfig from "eslint-config-prettier";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config(
+export default [
   { ignores: ["dist"] },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...pluginRouter.configs["flat/recommended"],
+  prettierConfig,
   {
-    extends: [
-      js.configs.recommended,
-      ...tseslint.configs.recommended,
-      "plugin:prettier/recommended",
-    ],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
@@ -29,4 +30,4 @@ export default tseslint.config(
       ],
     },
   },
-);
+];
