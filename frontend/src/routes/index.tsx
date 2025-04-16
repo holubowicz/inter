@@ -19,24 +19,24 @@ export const Route = createFileRoute("/")({
 
 function IndexPage() {
   const queries = [
-    { name: "Przeliczanie ludzi", status: "✅", available: true },
-    { name: "Przeliczanie ludzi", status: "✅", available: true },
-    { name: "Przeliczanie ludzi", status: "✅", available: true },
-    { name: "Przeliczanie ludzi", status: "❌", available: false },
+    { name: "Some query", status: "✅", available: true },
+    { name: "Some query", status: "✅", available: true },
+    { name: "Some query", status: "✅", available: true },
+    { name: "Some query", status: "❌", available: false },
   ];
 
   return (
     <PageLayout>
-      <Title>Wybór Poleceń</Title>
+      <Title>Query selection</Title>
 
       <Table>
-        <TableCaption>List dostępnych poleceń</TableCaption>
+        <TableCaption>List of available queries</TableCaption>
 
         <TableHeader>
           <TableRow className="*:text-center *:font-bold">
-            <TableHead>Wybór</TableHead>
+            <TableHead>Selection</TableHead>
 
-            <TableHead>Polecenie</TableHead>
+            <TableHead>Query</TableHead>
 
             <TableHead>Status</TableHead>
           </TableRow>
@@ -58,7 +58,7 @@ function IndexPage() {
       </Table>
 
       <Button className="cursor-pointer" onClick={() => alert("click")}>
-        Wykonaj polecenia
+        Execute
       </Button>
     </PageLayout>
   );
