@@ -19,7 +19,9 @@ public class QueryConnector {
     }
 
     public List<Map<String, Object>> runQuery(Query query) {
-        if (query.getQuery().isEmpty()) return new ArrayList<>();
+        if (query.getQuery().isEmpty()) {
+            return new ArrayList<>();
+        }
         return jdbcTemplate.queryForList(query.getQuery());
     }
 

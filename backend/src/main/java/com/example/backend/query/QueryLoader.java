@@ -13,7 +13,7 @@ public class QueryLoader {
 
     private static final String queryDirectory = "queries";
 
-    public List<QueryDTO> getQueries() {
+    public List<QueryDto> getQueries() {
         Path queriesPath = Paths.get(queryDirectory).toAbsolutePath();
 
         if (!Files.exists(queriesPath)) {
@@ -25,31 +25,27 @@ public class QueryLoader {
                     .filter(Files::isRegularFile)
                     .filter(path -> path.toString().toLowerCase().endsWith(".sql"))
                     .map(this::getQuery)
-                    .map(this::convertQueryToQueryDTO)
+                    .map(QueryDto::from)
                     .toList();
         } catch (IOException e) {
             throw new RuntimeException("Failed to load queries", e);
         }
     }
 
-    public QueryDTO convertQueryToQueryDTO(Query query) {
-        return new QueryDTO(query.getName());
-    }
-
-    public Query convertQueryDTOToQuery(QueryDTO queryDTO) {
-        String filename = queryDTO.getName() + ".sql";
-        Path filepath = Paths.get(queryDirectory, filename);
-        return getQuery(filepath);
-    }
-
     private Query getQuery(Path filepath) {
         String queryName = getQueryNameFromPath(filepath);
         try {
             String content = Files.readString(filepath);
-            return new Query(queryName, content, true);
+            return Query.builder().name(queryName).query(content).build();
         } catch (IOException e) {
-            return new Query(queryName, "", false);
+            return Query.builder().name(queryName).build();
         }
+    }
+
+    public Query convertQueryDtoToQuery(QueryDto queryDto) {
+        String filename = queryDto.getName() + ".sql";
+        Path filepath = Paths.get(queryDirectory, filename);
+        return getQuery(filepath);
     }
 
     private String getQueryNameFromPath(Path filepath) {

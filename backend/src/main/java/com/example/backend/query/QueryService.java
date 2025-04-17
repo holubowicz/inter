@@ -5,8 +5,8 @@ import java.util.Map;
 
 public interface QueryService {
 
-    List<QueryDTO> getQueries();
+    List<QueryDto> getQueries();
 
-    List<List<Map<String, Object>>> runQueries(List<QueryDTO> queries);
+    List<List<Map<String, Object>>> runQueries(List<QueryDto> queries);
 
 }

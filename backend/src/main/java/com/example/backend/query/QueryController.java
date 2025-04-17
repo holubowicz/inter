@@ -18,12 +18,12 @@ public class QueryController {
     }
 
     @GetMapping
-    public List<QueryDTO> getQueries() {
+    public List<QueryDto> getQueries() {
         return queryService.getQueries();
     }
 
     @PostMapping("/run")
-    public List<List<Map<String, Object>>> runQueries(@RequestBody List<QueryDTO> queries) {
+    public List<List<Map<String, Object>>> runQueries(@RequestBody List<QueryDto> queries) {
         return queryService.runQueries(queries);
     }
 

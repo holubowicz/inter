@@ -20,20 +20,19 @@ public class QueryServiceImpl implements QueryService {
     }
 
     @Override
-    public List<QueryDTO> getQueries() {
+    public List<QueryDto> getQueries() {
         return queryLoader.getQueries();
     }
 
     @Override
-    public List<List<Map<String, Object>>> runQueries(List<QueryDTO> queries) {
+    public List<List<Map<String, Object>>> runQueries(List<QueryDto> queries) {
         List<List<Map<String, Object>>> results = new ArrayList<>();
 
-        for (QueryDTO queryDTO : queries) {
-            Query query = queryLoader.convertQueryDTOToQuery(queryDTO);
+        for (QueryDto queryDto : queries) {
+            Query query = queryLoader.convertQueryDtoToQuery(queryDto);
             results.add(queryConnector.runQuery(query));
         }
 
         return results;
     }
-
 }

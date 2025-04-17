@@ -1,12 +1,13 @@
 package com.example.backend.query;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Getter
+@Builder
 public class Query {
 
     private final String name;
     private final String query;
-    private final boolean isAvailable;
 
 }
