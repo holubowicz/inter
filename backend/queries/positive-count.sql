@@ -1,2 +1,3 @@
-SELECT SUM(CASE WHEN number > 0 THEN 1 ELSE 0 END) AS value
-FROM calculations;
+SELECT COUNT(*) AS value
+FROM calculations
+WHERE number > 0;
