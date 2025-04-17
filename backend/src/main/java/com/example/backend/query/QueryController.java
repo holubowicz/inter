@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/query")
+@RequestMapping("api/queries")
 public class QueryController {
 
     private final QueryService queryService;
@@ -22,7 +22,7 @@ public class QueryController {
         return queryService.getQueries();
     }
 
-    @PostMapping
+    @PostMapping("/run")
     public List<List<Map<String, Object>>> runQueries(@RequestBody List<QueryDTO> queries) {
         return queryService.runQueries(queries);
     }
