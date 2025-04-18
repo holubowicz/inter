@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS calculations CASCADE;
+
 CREATE TABLE calculations (
     id SERIAL PRIMARY KEY,
     date DATE,
