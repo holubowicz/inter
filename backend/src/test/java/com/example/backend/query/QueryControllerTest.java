@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -38,7 +38,8 @@ class QueryControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[?(@.name)]").isArray());
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[*].name").exists());
     }
 
     @Test
@@ -50,28 +51,35 @@ class QueryControllerTest {
 
     @Test
     void runQueries_whenSingleQuery_thenVerifyResponse() throws Exception {
-        String body = "[{\"name\": \"absolute-avg\"}]";
+        final String REQUEST_BODY = "[{\"name\": \"absolute-avg\"}]";
+        final int EXPECTED_SIZE = 1;
 
         this.mockMvc.perform(post("/api/queries/run")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
+                        .content(REQUEST_BODY))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[?(@[0].value)]").isArray());
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
+                .andExpect(jsonPath("$[0]").isArray())
+                .andExpect(jsonPath("$[0][*].value").exists());
     }
 
     @Test
     void runQueries_whenMultipleQueries_thenVerifyResponse() throws Exception {
-        String body = "[{\"name\": \"absolute-avg\"},{\"name\": \"avg-all\"},{\"name\": \"total-count\"}]";
+        final String REQUEST_BODY = "[{\"name\": \"absolute-avg\"},{\"name\": \"avg-all\"},{\"name\": \"total-count\"}]";
+        final int EXPECTED_SIZE = 3;
 
         this.mockMvc.perform(post("/api/queries/run")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
+                        .content(REQUEST_BODY))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[?(@[0].value)]").isArray())
-                .andExpect(jsonPath("$[?(@[0].value)]", hasSize(3)));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
+                .andExpect(jsonPath("$[*]", everyItem(not(empty()))))
+                .andExpect(jsonPath("$[*][*].value").exists());
     }
 }
