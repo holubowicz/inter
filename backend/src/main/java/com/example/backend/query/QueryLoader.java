@@ -1,5 +1,6 @@
 package com.example.backend.query;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -11,10 +12,17 @@ import java.util.List;
 @Component
 public class QueryLoader {
 
-    private static final String queryDirectory = "queries";
+    private final QueryLoaderConfiguration queryLoaderConfiguration;
+
+    @Autowired
+    public QueryLoader(QueryLoaderConfiguration queryLoaderConfiguration) {
+        this.queryLoaderConfiguration = queryLoaderConfiguration;
+    }
 
     public List<QueryDto> getQueries() {
-        Path queriesPath = Paths.get(queryDirectory).toAbsolutePath();
+        // TODO: make more accessible in test, and prod
+        Path queriesPath = Paths.get(this.queryLoaderConfiguration.getQueriesPath())
+                .toAbsolutePath();
 
         if (!Files.exists(queriesPath)) {
             throw new RuntimeException("Query directory does not exist: " + queriesPath);
@@ -44,7 +52,7 @@ public class QueryLoader {
 
     public Query convertQueryDtoToQuery(QueryDto queryDto) {
         String filename = queryDto.getName() + ".sql";
-        Path filepath = Paths.get(queryDirectory, filename);
+        Path filepath = Paths.get(this.queryLoaderConfiguration.getQueriesPath(), filename);
         return getQuery(filepath);
     }
 

@@ -29,9 +29,12 @@ class QueryControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private QueryLoaderConfiguration queryLoaderConfiguration;
+
     @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine")
-            .withInitScript("init.sql");
+            .withInitScript("com/example/backend/query/init.sql");
 
     @DynamicPropertySource
     static void setTestProperties(DynamicPropertyRegistry registry) {
@@ -43,10 +46,11 @@ class QueryControllerTest {
     @BeforeEach
     public void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+        queryLoaderConfiguration.setQueriesPath("src/test/resources/com/example/backend/query/queries");
     }
 
     @Test
-    void getQueries_whenMockMvc_thenVerifyResponse() throws Exception {
+    void getQueries_whenQueriesExist_thenVerifyIfResponseStructure() throws Exception {
         this.mockMvc.perform(get("/api/queries"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -56,14 +60,14 @@ class QueryControllerTest {
     }
 
     @Test
-    void runQueries_whenNoBody_thenBadRequest() throws Exception {
+    void runQueries_whenDataProvided_thenIsBadRequest() throws Exception {
         this.mockMvc.perform(post("/api/queries/run"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void runQueries_whenSingleQuery_thenVerifyResponse() throws Exception {
+    void runQueries_whenSingleQueryProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"absolute-avg\"}]";
         final int EXPECTED_SIZE = 1;
 
@@ -80,8 +84,22 @@ class QueryControllerTest {
     }
 
     @Test
-    void runQueries_whenMultipleQueries_thenVerifyResponse() throws Exception {
-        final String REQUEST_BODY = "[{\"name\": \"absolute-avg\"},{\"name\": \"avg-all\"},{\"name\": \"total-count\"}]";
+    void runQueries_whenSingleQueryProvided_thenVerifyResultValue() throws Exception {
+        final String REQUEST_BODY = "[{\"name\": \"positive-count\"}]";
+        final int EXPECTED_RESULT = 5;
+
+        this.mockMvc.perform(post("/api/queries/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(REQUEST_BODY))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0][0].value", equalTo(EXPECTED_RESULT)));
+    }
+
+    @Test
+    void runQueries_whenMultipleQueriesProvided_thenVerifyResponseStructure() throws Exception {
+        final String REQUEST_BODY = "[{\"name\": \"absolute-avg\"},{\"name\": \"avg-all\"},{\"name\": \"negative-count\"}]";
         final int EXPECTED_SIZE = 3;
 
         this.mockMvc.perform(post("/api/queries/run")
@@ -94,5 +112,23 @@ class QueryControllerTest {
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[*]", everyItem(not(empty()))))
                 .andExpect(jsonPath("$[*][*].value").exists());
+    }
+
+    @Test
+    void runQueries_whenMultipleQueriesProvided_thenVerifyResultValues() throws Exception {
+        final String REQUEST_BODY = "[{\"name\": \"negative-count\"},{\"name\": \"positive-count\"},{\"name\": \"total-count\"}]";
+        final int EXPECTED_RESULT_1 = 9;
+        final int EXPECTED_RESULT_2 = 5;
+        final int EXPECTED_RESULT_3 = 14;
+
+        this.mockMvc.perform(post("/api/queries/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(REQUEST_BODY))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0][0].value", equalTo(EXPECTED_RESULT_1)))
+                .andExpect(jsonPath("$[1][0].value", equalTo(EXPECTED_RESULT_2)))
+                .andExpect(jsonPath("$[2][0].value", equalTo(EXPECTED_RESULT_3)));
     }
 }
