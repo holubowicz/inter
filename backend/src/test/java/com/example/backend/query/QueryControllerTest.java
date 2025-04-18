@@ -60,6 +60,22 @@ class QueryControllerTest {
     }
 
     @Test
+    void getQueries_whenQueriesExist_thenVerifyResultValues() throws Exception {
+        this.mockMvc.perform(get("/api/queries"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[*].name", hasItems(
+                        "absolute-avg",
+                        "avg-all",
+                        "negative-count",
+                        "positive-count",
+                        "total-count"
+                )));
+    }
+
+    @Test
     void runQueries_whenDataProvided_thenIsBadRequest() throws Exception {
         this.mockMvc.perform(post("/api/queries/run"))
                 .andDo(print())
@@ -131,4 +147,5 @@ class QueryControllerTest {
                 .andExpect(jsonPath("$[1][0].value", equalTo(EXPECTED_RESULT_2)))
                 .andExpect(jsonPath("$[2][0].value", equalTo(EXPECTED_RESULT_3)));
     }
+    
 }
