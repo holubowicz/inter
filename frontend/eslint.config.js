@@ -1,4 +1,5 @@
 import js from "@eslint/js";
+import pluginQuery from "@tanstack/eslint-plugin-query";
 import pluginRouter from "@tanstack/eslint-plugin-router";
 import prettierConfig from "eslint-config-prettier";
 import reactHooks from "eslint-plugin-react-hooks";
@@ -11,6 +12,7 @@ export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...pluginRouter.configs["flat/recommended"],
+  ...pluginQuery.configs["flat/recommended"],
   prettierConfig,
   {
     files: ["**/*.{ts,tsx}"],

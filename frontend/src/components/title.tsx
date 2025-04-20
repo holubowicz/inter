@@ -1,9 +1,9 @@
 import { PropsWithChildren } from "react";
 import { cn } from "@/lib/utils";
 
-type TitleProps = {
+interface TitleProps extends PropsWithChildren {
   className?: string;
-} & PropsWithChildren;
+}
 
 export function Title({ children, className }: TitleProps) {
   return (

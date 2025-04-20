@@ -1,9 +1,9 @@
 import { PropsWithChildren } from "react";
 import { cn } from "@/lib/utils";
 
-type PageLayoutProps = {
+interface PageLayoutProps extends PropsWithChildren {
   className?: string;
-} & PropsWithChildren;
+}
 
 export function PageLayout({ children, className }: PageLayoutProps) {
   return (
