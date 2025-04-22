@@ -1,0 +1,14 @@
+package com.example.backend.check;
+
+import lombok.Data;
+
+@Data
+public class CheckDto {
+
+    private final String name;
+
+    public static CheckDto from(Check check) {
+        return new CheckDto(check.getName());
+    }
+
+}
