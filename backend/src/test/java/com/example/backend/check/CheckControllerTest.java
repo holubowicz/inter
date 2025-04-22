@@ -15,6 +15,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,15 +36,18 @@ class CheckControllerTest {
     @Autowired
     private CheckLoaderConfiguration checkLoaderConfiguration;
 
+//    @Autowired
+//    private TestedDatabaseConfiguration testedDatabaseConfiguration;
+
     @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine")
             .withInitScript("com/example/backend/check/init.sql");
 
     @DynamicPropertySource
     static void setTestProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.datasource.tested.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.tested.username", postgreSQLContainer::getUsername);
+        registry.add("spring.datasource.tested.password", postgreSQLContainer::getPassword);
     }
 
     @BeforeEach
@@ -62,18 +68,22 @@ class CheckControllerTest {
 
     @Test
     void getCheckDtoList_whenRequestSent_thenVerifyResultValues() throws Exception {
+        List<String> EXPECTED_NAMES = Arrays.asList(
+                "absolute-avg",
+                "avg-all",
+                "negative-count",
+                "positive-count",
+                "total-count",
+                "wrong-sql-format"
+        );
+        final int EXPECTED_SIZE = EXPECTED_NAMES.size();
+
         this.mockMvc.perform(get("/api/checks"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(5)))
-                .andExpect(jsonPath("$[*].name", hasItems(
-                        "absolute-avg",
-                        "avg-all",
-                        "negative-count",
-                        "positive-count",
-                        "total-count"
-                )));
+                .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder(EXPECTED_NAMES.toArray())));
     }
 
     @Test
@@ -98,6 +108,42 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[0].name").exists())
                 .andExpect(jsonPath("$[0].result").exists());
+    }
+
+    @Test
+    void runCheckDtoList_whenSingleNotExistingCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
+        final String REQUEST_BODY = "[{\"name\": \"not-existing\"}]";
+        final int EXPECTED_SIZE = 1;
+
+        this.mockMvc.perform(post("/api/checks/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(REQUEST_BODY))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
+                .andExpect(jsonPath("$[0].name").exists())
+                .andExpect(jsonPath("$[0].result", nullValue()))
+                .andExpect(jsonPath("$[0].error", notNullValue()));
+    }
+
+    @Test
+    void runCheckDtoList_whenSingleWrongQueryFormatCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
+        final String REQUEST_BODY = "[{\"name\": \"wrong-sql-format\"}]";
+        final int EXPECTED_SIZE = 1;
+
+        this.mockMvc.perform(post("/api/checks/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(REQUEST_BODY))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
+                .andExpect(jsonPath("$[0].name").exists())
+                .andExpect(jsonPath("$[0].result", nullValue()))
+                .andExpect(jsonPath("$[0].error", notNullValue()));
     }
 
     @Test
@@ -133,6 +179,42 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$", everyItem(not(empty()))))
                 .andExpect(jsonPath("$[*].name").exists())
                 .andExpect(jsonPath("$[*].result").exists());
+    }
+
+    @Test
+    void runCheckDtoList_whenMultipleNotExistingCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
+        final String REQUEST_BODY = "[{\"name\": \"not-existing-1\"},{\"name\": \"not-existing-1\"},{\"name\": \"not-existing-1\"}]";
+        final int EXPECTED_SIZE = 3;
+
+        this.mockMvc.perform(post("/api/checks/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(REQUEST_BODY))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
+                .andExpect(jsonPath("$", everyItem(not(empty()))))
+                .andExpect(jsonPath("$[*].name").exists())
+                .andExpect(jsonPath("$[*].error", notNullValue()));
+    }
+
+    @Test
+    void runCheckDtoList_whenMultipleWrongQueryFormatCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
+        final String REQUEST_BODY = "[{\"name\": \"wrong-sql-format\"},{\"name\": \"wrong-sql-format\"}]";
+        final int EXPECTED_SIZE = 2;
+
+        this.mockMvc.perform(post("/api/checks/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(REQUEST_BODY))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
+                .andExpect(jsonPath("$", everyItem(not(empty()))))
+                .andExpect(jsonPath("$[*].name").exists())
+                .andExpect(jsonPath("$[*].error", notNullValue()));
     }
 
     @Test

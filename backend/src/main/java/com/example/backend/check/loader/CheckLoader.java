@@ -43,7 +43,6 @@ public class CheckLoader {
         }
     }
 
-    // TODO: handle when file does not exist better
     private Check getCheck(Path filepath) {
         String queryName = getCheckNameFromPath(filepath);
 
@@ -59,6 +58,7 @@ public class CheckLoader {
             return Check
                     .builder()
                     .name(queryName)
+                    .error("Failed to load query")
                     .build();
         }
     }
@@ -73,7 +73,7 @@ public class CheckLoader {
         String filename = filepath
                 .getFileName()
                 .toString();
-        
+
         return filename.substring(0, filename.lastIndexOf(checkFileExtension));
     }
 

@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: backend
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    tested:
+      url: ${DB_URL}
+      username: ${DB_USER}
+      password: ${DB_PASS}
+    internal:
+      url: ${INTERNAL_DB_URL}
+      username: ${INTERNAL_DB_USER}
+      password: ${INTERNAL_DB_PASS}
+
+app:
+  loader:
+    checks-path: checks

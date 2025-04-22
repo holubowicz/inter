@@ -11,5 +11,6 @@ public class CheckResult {
 
     private final String name;
     private final BigDecimal result;
+    private final String error;
 
 }
