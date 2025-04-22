@@ -5,10 +5,12 @@ spring:
     import: optional:file:.env[.properties]
   datasource:
     tested:
+      driver-class-name: org.postgresql.Driver
       url: ${DB_URL}
       username: ${DB_USER}
       password: ${DB_PASS}
     internal:
+      driver-class-name: org.postgresql.Driver
       url: ${INTERNAL_DB_URL}
       username: ${INTERNAL_DB_USER}
       password: ${INTERNAL_DB_PASS}

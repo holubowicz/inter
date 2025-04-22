@@ -49,14 +49,12 @@ public class CheckLoader {
         try {
             String content = Files.readString(filepath);
 
-            return Check
-                    .builder()
+            return Check.builder()
                     .name(queryName)
                     .query(content)
                     .build();
         } catch (IOException e) {
-            return Check
-                    .builder()
+            return Check.builder()
                     .name(queryName)
                     .error("Failed to load query")
                     .build();

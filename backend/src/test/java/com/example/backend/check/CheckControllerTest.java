@@ -36,9 +36,6 @@ class CheckControllerTest {
     @Autowired
     private CheckLoaderConfiguration checkLoaderConfiguration;
 
-//    @Autowired
-//    private TestedDatabaseConfiguration testedDatabaseConfiguration;
-
     @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine")
             .withInitScript("com/example/backend/check/init.sql");

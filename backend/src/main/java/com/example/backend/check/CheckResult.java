@@ -10,7 +10,9 @@ import java.math.BigDecimal;
 public class CheckResult {
 
     private final String name;
-    private final BigDecimal result;
     private final String error;
+    private final BigDecimal result;
+
+    // TODO: add: last result, trend
 
 }
