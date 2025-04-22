@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
@@ -21,14 +20,9 @@ public class TestedDatabaseConfiguration {
 
     @Bean(name = "testedDataSource")
     public DataSource testedDataSource() {
-        DataSourceProperties dataSourceProperties = testedDataSourceProperties();
-
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl(dataSourceProperties.getUrl());
-        dataSource.setUsername(dataSourceProperties.getUsername());
-        dataSource.setPassword(dataSourceProperties.getPassword());
-
-        return dataSource;
+        return testedDataSourceProperties()
+                .initializeDataSourceBuilder()
+                .build();
     }
 
     @Bean(name = "testedJdbcTemplate")
