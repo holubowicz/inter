@@ -3,9 +3,8 @@ package com.example.backend.query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class QueryServiceImpl implements QueryService {
@@ -25,14 +24,11 @@ public class QueryServiceImpl implements QueryService {
     }
 
     @Override
-    public List<List<Map<String, Object>>> runQueries(List<QueryDto> queries) {
-        List<List<Map<String, Object>>> results = new ArrayList<>();
-
-        for (QueryDto queryDto : queries) {
-            Query query = queryLoader.convertQueryDtoToQuery(queryDto);
-            results.add(queryConnector.runQuery(query));
-        }
-
-        return results;
+    public List<QueryResult> runQueries(List<QueryDto> queryDtoList) {
+        return queryDtoList
+                .stream()
+                .map(queryLoader::convertQueryDtoToQuery)
+                .map(queryConnector::runQuery)
+                .collect(Collectors.toList());
     }
 }

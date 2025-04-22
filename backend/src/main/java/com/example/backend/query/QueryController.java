@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/queries")
@@ -23,7 +22,7 @@ public class QueryController {
     }
 
     @PostMapping("/run")
-    public List<List<Map<String, Object>>> runQueries(@RequestBody List<QueryDto> queries) {
+    public List<QueryResult> runQueries(@RequestBody List<QueryDto> queries) {
         return queryService.runQueries(queries);
     }
 

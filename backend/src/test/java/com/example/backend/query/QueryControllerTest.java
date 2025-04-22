@@ -75,6 +75,8 @@ class QueryControllerTest {
                 )));
     }
 
+    // TODO: fix tests from here
+
     @Test
     void runQueries_whenDataProvided_thenIsBadRequest() throws Exception {
         this.mockMvc.perform(post("/api/queries/run"))
@@ -147,5 +149,5 @@ class QueryControllerTest {
                 .andExpect(jsonPath("$[1][0].value", equalTo(EXPECTED_RESULT_2)))
                 .andExpect(jsonPath("$[2][0].value", equalTo(EXPECTED_RESULT_3)));
     }
-    
+
 }

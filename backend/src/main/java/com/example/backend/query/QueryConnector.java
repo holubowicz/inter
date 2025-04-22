@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
 
 @Component
 public class QueryConnector {
@@ -18,11 +16,20 @@ public class QueryConnector {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Map<String, Object>> runQuery(Query query) {
+    public QueryResult runQuery(Query query) {
         if (query.getQuery().isEmpty()) {
-            return new ArrayList<>();
+            return QueryResult
+                    .builder()
+                    .queryName(query.getName())
+                    .build();
         }
-        return jdbcTemplate.queryForList(query.getQuery());
+
+        BigDecimal result = jdbcTemplate.queryForObject(query.getQuery(), BigDecimal.class);
+        return QueryResult
+                .builder()
+                .queryName(query.getName())
+                .result(result)
+                .build();
     }
 
 }

@@ -12,6 +12,7 @@ import java.util.List;
 @Component
 public class QueryLoader {
 
+    private final String queryFileExtension = ".sql";
     private final QueryLoaderConfiguration queryLoaderConfiguration;
 
     @Autowired
@@ -21,6 +22,7 @@ public class QueryLoader {
 
     public List<QueryDto> getQueries() {
         // TODO: make more accessible in test, and prod
+
         Path queriesPath = Paths.get(this.queryLoaderConfiguration.getQueriesPath())
                 .toAbsolutePath();
 
@@ -40,6 +42,7 @@ public class QueryLoader {
         }
     }
 
+    // TODO: handle when file does not exist better
     private Query getQuery(Path filepath) {
         String queryName = getQueryNameFromPath(filepath);
         try {
@@ -51,14 +54,14 @@ public class QueryLoader {
     }
 
     public Query convertQueryDtoToQuery(QueryDto queryDto) {
-        String filename = queryDto.getName() + ".sql";
+        String filename = queryDto.getName() + queryFileExtension;
         Path filepath = Paths.get(this.queryLoaderConfiguration.getQueriesPath(), filename);
         return getQuery(filepath);
     }
 
     private String getQueryNameFromPath(Path filepath) {
         String filename = filepath.getFileName().toString();
-        return filename.substring(0, filename.lastIndexOf(".sql"));
+        return filename.substring(0, filename.lastIndexOf(queryFileExtension));
     }
 
 }
