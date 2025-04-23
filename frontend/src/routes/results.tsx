@@ -1,0 +1,70 @@
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { PageLayout } from "@/components/layout/page-layout";
+import { ResultsTable } from "@/components/table/results-table";
+import { Title } from "@/components/title";
+
+type ChecksArray = string[];
+
+interface CheckResultsSearch {
+  checks: ChecksArray;
+}
+
+function checkResultsValidateSearch(
+  search: Record<string, unknown>,
+): CheckResultsSearch {
+  const checksSearchParam = search.checks;
+
+  if (
+    Array.isArray(checksSearchParam) &&
+    checksSearchParam.every((item) => typeof item === "string")
+  ) {
+    return {
+      checks: checksSearchParam as ChecksArray,
+    };
+  }
+
+  if (typeof checksSearchParam === "string") {
+    const checks = checksSearchParam
+      .toLocaleLowerCase()
+      .split(",")
+      .map((check) => check.trim());
+
+    return {
+      checks,
+    };
+  }
+
+  return {
+    checks: [],
+  };
+}
+
+function checkResultsBeforeLoad({ search }: { search: CheckResultsSearch }) {
+  const { checks } = search;
+
+  if (checks.length === 0) {
+    throw redirect({ to: "/" });
+  }
+}
+
+export const Route = createFileRoute("/results")({
+  validateSearch: checkResultsValidateSearch,
+  beforeLoad: checkResultsBeforeLoad,
+  component: CheckResultsPage,
+});
+
+function CheckResultsPage() {
+  const { checks } = Route.useSearch();
+
+  const selectedChecks = checks.map((check) => ({
+    name: check,
+  }));
+
+  return (
+    <PageLayout>
+      <Title>Check Results</Title>
+
+      <ResultsTable checks={selectedChecks} />
+    </PageLayout>
+  );
+}

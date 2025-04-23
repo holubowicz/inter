@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { LoadingSpinner } from "@/components/loading-spinner";
 
-export function QueriesTableLoading() {
+export function LoadingState() {
   const [dots, setDots] = useState("");
 
   useEffect(() => {
