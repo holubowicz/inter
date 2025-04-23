@@ -37,14 +37,21 @@ class CheckControllerTest {
     private CheckLoaderConfiguration checkLoaderConfiguration;
 
     @Container
-    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine")
+    private static final PostgreSQLContainer<?> testedPostgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine")
             .withInitScript("com/example/backend/check/init.sql");
+
+    @Container
+    private static final PostgreSQLContainer<?> internalPostgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine");
 
     @DynamicPropertySource
     static void setTestProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.tested.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.tested.username", postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.tested.password", postgreSQLContainer::getPassword);
+        registry.add("spring.datasource.tested.url", testedPostgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.tested.username", testedPostgreSQLContainer::getUsername);
+        registry.add("spring.datasource.tested.password", testedPostgreSQLContainer::getPassword);
+
+        registry.add("spring.datasource.internal.url", internalPostgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.internal.username", internalPostgreSQLContainer::getUsername);
+        registry.add("spring.datasource.internal.password", internalPostgreSQLContainer::getPassword);
     }
 
     @BeforeEach
@@ -54,7 +61,7 @@ class CheckControllerTest {
     }
 
     @Test
-    void getCheckDtoList_whenRequestSent_thenVerifyIfResponseStructure() throws Exception {
+    public void getCheckDtoList_whenRequestSent_thenVerifyIfResponseStructure() throws Exception {
         this.mockMvc.perform(get("/api/checks"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -64,7 +71,7 @@ class CheckControllerTest {
     }
 
     @Test
-    void getCheckDtoList_whenRequestSent_thenVerifyResultValues() throws Exception {
+    public void getCheckDtoList_whenRequestSent_thenVerifyResultValues() throws Exception {
         List<String> EXPECTED_NAMES = Arrays.asList(
                 "absolute-avg",
                 "avg-all",
@@ -84,14 +91,14 @@ class CheckControllerTest {
     }
 
     @Test
-    void runCheckDtoList_whenNoCheckDtoProvided_thenIsBadRequest() throws Exception {
+    public void runCheckDtoList_whenNoCheckDtoProvided_thenIsBadRequest() throws Exception {
         this.mockMvc.perform(post("/api/checks/run"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void runCheckDtoList_whenSingleCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDtoList_whenSingleCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"absolute-avg\"}]";
         final int EXPECTED_SIZE = 1;
 
@@ -108,7 +115,7 @@ class CheckControllerTest {
     }
 
     @Test
-    void runCheckDtoList_whenSingleNotExistingCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDtoList_whenSingleNotExistingCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"not-existing\"}]";
         final int EXPECTED_SIZE = 1;
 
@@ -126,7 +133,7 @@ class CheckControllerTest {
     }
 
     @Test
-    void runCheckDtoList_whenSingleWrongQueryFormatCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDtoList_whenSingleWrongQueryFormatCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"wrong-sql-format\"}]";
         final int EXPECTED_SIZE = 1;
 
@@ -144,7 +151,7 @@ class CheckControllerTest {
     }
 
     @Test
-    void runCheckDtoList_whenSingleCheckDtoProvided_thenVerifyResultValue() throws Exception {
+    public void runCheckDtoList_whenSingleCheckDtoProvided_thenVerifyResultValue() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"positive-count\"}]";
 
         final String EXPECTED_NAME = "positive-count";
@@ -161,7 +168,7 @@ class CheckControllerTest {
     }
 
     @Test
-    void runCheckDtoList_whenMultipleCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDtoList_whenMultipleCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"absolute-avg\"},{\"name\": \"avg-all\"},{\"name\": \"negative-count\"}]";
         final int EXPECTED_SIZE = 3;
 
@@ -179,7 +186,7 @@ class CheckControllerTest {
     }
 
     @Test
-    void runCheckDtoList_whenMultipleNotExistingCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDtoList_whenMultipleNotExistingCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"not-existing-1\"},{\"name\": \"not-existing-1\"},{\"name\": \"not-existing-1\"}]";
         final int EXPECTED_SIZE = 3;
 
@@ -197,7 +204,7 @@ class CheckControllerTest {
     }
 
     @Test
-    void runCheckDtoList_whenMultipleWrongQueryFormatCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDtoList_whenMultipleWrongQueryFormatCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"wrong-sql-format\"},{\"name\": \"wrong-sql-format\"}]";
         final int EXPECTED_SIZE = 2;
 
@@ -215,7 +222,7 @@ class CheckControllerTest {
     }
 
     @Test
-    void runCheckDtoList_whenMultipleCheckDtosProvided_thenVerifyResultValues() throws Exception {
+    public void runCheckDtoList_whenMultipleCheckDtosProvided_thenVerifyResultValues() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"negative-count\"},{\"name\": \"positive-count\"},{\"name\": \"total-count\"}]";
 
         final String EXPECTED_NAME_1 = "negative-count";

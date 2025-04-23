@@ -16,7 +16,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Result {
+public class ResultHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

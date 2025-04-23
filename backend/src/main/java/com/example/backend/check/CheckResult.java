@@ -12,7 +12,7 @@ public class CheckResult {
     private final String name;
     private final String error;
     private final BigDecimal result;
-
-    // TODO: add: last result, trend
-
+    private final BigDecimal lastResult;
+    private final double trendPercentage;
+    
 }
