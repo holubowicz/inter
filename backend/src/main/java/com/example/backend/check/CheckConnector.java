@@ -50,7 +50,7 @@ public class CheckConnector {
         }
 
         BigDecimal lastResult = lastResultOpt.get().getResult();
-        builder.result(lastResult);
+        builder.lastResult(lastResult);
 
         double previous = lastResult.doubleValue();
         double current = currentResult.doubleValue();

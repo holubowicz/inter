@@ -13,6 +13,6 @@ public class CheckResult {
     private final String error;
     private final BigDecimal result;
     private final BigDecimal lastResult;
-    private final double trendPercentage;
-    
+    private final Double trendPercentage;
+
 }
