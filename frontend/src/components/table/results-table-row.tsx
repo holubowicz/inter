@@ -25,8 +25,6 @@ export function ResultsTableRow({ checkResult }: ResultsTableRowProps) {
   );
 
   useEffect(() => {
-    console.log(checkResult);
-
     if (checkResult.error != null) {
       return;
     }
