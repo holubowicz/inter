@@ -24,18 +24,23 @@ class CheckLoaderUtilsTest {
 
     @Test
     void getCheckNameFromPath_whenPathIsNull_thenThrowsException() {
-        assertThrows(NullPointerException.class, () -> {
+        Exception exception = assertThrows(NullPointerException.class, () -> {
             underTest.getCheckNameFromPath(null);
         });
+
+        String expectedMessage = "The filepath is null";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
     void getCheckNameFromPath_whenPathIsEmpty_thenThrowsException() {
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            underTest.getCheckNameFromPath(Paths.get(""));
-        });
+        Exception exception = assertThrows(RuntimeException.class, () ->
+                underTest.getCheckNameFromPath(Paths.get(""))
+        );
 
-        String expectedMessage = "The path is empty";
+        String expectedMessage = "The filepath is empty";
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
@@ -88,7 +93,7 @@ class CheckLoaderUtilsTest {
     }
 
     @Test
-    void getCheckNameFromPath_whenFilenameCapitalalLetter_thenReturnsCheckName() {
+    void getCheckNameFromPath_whenFilenameCapitalized_thenReturnsCheckName() {
         Path path = Paths.get("/path/to/folder/Check.sql");
 
         String result = underTest.getCheckNameFromPath(path);

@@ -16,7 +16,7 @@ public class CheckLoaderUtils {
 
         String pathString = filepath.toString();
         if (pathString.isEmpty()) {
-            throw new RuntimeException("The path is empty");
+            throw new RuntimeException("The filepath is empty");
         }
 
         String filename = filepath.getFileName().toString();

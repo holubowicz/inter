@@ -8,6 +8,10 @@ public class CheckDto {
     private final String name;
 
     public static CheckDto from(Check check) {
+        if (check == null) {
+            throw new NullPointerException("The Check is null");
+        }
+
         return new CheckDto(check.getName());
     }
 

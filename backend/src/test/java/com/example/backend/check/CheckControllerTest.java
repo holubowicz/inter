@@ -55,7 +55,7 @@ class CheckControllerTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
         checkLoaderConfiguration.setChecksPath("src/test/resources/com/example/backend/check/checks");
     }
