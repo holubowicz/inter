@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_DB: ${DB_NAME:-inter}
+      POSTGRES_DB: ${DB_NAME:-tested}
     ports:
       - "5432:5432"
     volumes:
@@ -25,7 +25,7 @@ services:
     environment:
       POSTGRES_USER: ${INTERNAL_DB_USER:-postgres}
       POSTGRES_PASSWORD: ${INTERNAL_DB_PASS}
-      POSTGRES_DB: ${INTERNAL_DB_NAME:-inter}
+      POSTGRES_DB: ${INTERNAL_DB_NAME:-internal}
     ports:
       - "5433:5432"
     volumes:
