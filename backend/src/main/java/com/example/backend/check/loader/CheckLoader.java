@@ -14,12 +14,13 @@ import java.util.List;
 @Component
 public class CheckLoader {
 
-    private final String checkFileExtension = ".sql";
     private final CheckLoaderConfiguration checkLoaderConfiguration;
+    private final CheckLoaderUtils checkLoaderUtils;
 
     @Autowired
-    public CheckLoader(CheckLoaderConfiguration checkLoaderConfiguration) {
+    public CheckLoader(CheckLoaderConfiguration checkLoaderConfiguration, CheckLoaderUtils checkLoaderUtils) {
         this.checkLoaderConfiguration = checkLoaderConfiguration;
+        this.checkLoaderUtils = checkLoaderUtils;
     }
 
     // TODO: make more accessible in test, and prod
@@ -44,7 +45,7 @@ public class CheckLoader {
     }
 
     private Check getCheck(Path filepath) {
-        String queryName = getCheckNameFromPath(filepath);
+        String queryName = checkLoaderUtils.getCheckNameFromPath(filepath);
 
         try {
             String content = Files.readString(filepath);
@@ -62,17 +63,9 @@ public class CheckLoader {
     }
 
     public Check convertCheckDtoToCheck(CheckDto checkDto) {
-        String filename = checkDto.getName() + checkFileExtension;
+        String filename = checkDto.getName() + checkLoaderUtils.checkFileExtension;
         Path filepath = Paths.get(this.checkLoaderConfiguration.getChecksPath(), filename);
         return getCheck(filepath);
-    }
-
-    private String getCheckNameFromPath(Path filepath) {
-        String filename = filepath
-                .getFileName()
-                .toString();
-
-        return filename.substring(0, filename.lastIndexOf(checkFileExtension));
     }
 
 }

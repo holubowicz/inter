@@ -21,6 +21,7 @@ public class CheckController {
         return checkService.getCheckDtoList();
     }
 
+    // TODO: write better the error messages, for that route
     @PostMapping("/run")
     public List<CheckResult> runCheckDtoList(@RequestBody List<CheckDto> checkDtoList) {
         return checkService.runCheckDtoList(checkDtoList);
