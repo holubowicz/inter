@@ -49,7 +49,7 @@ public class CheckRunner {
         }
     }
 
-    private CheckTrend calculateTrend(String checkName, BigDecimal currentResult) {
+    public CheckTrend calculateTrend(String checkName, BigDecimal currentResult) {
         Optional<ResultHistory> lastResultOpt = resultHistoryRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
         if (lastResultOpt.isEmpty()) {
             return CheckTrend.builder().build();
@@ -72,7 +72,7 @@ public class CheckRunner {
         return builder.build();
     }
 
-    private void saveResultToHistory(String checkName, BigDecimal result) {
+    public void saveResultToHistory(String checkName, BigDecimal result) {
         ResultHistory resultHistory = ResultHistory.builder()
                 .checkName(checkName)
                 .result(result)

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CheckService {
@@ -30,6 +29,7 @@ public class CheckService {
                 .stream()
                 .map(checkLoader::convertCheckDtoToCheck)
                 .map(checkRunner::runCheck)
-                .collect(Collectors.toList());
+                .toList();
     }
+
 }

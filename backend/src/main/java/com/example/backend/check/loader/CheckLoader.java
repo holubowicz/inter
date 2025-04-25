@@ -16,6 +16,11 @@ import java.util.List;
 @Component
 public class CheckLoader {
 
+    public static final String CHECK_DTO_INCORRECT_ERROR = "Check DTO is incorrect";
+    public static final String FAILED_TO_LOAD_CONTENT_ERROR = "Failed to load check content";
+    public static final String CHECK_DIRECTORY_DONT_EXIST_ERROR = "Check directory does not exist";
+    public static final String FAILED_TO_LOAD_CHECKS_ERROR = "Failed to load checks";
+
     private final CheckLoaderConfiguration checkLoaderConfiguration;
 
     @Autowired
@@ -28,7 +33,7 @@ public class CheckLoader {
                 .toAbsolutePath();
 
         if (!Files.exists(checksPath)) {
-            throw new RuntimeException("Check directory does not exist");
+            throw new RuntimeException(CHECK_DIRECTORY_DONT_EXIST_ERROR);
         }
 
         try {
@@ -39,7 +44,7 @@ public class CheckLoader {
                     .map(CheckDto::from)
                     .toList();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load checks", e);
+            throw new RuntimeException(FAILED_TO_LOAD_CHECKS_ERROR);
         }
     }
 
@@ -49,12 +54,12 @@ public class CheckLoader {
         }
 
         if (checkDto.getName() == null || checkDto.getName().isEmpty()) {
-            return CheckFactory.createErrorCheck(CheckFactory.CHECK_DTO_INCORRECT_ERROR);
+            return CheckFactory.createErrorCheck(CHECK_DTO_INCORRECT_ERROR);
         }
 
         String filename = checkDto.getName() + CheckLoaderUtils.CHECK_FILE_EXTENSION;
         Path filepath = Paths.get(this.checkLoaderConfiguration.getChecksPath(), filename);
-        
+
         return getCheck(filepath);
     }
 
@@ -65,7 +70,7 @@ public class CheckLoader {
             String content = Files.readString(filepath);
             return CheckFactory.createCheck(queryName, content);
         } catch (Exception e) {
-            return CheckFactory.createNameErrorCheck(queryName, CheckFactory.FAILED_TO_LOAD_CONTENT_ERROR);
+            return CheckFactory.createNameErrorCheck(queryName, FAILED_TO_LOAD_CONTENT_ERROR);
         }
     }
 

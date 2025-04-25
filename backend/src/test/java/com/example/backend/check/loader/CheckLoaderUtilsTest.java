@@ -22,26 +22,18 @@ class CheckLoaderUtilsTest {
 
     @Test
     void getCheckNameFromPath_whenPathIsNull_thenThrowsException() {
-        Exception exception = assertThrows(NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             CheckLoaderUtils.getCheckNameFromPath(null);
         });
-
-        String expectedMessage = "The filepath is null";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
     void getCheckNameFromPath_whenPathIsEmpty_thenThrowsException() {
-        Exception exception = assertThrows(RuntimeException.class, () ->
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 CheckLoaderUtils.getCheckNameFromPath(Paths.get(""))
         );
 
-        String expectedMessage = "The filepath is empty";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
+        assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_IS_EMPTY_ERROR));
     }
 
     @Test

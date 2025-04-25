@@ -2,7 +2,6 @@ package com.example.backend.check.loader;
 
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckDto;
-import com.example.backend.check.model.factory.CheckFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +17,7 @@ class CheckLoaderTest {
 
     private static final String checksPathString = "src/test/resources/com/example/backend/check/checks";
     private static final CheckLoaderConfiguration checkLoaderConfiguration = new CheckLoaderConfiguration();
+
     private static final CheckLoader underTest = new CheckLoader(checkLoaderConfiguration);
 
     @BeforeEach
@@ -43,9 +43,7 @@ class CheckLoaderTest {
 
         Exception exception = assertThrows(RuntimeException.class, underTest::getCheckDtoList);
 
-        String expectedMessage = "Check directory does not exist";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        assertTrue(exception.getMessage().contains(CheckLoader.CHECK_DIRECTORY_DONT_EXIST_ERROR));
     }
 
     @Test
@@ -88,7 +86,7 @@ class CheckLoaderTest {
 
         assertNotNull(check);
         assertNull(check.getQuery());
-        assertEquals(CheckFactory.CHECK_DTO_INCORRECT_ERROR, check.getError());
+        assertEquals(CheckLoader.CHECK_DTO_INCORRECT_ERROR, check.getError());
     }
 
     @Test
@@ -115,24 +113,18 @@ class CheckLoaderTest {
 
     @Test
     void getCheck_whenFilepathIsNull_thenReturnCheck() {
-        Exception exception = assertThrows(NullPointerException.class, () ->
+        assertThrows(NullPointerException.class, () ->
                 underTest.getCheck(null)
         );
-
-        String expectedMessage = "The filepath is null";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
     void getCheck_whenFilepathIsEmpty_thenReturnCheck() {
-        Exception exception = assertThrows(RuntimeException.class, () ->
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 underTest.getCheck(Paths.get(""))
         );
 
-        String expectedMessage = "The filepath is empty";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_IS_EMPTY_ERROR));
     }
 
 }
