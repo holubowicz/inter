@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS calculations CASCADE;
 
 CREATE TABLE calculations
 (
-    id     SERIAL PRIMARY KEY,
+    id     BIGSERIAL PRIMARY KEY,
     date   DATE          NOT NULL,
     number NUMERIC(5, 2) NOT NULL
 );

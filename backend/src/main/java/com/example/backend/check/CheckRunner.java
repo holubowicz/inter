@@ -1,15 +1,16 @@
 package com.example.backend.check;
 
-import com.example.backend.database.internal.ResultHistory;
-import com.example.backend.database.internal.ResultHistoryRepository;
+import com.example.backend.database.schema.ResultHistory;
+import com.example.backend.database.schema.ResultHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+
+// TODO: CheckConnector -> CheckRunner
 
 @Component
 public class CheckConnector {
@@ -38,11 +39,12 @@ public class CheckConnector {
             saveResultToHistory(check.getName(), currentResult);
 
             return checkResultBuilder.result(currentResult).build();
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             return checkResultBuilder.error("Failed to query database").build();
         }
     }
 
+    // TODO: fix the builder, minimum class, tuple or sth
     private void calculateTrend(String checkName, BigDecimal currentResult, CheckResult.CheckResultBuilder builder) {
         Optional<ResultHistory> lastResultOpt = resultHistoryRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
         if (lastResultOpt.isEmpty()) {

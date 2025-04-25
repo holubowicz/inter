@@ -1,5 +1,7 @@
 package com.example.backend.check;
 
+import com.example.backend.check.models.Check;
+import com.example.backend.check.models.CheckDto;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
