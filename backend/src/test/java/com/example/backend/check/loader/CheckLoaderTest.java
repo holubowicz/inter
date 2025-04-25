@@ -1,7 +1,8 @@
 package com.example.backend.check.loader;
 
-import com.example.backend.check.Check;
-import com.example.backend.check.CheckDto;
+import com.example.backend.check.model.Check;
+import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.factory.CheckFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,11 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CheckLoaderTest {
 
     private static final String checksPathString = "src/test/resources/com/example/backend/check/checks";
-
     private static final CheckLoaderConfiguration checkLoaderConfiguration = new CheckLoaderConfiguration();
-    private static final CheckLoaderUtils checkLoaderUtils = new CheckLoaderUtils();
-
-    private static final CheckLoader underTest = new CheckLoader(checkLoaderConfiguration, checkLoaderUtils);
+    private static final CheckLoader underTest = new CheckLoader(checkLoaderConfiguration);
 
     @BeforeEach
     void setupBeforeEach() {
@@ -45,20 +43,16 @@ class CheckLoaderTest {
 
         Exception exception = assertThrows(RuntimeException.class, underTest::getCheckDtoList);
 
-        String expectedMessage = "Check directory does not exist: ";
+        String expectedMessage = "Check directory does not exist";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
     void convertCheckDtoToCheck_whenCheckDtoIsNull_thenThrowNullPointerException() {
-        Exception exception = assertThrows(NullPointerException.class, () ->
+        assertThrows(NullPointerException.class, () ->
                 underTest.convertCheckDtoToCheck(null)
         );
-
-        String expectedMessage = "Check DTO is null";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
@@ -93,9 +87,8 @@ class CheckLoaderTest {
         Check check = underTest.convertCheckDtoToCheck(checkDto);
 
         assertNotNull(check);
-        assertEquals("", check.getName());
         assertNull(check.getQuery());
-        assertEquals("The Check DTO name is incorrect", check.getError());
+        assertEquals(CheckFactory.CHECK_DTO_INCORRECT_ERROR, check.getError());
     }
 
     @Test

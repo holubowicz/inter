@@ -11,13 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CheckLoaderUtilsTest {
 
-    private final CheckLoaderUtils underTest = new CheckLoaderUtils();
-
     @Test
     void getCheckNameFromPath_whenPathIsValid_thenReturnsCheckName() {
         Path path = Paths.get("/path/to/folder/check.sql");
 
-        String result = underTest.getCheckNameFromPath(path);
+        String result = CheckLoaderUtils.getCheckNameFromPath(path);
 
         assertEquals("check", result);
     }
@@ -25,7 +23,7 @@ class CheckLoaderUtilsTest {
     @Test
     void getCheckNameFromPath_whenPathIsNull_thenThrowsException() {
         Exception exception = assertThrows(NullPointerException.class, () -> {
-            underTest.getCheckNameFromPath(null);
+            CheckLoaderUtils.getCheckNameFromPath(null);
         });
 
         String expectedMessage = "The filepath is null";
@@ -37,7 +35,7 @@ class CheckLoaderUtilsTest {
     @Test
     void getCheckNameFromPath_whenPathIsEmpty_thenThrowsException() {
         Exception exception = assertThrows(RuntimeException.class, () ->
-                underTest.getCheckNameFromPath(Paths.get(""))
+                CheckLoaderUtils.getCheckNameFromPath(Paths.get(""))
         );
 
         String expectedMessage = "The filepath is empty";
@@ -50,7 +48,7 @@ class CheckLoaderUtilsTest {
     void getCheckNameFromPath_whenNoExtension_thenReturnsCheckName() {
         Path path = Paths.get("/path/to/folder/check");
 
-        String result = underTest.getCheckNameFromPath(path);
+        String result = CheckLoaderUtils.getCheckNameFromPath(path);
 
         assertEquals("check", result);
     }
@@ -60,7 +58,7 @@ class CheckLoaderUtilsTest {
     void getCheckNameFromPath_whenExtensionLowercase_thenReturnsCheckName(String pathString) {
         Path path = Paths.get(pathString);
 
-        String result = underTest.getCheckNameFromPath(path);
+        String result = CheckLoaderUtils.getCheckNameFromPath(path);
 
         assertEquals("check", result);
     }
@@ -69,7 +67,7 @@ class CheckLoaderUtilsTest {
     void getCheckNameFromPath_whenFilenameContainsTwoDots_thenReturnsCheckName() {
         Path path = Paths.get("/path/to/folder/check.test.sql");
 
-        String result = underTest.getCheckNameFromPath(path);
+        String result = CheckLoaderUtils.getCheckNameFromPath(path);
 
         assertEquals("check", result);
     }
@@ -78,7 +76,7 @@ class CheckLoaderUtilsTest {
     void getCheckNameFromPath_whenExtensionIsTest_thenReturnsCheckName() {
         Path path = Paths.get("/path/to/folder/check.test");
 
-        String result = underTest.getCheckNameFromPath(path);
+        String result = CheckLoaderUtils.getCheckNameFromPath(path);
 
         assertEquals("check", result);
     }
@@ -87,7 +85,7 @@ class CheckLoaderUtilsTest {
     void getCheckNameFromPath_whenContainsSpaceInFilename_thenReturnsCheckName() {
         Path path = Paths.get("/path/to/folder/check name.sql");
 
-        String result = underTest.getCheckNameFromPath(path);
+        String result = CheckLoaderUtils.getCheckNameFromPath(path);
 
         assertEquals("check name", result);
     }
@@ -96,7 +94,7 @@ class CheckLoaderUtilsTest {
     void getCheckNameFromPath_whenFilenameCapitalized_thenReturnsCheckName() {
         Path path = Paths.get("/path/to/folder/Check.sql");
 
-        String result = underTest.getCheckNameFromPath(path);
+        String result = CheckLoaderUtils.getCheckNameFromPath(path);
 
         assertEquals("Check", result);
     }

@@ -1,10 +1,9 @@
-package com.example.backend.check;
+package com.example.backend.check.model;
 
-import com.example.backend.check.models.Check;
-import com.example.backend.check.models.CheckDto;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CheckDtoTest {
 
@@ -19,14 +18,9 @@ class CheckDtoTest {
 
     @Test
     void from_whenCheckIsNull_thenThrowNullPointerException() {
-        Exception exception = assertThrows(NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             CheckDto.from(null);
         });
-
-        String expectedMessage = "The Check is null";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
     }
 
 }

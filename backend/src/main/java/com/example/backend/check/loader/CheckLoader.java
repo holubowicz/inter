@@ -1,7 +1,9 @@
 package com.example.backend.check.loader;
 
-import com.example.backend.check.Check;
-import com.example.backend.check.CheckDto;
+import com.example.backend.check.model.Check;
+import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.factory.CheckFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,16 +12,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+@Slf4j
 @Component
 public class CheckLoader {
 
     private final CheckLoaderConfiguration checkLoaderConfiguration;
-    private final CheckLoaderUtils checkLoaderUtils;
 
     @Autowired
-    public CheckLoader(CheckLoaderConfiguration checkLoaderConfiguration, CheckLoaderUtils checkLoaderUtils) {
+    public CheckLoader(CheckLoaderConfiguration checkLoaderConfiguration) {
         this.checkLoaderConfiguration = checkLoaderConfiguration;
-        this.checkLoaderUtils = checkLoaderUtils;
     }
 
     public List<CheckDto> getCheckDtoList() {
@@ -27,13 +28,13 @@ public class CheckLoader {
                 .toAbsolutePath();
 
         if (!Files.exists(checksPath)) {
-            throw new RuntimeException("Check directory does not exist: " + checksPath);
+            throw new RuntimeException("Check directory does not exist");
         }
 
         try {
             return Files.walk(checksPath)
                     .filter(Files::isRegularFile)
-                    .filter(path -> path.toString().toLowerCase().endsWith(".sql"))
+                    .filter(path -> path.toString().toLowerCase().endsWith(CheckLoaderUtils.CHECK_FILE_EXTENSION))
                     .map(this::getCheck)
                     .map(CheckDto::from)
                     .toList();
@@ -44,36 +45,27 @@ public class CheckLoader {
 
     public Check convertCheckDtoToCheck(CheckDto checkDto) {
         if (checkDto == null) {
-            throw new NullPointerException("Check DTO is null");
+            log.error("Check DTO is null");
         }
 
         if (checkDto.getName() == null || checkDto.getName().isEmpty()) {
-            return Check.builder()
-                    .name("")
-                    .error("The Check DTO name is incorrect")
-                    .build();
+            return CheckFactory.createErrorCheck(CheckFactory.CHECK_DTO_INCORRECT_ERROR);
         }
 
-        String filename = checkDto.getName() + checkLoaderUtils.checkFileExtension;
+        String filename = checkDto.getName() + CheckLoaderUtils.CHECK_FILE_EXTENSION;
         Path filepath = Paths.get(this.checkLoaderConfiguration.getChecksPath(), filename);
+        
         return getCheck(filepath);
     }
 
     public Check getCheck(Path filepath) {
-        String queryName = checkLoaderUtils.getCheckNameFromPath(filepath);
+        String queryName = CheckLoaderUtils.getCheckNameFromPath(filepath);
 
         try {
             String content = Files.readString(filepath);
-
-            return Check.builder()
-                    .name(queryName)
-                    .query(content)
-                    .build();
+            return CheckFactory.createCheck(queryName, content);
         } catch (Exception e) {
-            return Check.builder()
-                    .name(queryName)
-                    .error("Failed to load query")
-                    .build();
+            return CheckFactory.createNameErrorCheck(queryName, CheckFactory.FAILED_TO_LOAD_CONTENT_ERROR);
         }
     }
 

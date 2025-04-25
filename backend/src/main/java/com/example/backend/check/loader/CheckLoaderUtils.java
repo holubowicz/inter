@@ -1,15 +1,12 @@
 package com.example.backend.check.loader;
 
-import org.springframework.stereotype.Component;
-
 import java.nio.file.Path;
 
-@Component
 public class CheckLoaderUtils {
 
-    public final String checkFileExtension = ".sql";
+    public static final String CHECK_FILE_EXTENSION = ".sql";
 
-    public String getCheckNameFromPath(Path filepath) {
+    public static String getCheckNameFromPath(Path filepath) {
         if (filepath == null) {
             throw new NullPointerException("The filepath is null");
         }
@@ -28,8 +25,8 @@ public class CheckLoaderUtils {
             return filename.substring(0, dotIdx);
         }
 
-        if (lowerFilename.endsWith(checkFileExtension)) {
-            return filename.substring(0, lowerFilename.length() - checkFileExtension.length());
+        if (lowerFilename.endsWith(CHECK_FILE_EXTENSION)) {
+            return filename.substring(0, lowerFilename.length() - CHECK_FILE_EXTENSION.length());
         }
 
         return filename;

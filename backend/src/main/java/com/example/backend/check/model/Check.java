@@ -1,9 +1,7 @@
-package com.example.backend.check;
+package com.example.backend.check.model;
 
 import lombok.Builder;
 import lombok.Getter;
-
-// TODO: maybe, does something like CheckFactory?, using Factory principle
 
 @Getter
 @Builder

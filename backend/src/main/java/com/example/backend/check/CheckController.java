@@ -1,5 +1,7 @@
 package com.example.backend.check;
 
+import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.CheckResult;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
