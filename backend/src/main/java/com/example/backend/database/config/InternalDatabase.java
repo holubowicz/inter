@@ -1,5 +1,6 @@
-package com.example.backend.database;
+package com.example.backend.database.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,14 @@ import java.util.HashMap;
         entityManagerFactoryRef = "internalEntityManagerFactory",
         transactionManagerRef = "internalTransactionManager"
 )
-public class InternalDatabaseConfiguration {
+public class InternalDatabase {
+
+    private final InternalDatabaseConfiguration internalDatabaseConfiguration;
+
+    @Autowired
+    public InternalDatabase(InternalDatabaseConfiguration internalDatabaseConfiguration) {
+        this.internalDatabaseConfiguration = internalDatabaseConfiguration;
+    }
 
     @Bean
     @ConfigurationProperties("spring.datasource.internal")
@@ -39,14 +47,17 @@ public class InternalDatabaseConfiguration {
     public LocalContainerEntityManagerFactoryBean internalEntityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(internalDataSource());
-        em.setPackagesToScan("com.example.backend.database.internal");
+        em.setPackagesToScan("com.example.backend.database.schema");
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
 
         HashMap<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.hbm2ddl.auto", "create-drop");
-        properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        properties.put("hibernate.hbm2ddl.auto", "update");
+        properties.put("javax.persistence.schema-generation.create-source", "script");
+        properties.put(
+                "javax.persistence.schema-generation.create-script-source",
+                internalDatabaseConfiguration.getInitScriptPath());
         em.setJpaPropertyMap(properties);
 
         return em;

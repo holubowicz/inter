@@ -1,4 +1,4 @@
-package com.example.backend.database.internal;
+package com.example.backend.database.schema;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

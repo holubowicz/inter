@@ -1,4 +1,4 @@
-package com.example.backend.database;
+package com.example.backend.database.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 
 @Configuration
-public class TestedDatabaseConfiguration {
+public class TestedDatabase {
 
     @Bean
     @ConfigurationProperties("spring.datasource.tested")

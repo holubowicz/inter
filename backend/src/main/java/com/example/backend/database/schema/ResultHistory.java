@@ -1,4 +1,4 @@
-package com.example.backend.database.internal;
+package com.example.backend.database.schema;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,13 +23,13 @@ public class ResultHistory {
     private Long id;
 
     @CreationTimestamp
-    @Column(updatable = false, nullable = false)
+    @Column(nullable = false, updatable = false)
     private Instant timestamp;
 
     @Column(name = "check_name", nullable = false, updatable = false)
     private String checkName;
 
-    @Column(columnDefinition = "NUMERIC(38, 16)", nullable = false, updatable = false)
+    @Column(precision = 38, scale = 16, nullable = false, updatable = false)
     private BigDecimal result;
 
 }
