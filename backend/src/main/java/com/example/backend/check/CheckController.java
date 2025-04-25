@@ -1,6 +1,8 @@
 package com.example.backend.check;
 
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +23,24 @@ public class CheckController {
         return checkService.getCheckDtoList();
     }
 
-    // TODO: write better the error messages, for that route
     @PostMapping("/run")
-    public List<CheckResult> runCheckDtoList(@RequestBody List<CheckDto> checkDtoList) {
-        return checkService.runCheckDtoList(checkDtoList);
+    public ResponseEntity<?> runCheckDtoList(@Nullable @RequestBody List<CheckDto> checkDtoList) {
+        if (checkDtoList == null || checkDtoList.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body("Check DTO list must be provided and cannot be empty");
+        }
+
+        boolean allMatchCheckDto = checkDtoList.stream()
+                .allMatch(item -> item != null && item.getName() != null && !item.getName().isEmpty());
+
+        if (!allMatchCheckDto) {
+            return ResponseEntity.badRequest()
+                    .body("Invalid item found in the list. All items must be of type Check DTO and not null nor any fields");
+        }
+
+        List<CheckResult> results = checkService.runCheckDtoList(checkDtoList);
+
+        return ResponseEntity.ok(results);
     }
 
 }
