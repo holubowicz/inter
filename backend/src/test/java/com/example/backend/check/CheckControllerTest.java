@@ -15,6 +15,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,7 +68,7 @@ class CheckControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[*].name").exists());
+                .andExpect(jsonPath("$[*].name", everyItem(notNullValue())));
     }
 
     @Test
@@ -91,10 +92,33 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenNoCheckDtoProvided_thenIsBadRequest() throws Exception {
+    public void runCheckDtoList_whenCheckDtoListIsNotProvided_thenIsBadRequest() throws Exception {
         this.mockMvc.perform(post("/api/checks/run"))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Check DTO list must be provided and cannot be empty"));
+    }
+
+    @Test
+    public void runCheckDtoList_whenCheckDtoListIsEmpty_thenIsBadRequest() throws Exception {
+        this.mockMvc.perform(post("/api/checks/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ArrayList<>().toString()))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Check DTO list must be provided and cannot be empty"));
+    }
+
+    @Test
+    public void runCheckDtoList_whenCheckDtoListIsNotCheckDtoType_thenIsBadRequest() throws Exception {
+        this.mockMvc.perform(post("/api/checks/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("[{\"msg\":  \"bad request\"}]"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content()
+                        .string("Invalid item found in the list. All items must be of type Check DTO and not null nor any fields")
+                );
     }
 
     @Test
@@ -110,8 +134,9 @@ class CheckControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
-                .andExpect(jsonPath("$[0].name").exists())
-                .andExpect(jsonPath("$[0].result").exists());
+                .andExpect(jsonPath("$[0].name", notNullValue()))
+                .andExpect(jsonPath("$[0].result", notNullValue()))
+                .andExpect(jsonPath("$[0].error", nullValue()));
     }
 
     @Test
@@ -127,7 +152,7 @@ class CheckControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
-                .andExpect(jsonPath("$[0].name").exists())
+                .andExpect(jsonPath("$[0].name", notNullValue()))
                 .andExpect(jsonPath("$[0].result", nullValue()))
                 .andExpect(jsonPath("$[0].error", notNullValue()));
     }
@@ -145,7 +170,7 @@ class CheckControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
-                .andExpect(jsonPath("$[0].name").exists())
+                .andExpect(jsonPath("$[0].name", notNullValue()))
                 .andExpect(jsonPath("$[0].result", nullValue()))
                 .andExpect(jsonPath("$[0].error", notNullValue()));
     }
@@ -164,7 +189,8 @@ class CheckControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].name", equalTo(EXPECTED_NAME)))
-                .andExpect(jsonPath("$[0].result", equalTo(EXPECTED_RESULT)));
+                .andExpect(jsonPath("$[0].result", equalTo(EXPECTED_RESULT)))
+                .andExpect(jsonPath("$[0].error", nullValue()));
     }
 
     @Test
@@ -181,8 +207,9 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$", everyItem(not(empty()))))
-                .andExpect(jsonPath("$[*].name").exists())
-                .andExpect(jsonPath("$[*].result").exists());
+                .andExpect(jsonPath("$[*].name", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].result", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].error", everyItem(nullValue())));
     }
 
     @Test
@@ -199,8 +226,9 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$", everyItem(not(empty()))))
-                .andExpect(jsonPath("$[*].name").exists())
-                .andExpect(jsonPath("$[*].error", notNullValue()));
+                .andExpect(jsonPath("$[*].name", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].result", everyItem(nullValue())))
+                .andExpect(jsonPath("$[*].error", everyItem(notNullValue())));
     }
 
     @Test
@@ -217,8 +245,9 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$", everyItem(not(empty()))))
-                .andExpect(jsonPath("$[*].name").exists())
-                .andExpect(jsonPath("$[*].error", notNullValue()));
+                .andExpect(jsonPath("$[*].name", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].result", everyItem(nullValue())))
+                .andExpect(jsonPath("$[*].error", everyItem(notNullValue())));
     }
 
     @Test
