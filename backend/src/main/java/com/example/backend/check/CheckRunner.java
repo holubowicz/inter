@@ -16,6 +16,10 @@ import java.util.Optional;
 @Component
 public class CheckRunner {
 
+    public static String CHECK_NAME_NULL_ERROR = "Check name is null";
+    public static String CHECK_NAME_EMPTY_ERROR = "Check name is empty";
+    public static String RESULT_NULL_ERROR = "Result is null";
+
     private final JdbcTemplate jdbcTemplate;
     private final ResultHistoryRepository resultHistoryRepository;
 
@@ -73,6 +77,17 @@ public class CheckRunner {
     }
 
     public void saveResultToHistory(String checkName, BigDecimal result) {
+        if (checkName == null) {
+            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+        }
+        if (checkName.isEmpty()) {
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+        }
+
+        if (result == null) {
+            throw new IllegalArgumentException(RESULT_NULL_ERROR);
+        }
+
         ResultHistory resultHistory = ResultHistory.builder()
                 .checkName(checkName)
                 .result(result)

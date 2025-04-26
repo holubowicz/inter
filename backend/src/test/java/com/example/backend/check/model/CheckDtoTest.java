@@ -2,8 +2,7 @@ package com.example.backend.check.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CheckDtoTest {
 
@@ -17,10 +16,12 @@ class CheckDtoTest {
     }
 
     @Test
-    void from_whenCheckIsNull_thenThrowNullPointerException() {
-        assertThrows(NullPointerException.class, () -> {
+    void from_whenCheckIsNull_thenThrowIllegalArgumentException() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             CheckDto.from(null);
         });
+
+        assertTrue(exception.getMessage().contains(CheckDto.CHECK_NULL_ERROR));
     }
 
 }

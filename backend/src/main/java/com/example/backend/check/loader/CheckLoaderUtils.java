@@ -1,24 +1,22 @@
 package com.example.backend.check.loader;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.nio.file.Path;
 
-@Slf4j
 public class CheckLoaderUtils {
 
     public static final String CHECK_FILE_EXTENSION = ".sql";
 
-    public static final String FILEPATH_IS_EMPTY_ERROR = "The filepath is empty";
+    public static final String FILEPATH_NULL_ERROR = "File path is null";
+    public static final String FILEPATH_EMPTY_ERROR = "File path is empty";
 
     public static String getCheckNameFromPath(Path filepath) {
         if (filepath == null) {
-            log.error("The filepath is null");
+            throw new IllegalArgumentException(FILEPATH_NULL_ERROR);
         }
 
         String pathString = filepath.toString();
         if (pathString.isEmpty()) {
-            throw new IllegalArgumentException(FILEPATH_IS_EMPTY_ERROR);
+            throw new IllegalArgumentException(FILEPATH_EMPTY_ERROR);
         }
 
         String filename = filepath.getFileName().toString();

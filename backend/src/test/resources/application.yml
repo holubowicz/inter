@@ -15,7 +15,7 @@ spring:
 
 app:
   loader:
-    checks-path: checks
+    checks-path: src/test/resources/checks
   db:
     internal:
       init-script-path: classpath:schema/internal.sql

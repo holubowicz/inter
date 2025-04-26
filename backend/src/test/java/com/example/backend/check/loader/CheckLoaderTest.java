@@ -15,14 +15,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CheckLoaderTest {
 
-    private static final String checksPathString = "src/test/resources/com/example/backend/check/checks";
+    // TODO: load the checksPath from application properties
+    private static final String checksPath = "src/test/resources/checks";
     private static final CheckLoaderConfiguration checkLoaderConfiguration = new CheckLoaderConfiguration();
 
     private static final CheckLoader underTest = new CheckLoader(checkLoaderConfiguration);
 
     @BeforeEach
     void setupBeforeEach() {
-        checkLoaderConfiguration.setChecksPath(checksPathString);
+        checkLoaderConfiguration.setChecksPath(checksPath);
     }
 
     @Test
@@ -47,10 +48,12 @@ class CheckLoaderTest {
     }
 
     @Test
-    void convertCheckDtoToCheck_whenCheckDtoIsNull_thenThrowNullPointerException() {
-        assertThrows(NullPointerException.class, () ->
+    void convertCheckDtoToCheck_whenCheckDtoIsNull_thenThrowIllegalArgumentException() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 underTest.convertCheckDtoToCheck(null)
         );
+
+        assertTrue(exception.getMessage().contains(CheckLoader.CHECK_DTO_NULL_ERROR));
     }
 
     @Test
@@ -91,7 +94,7 @@ class CheckLoaderTest {
 
     @Test
     void getCheck_whenFilepathIsValid_thenReturnCorrectCheck() {
-        Path filepath = Paths.get(checksPathString + "/absolute-avg.sql");
+        Path filepath = Paths.get(checksPath + "/absolute-avg.sql");
 
         Check result = underTest.getCheck(filepath);
 
@@ -113,9 +116,11 @@ class CheckLoaderTest {
 
     @Test
     void getCheck_whenFilepathIsNull_thenReturnCheck() {
-        assertThrows(NullPointerException.class, () ->
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 underTest.getCheck(null)
         );
+
+        assertTrue(exception.getMessage().contains(CheckLoader.FILEPATH_NULL_ERROR));
     }
 
     @Test
@@ -124,7 +129,7 @@ class CheckLoaderTest {
                 underTest.getCheck(Paths.get(""))
         );
 
-        assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_IS_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_EMPTY_ERROR));
     }
 
 }

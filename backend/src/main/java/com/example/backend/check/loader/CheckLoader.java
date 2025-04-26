@@ -3,7 +3,6 @@ package com.example.backend.check.loader;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.factory.CheckFactory;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +11,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-@Slf4j
 @Component
 public class CheckLoader {
 
+    public static final String CHECK_DTO_NULL_ERROR = "Check DTO is null";
     public static final String CHECK_DTO_INCORRECT_ERROR = "Check DTO is incorrect";
+    public static final String FILEPATH_NULL_ERROR = "File path is null";
     public static final String FAILED_TO_LOAD_CONTENT_ERROR = "Failed to load check content";
     public static final String CHECK_DIRECTORY_DONT_EXIST_ERROR = "Check directory does not exist";
     public static final String FAILED_TO_LOAD_CHECKS_ERROR = "Failed to load checks";
@@ -50,7 +50,7 @@ public class CheckLoader {
 
     public Check convertCheckDtoToCheck(CheckDto checkDto) {
         if (checkDto == null) {
-            log.error("Check DTO is null");
+            throw new IllegalArgumentException(CHECK_DTO_NULL_ERROR);
         }
 
         if (checkDto.getName() == null || checkDto.getName().isEmpty()) {
@@ -64,6 +64,10 @@ public class CheckLoader {
     }
 
     public Check getCheck(Path filepath) {
+        if (filepath == null) {
+            throw new IllegalArgumentException(FILEPATH_NULL_ERROR);
+        }
+
         String queryName = CheckLoaderUtils.getCheckNameFromPath(filepath);
 
         try {

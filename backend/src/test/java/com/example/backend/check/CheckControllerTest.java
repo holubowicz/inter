@@ -1,6 +1,5 @@
 package com.example.backend.check;
 
-import com.example.backend.check.loader.CheckLoaderConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +33,9 @@ class CheckControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private CheckLoaderConfiguration checkLoaderConfiguration;
-
     @Container
     private static final PostgreSQLContainer<?> testedPostgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine")
-            .withInitScript("com/example/backend/check/init.sql");
+            .withInitScript("schema/tested.sql");
 
     @Container
     private static final PostgreSQLContainer<?> internalPostgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine");
@@ -58,7 +54,6 @@ class CheckControllerTest {
     @BeforeEach
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
-        checkLoaderConfiguration.setChecksPath("src/test/resources/com/example/backend/check/checks");
     }
 
     @Test
