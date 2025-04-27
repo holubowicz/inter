@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import {
   ChartLine,
   MoveRight,
@@ -8,50 +9,80 @@ import {
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { runChecks } from "@/lib/api/checks";
 import { formatNumber } from "@/lib/number";
-import { CheckResult } from "@/types/check";
+import { Check, CheckResult } from "@/types/check";
 
 interface ResultsTableRowProps {
+  check: Check;
   checkResult: CheckResult;
 }
 
-export function ResultsTableRow({ checkResult }: ResultsTableRowProps) {
-  const [result, setResult] = useState("-");
-  const [lastResult, setLastResult] = useState("-");
-  const [trendPercentage, setTrendPercentage] = useState("-");
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [trendIcon, setTrendIcon] = useState(
-    <MoveRight className="text-muted-foreground w-4" />,
+function getResultState(checkResult: CheckResult) {
+  if (checkResult.error != null || checkResult.result == null) {
+    return {
+      result: "-",
+      lastResult: "-",
+      trendPercentage: "-",
+      isDisabled: true,
+      trendIcon: <MoveRight className="text-muted-foreground w-4" />,
+    };
+  }
+
+  let trendIcon = <MoveRight className="text-muted-foreground w-4" />;
+  let lastResult = "-";
+  let trendPercentage = "-";
+
+  if (checkResult.lastResult != null) {
+    lastResult = formatNumber(checkResult.lastResult).toString();
+  }
+
+  if (checkResult.trendPercentage != null) {
+    trendPercentage =
+      formatNumber(checkResult.trendPercentage).toString() + "%";
+
+    if (checkResult.trendPercentage > 0) {
+      trendIcon = <TrendingUp className="w-4 text-green-600" />;
+    } else if (checkResult.trendPercentage < 0) {
+      trendIcon = <TrendingDown className="w-4 text-red-600" />;
+    }
+  }
+
+  return {
+    result: formatNumber(checkResult.result).toString(),
+    lastResult,
+    trendPercentage,
+    isDisabled: false,
+    trendIcon,
+  };
+}
+
+export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
+  const [resultState, setResultState] = useState(() =>
+    getResultState(checkResult),
   );
 
   useEffect(() => {
-    if (checkResult.error != null) {
-      return;
-    }
-
-    setResult(formatNumber(checkResult.result).toString());
-    setIsDisabled(false);
-
-    if (checkResult.lastResult == null) {
-      return;
-    }
-
-    setLastResult(formatNumber(checkResult.lastResult).toString());
-    setTrendPercentage(
-      formatNumber(checkResult.trendPercentage).toString() + "%",
-    );
-
-    if (checkResult.trendPercentage > 0) {
-      setTrendIcon(<TrendingUp className="w-4 text-green-600" />);
-    } else if (checkResult.trendPercentage < 0) {
-      setTrendIcon(<TrendingDown className="w-4 text-red-600" />);
-    } else {
-      <MoveRight className="text-muted-foreground w-4" />;
-    }
+    setResultState(getResultState(checkResult));
   }, [checkResult]);
 
+  const refetchMutation = useMutation({
+    mutationFn: async () => {
+      const results = await runChecks([check]);
+      return results[0];
+    },
+    onSuccess: (result) => {
+      setResultState(getResultState(result));
+    },
+    onError: () => {
+      setResultState(
+        getResultState({ ...checkResult, error: "Failed to refetch check" }),
+      );
+    },
+  });
+
   const handleRefetch = () => {
-    alert("result is being refetch");
+    refetchMutation.mutate();
   };
 
   const handleShowGraph = () => {
@@ -62,15 +93,14 @@ export function ResultsTableRow({ checkResult }: ResultsTableRowProps) {
     <TableRow className="*:text-center">
       <TableCell>{checkResult.name}</TableCell>
 
-      <TableCell>{result}</TableCell>
+      <TableCell>{resultState.result}</TableCell>
 
-      <TableCell>{lastResult}</TableCell>
+      <TableCell>{resultState.lastResult}</TableCell>
 
       <TableCell>
         <div className="flex items-center justify-center gap-2">
-          <span>{trendPercentage}</span>
-
-          {checkResult.lastResult != null && trendIcon}
+          <span>{resultState.trendPercentage}</span>
+          {resultState.trendPercentage != "-" && resultState.trendIcon}
         </div>
       </TableCell>
 
@@ -78,16 +108,20 @@ export function ResultsTableRow({ checkResult }: ResultsTableRowProps) {
         <Button
           className="cursor-pointer"
           variant="ghost"
-          disabled={isDisabled}
+          disabled={resultState.isDisabled || refetchMutation.isPending}
           onClick={handleRefetch}
         >
-          <RotateCcw />
+          {refetchMutation.isPending ? (
+            <RotateCcw className="direction-reverse animate-spin" />
+          ) : (
+            <RotateCcw />
+          )}
         </Button>
 
         <Button
           className="cursor-pointer"
           variant="ghost"
-          disabled={isDisabled}
+          disabled={resultState.isDisabled || refetchMutation.isPending}
           onClick={handleShowGraph}
         >
           <ChartLine />

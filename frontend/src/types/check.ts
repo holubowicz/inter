@@ -4,8 +4,8 @@ export interface Check {
 
 export interface CheckResult {
   name: string;
-  error: string;
-  result: number;
-  lastResult: number;
-  trendPercentage: number;
+  error: Nullable<string>;
+  result: Nullable<number>;
+  lastResult: Nullable<number>;
+  trendPercentage: Nullable<number>;
 }

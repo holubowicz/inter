@@ -12,24 +12,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Check } from "@/types/check";
+import { getChecks } from "@/lib/api/checks";
 import { ErrorState } from "../error-state";
 import { LoadingState } from "../loading-state";
 
 const AVAILABLE_CHECKS_KEY = "availableChecks";
-
-async function getAvailableChecks(): Promise<Check[]> {
-  const res = await fetch("http://localhost:8080/api/checks");
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(
-      `Failed to fetch checks: ${res.status} ${res.statusText} - ${errorText}`,
-    );
-  }
-
-  return res.json();
-}
 
 export function ChecksTable() {
   const navigate = useNavigate();
@@ -40,7 +27,7 @@ export function ChecksTable() {
     data: checks,
   } = useQuery({
     queryKey: [AVAILABLE_CHECKS_KEY],
-    queryFn: getAvailableChecks,
+    queryFn: getChecks,
   });
   const [checkboxes, setCheckboxes] = useState<boolean[]>([]);
 
