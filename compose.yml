@@ -1,0 +1,65 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      db_tested:
+        condition: service_healthy
+      db_internal:
+        condition: service_healthy
+
+  db_tested:
+    image: postgres:17-alpine
+    container_name: db_tested
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    # ports:
+    #   - "5432:5432"
+    volumes:
+      - ./db/db-tested-init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_tested_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db_internal:
+    image: postgres:17-alpine
+    container_name: db_internal
+    restart: always
+    environment:
+      POSTGRES_USER: ${INTERNAL_DB_USER}
+      POSTGRES_PASSWORD: ${INTERNAL_DB_PASS}
+      POSTGRES_DB: ${INTERNAL_DB_NAME}
+    # ports:
+    #   - "5433:5432"
+    volumes:
+      - ./db/db-internal-int.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_internal_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${INTERNAL_DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_tested_data:
+  db_internal_data:
