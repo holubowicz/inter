@@ -54,8 +54,6 @@ class CheckRunnerTest {
     }
 
 
-    // TODO: create unit tests for CheckRunner.runCheck(Check check)
-
     @Test
     void runCheck_whenCheckProvided_thenReturnCheckResult() {
         Check check = CheckFactory.createCheck("check-name", "SELECT COUNT(*) FROM calculations;");

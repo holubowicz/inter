@@ -11,6 +11,8 @@ import java.util.List;
 @Service
 public class CheckService {
 
+    public static final String CHECK_DTO_LIST_NULL_ERROR = "Check DTO list is null";
+
     private final CheckLoader checkLoader;
     private final CheckRunner checkRunner;
 
@@ -25,6 +27,10 @@ public class CheckService {
     }
 
     public List<CheckResult> runCheckDtoList(List<CheckDto> checkDtoList) {
+        if (checkDtoList == null) {
+            throw new IllegalArgumentException(CHECK_DTO_LIST_NULL_ERROR);
+        }
+
         return checkDtoList
                 .stream()
                 .map(checkLoader::convertCheckDtoToCheck)
