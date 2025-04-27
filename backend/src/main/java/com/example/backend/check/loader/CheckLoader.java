@@ -3,6 +3,7 @@ package com.example.backend.check.loader;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.factory.CheckFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+@Slf4j
 @Component
 public class CheckLoader {
 
@@ -74,6 +76,7 @@ public class CheckLoader {
             String content = Files.readString(filepath);
             return CheckFactory.createCheck(queryName, content);
         } catch (Exception e) {
+            log.error(FAILED_TO_LOAD_CHECKS_ERROR);
             return CheckFactory.createNameErrorCheck(queryName, FAILED_TO_LOAD_CONTENT_ERROR);
         }
     }

@@ -52,9 +52,10 @@ class CheckControllerTest {
     }
 
     @BeforeEach
-    public void setup() {
+    public void setupBeforeEach() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
+
 
     @Test
     public void getCheckDtoList_whenRequestSent_thenVerifyIfResponseStructure() throws Exception {
@@ -85,6 +86,7 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[*].name", containsInAnyOrder(EXPECTED_NAMES.toArray())));
     }
+
 
     @Test
     public void runCheckDtoList_whenCheckDtoListIsNotProvided_thenIsBadRequest() throws Exception {

@@ -66,6 +66,7 @@ class CheckFactoryTest {
         assertTrue(exception.getMessage().contains(CheckFactory.QUERY_EMPTY_ERROR));
     }
 
+
     @Test
     void createErrorCheck_whenErrorProvided_thenReturnCheck() {
         String error = "some error";
@@ -97,6 +98,7 @@ class CheckFactoryTest {
 
         assertTrue(exception.getMessage().contains(CheckFactory.ERROR_EMPTY_ERROR));
     }
+
 
     @Test
     void createNameErrorCheck_whenCheckNameAndErrorProvided_thenReturnCheck() {

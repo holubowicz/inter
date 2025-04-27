@@ -2,6 +2,7 @@ package com.example.backend.check.model;
 
 import lombok.Data;
 
+// TODO: change the Lombok annotations
 @Data
 public class CheckDto {
 

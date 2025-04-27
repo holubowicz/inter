@@ -10,6 +10,7 @@ class CheckServiceTest {
     void getCheckDtoList() {
     }
 
+
     // TODO: create unit tests for CheckService.runCheckDtoList(List<CheckDto> checkDtoList)
 
     @Test

@@ -1,5 +1,12 @@
 package com.example.backend.check;
 
+import com.example.backend.check.model.Check;
+import com.example.backend.check.model.CheckResult;
+import com.example.backend.check.model.CheckTrend;
+import com.example.backend.check.model.factory.CheckFactory;
+import com.example.backend.database.schema.ResultHistory;
+import com.example.backend.database.schema.ResultHistoryRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,8 +27,8 @@ class CheckRunnerTest {
     @Autowired
     private CheckRunner underTest;
 
-//    @Autowired
-//    private ResultHistoryRepository resultHistoryRepository;
+    @Autowired
+    private ResultHistoryRepository resultHistoryRepository;
 
     @Container
     private static final PostgreSQLContainer<?> testedPostgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine")
@@ -41,22 +48,167 @@ class CheckRunnerTest {
         registry.add("spring.datasource.internal.password", internalPostgreSQLContainer::getPassword);
     }
 
-//    @BeforeEach
-//    void setupBeforeEach() {
-//        resultHistoryRepository.deleteAll();
-//    }
+    @BeforeEach
+    void setupBeforeEach() {
+        resultHistoryRepository.deleteAll();
+    }
+
 
     // TODO: create unit tests for CheckRunner.runCheck(Check check)
 
     @Test
-    void runCheck() {
-    }
+    void runCheck_whenCheckProvided_thenReturnCheckResult() {
+        Check check = CheckFactory.createCheck("check-name", "SELECT COUNT(*) FROM calculations;");
+        BigDecimal result = BigDecimal.valueOf(14);
 
-    // TODO: create unit tests for CheckRunner.calculateTrend(String checkName, BigDecimal currentResult)
+        CheckResult checkResult = underTest.runCheck(check);
+
+        assertNotNull(checkResult);
+        assertEquals(check.getName(), checkResult.getName());
+        assertEquals(0, result.compareTo(checkResult.getResult()));
+    }
 
     @Test
-    void calculateTrend() {
+    void runCheck_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
+        Check check = Check.builder()
+                .query("SELECT COUNT(*) FROM calculations;")
+                .build();
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.runCheck(check)
+        );
+
+        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_NULL_ERROR));
     }
+
+    @Test
+    void runCheck_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
+        Check check = Check.builder()
+                .name("")
+                .query("SELECT COUNT(*) FROM calculations;")
+                .build();
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.runCheck(check)
+        );
+
+        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_EMPTY_ERROR));
+    }
+
+    @Test
+    void runCheck_whenCheckErrorProvided_thenReturnErrorCheckResult() {
+        Check check = CheckFactory.createNameErrorCheck("check-name", "some error");
+
+        CheckResult checkResult = underTest.runCheck(check);
+
+        assertNotNull(checkResult);
+        assertEquals(check.getName(), checkResult.getName());
+        assertEquals(check.getError(), checkResult.getError());
+    }
+
+    @Test
+    void runCheck_whenCheckQueryIsNull_thenReturnErrorCheckResult() {
+        Check check = Check.builder().name("check-name").build();
+
+        CheckResult checkResult = underTest.runCheck(check);
+
+        assertNotNull(checkResult);
+        assertEquals(check.getName(), checkResult.getName());
+        assertEquals(CheckRunner.FAILED_QUERY_DB_ERROR, checkResult.getError());
+    }
+
+    @Test
+    void runCheck_whenCheckQueryIsEmpty_thenReturnErrorCheckResult() {
+        Check check = Check.builder()
+                .name("check-name")
+                .query("")
+                .build();
+
+        CheckResult checkResult = underTest.runCheck(check);
+
+        assertNotNull(checkResult);
+        assertEquals(check.getName(), checkResult.getName());
+        assertEquals(CheckRunner.FAILED_QUERY_DB_ERROR, checkResult.getError());
+    }
+
+
+    @Test
+    void calculateTrend_whenSavedResultHistory_thenReturnCheckTrend() {
+        String checkName = "check-name";
+        BigDecimal currentResult = BigDecimal.valueOf(10);
+        BigDecimal lastResult = BigDecimal.valueOf(5);
+        resultHistoryRepository.save(ResultHistory.builder()
+                .checkName(checkName)
+                .result(lastResult)
+                .build());
+
+        CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
+
+        assertEquals(0, lastResult.compareTo(checkTrend.getLastResult()));
+        assertEquals(100.0, checkTrend.getTrendPercentage());
+    }
+
+    @Test
+    void calculateTrend_whenSavedResultHistoryIsZero_thenReturnCheckTrend() {
+        String checkName = "check-name";
+        BigDecimal currentResult = BigDecimal.valueOf(10);
+        BigDecimal lastResult = BigDecimal.valueOf(0);
+        resultHistoryRepository.save(ResultHistory.builder()
+                .checkName(checkName)
+                .result(lastResult)
+                .build());
+
+        CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
+
+        assertEquals(0, lastResult.compareTo(checkTrend.getLastResult()));
+        assertNull(checkTrend.getTrendPercentage());
+    }
+
+    @Test
+    void calculateTrend_whenNoSavedResultHistory_thenReturnEmptyCheckTrend() {
+        String checkName = "check-name";
+        BigDecimal currentResult = BigDecimal.valueOf(10.0);
+
+        CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
+
+        assertNull(checkTrend.getLastResult());
+        assertNull(checkTrend.getTrendPercentage());
+    }
+
+    @Test
+    void calculateTrend_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
+        BigDecimal currentResult = BigDecimal.valueOf(10.0);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.calculateTrend(null, currentResult)
+        );
+
+        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_NULL_ERROR));
+    }
+
+    @Test
+    void calculateTrend_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
+        String checkName = "";
+        BigDecimal currentResult = BigDecimal.valueOf(10.0);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.calculateTrend(checkName, currentResult)
+        );
+
+        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_EMPTY_ERROR));
+    }
+
+    @Test
+    void calculateTrend_whenCurrentResultIsNull_thenThrowIllegalArgumentException() {
+        String checkName = "check-name";
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.calculateTrend(checkName, null)
+        );
+
+        assertTrue(exception.getMessage().contains(CheckRunner.RESULT_NULL_ERROR));
+    }
+
 
     @Test
     void saveResultToHistory_whenCheckNameAndResultProvided_thenSaveResult() {
@@ -70,10 +222,10 @@ class CheckRunnerTest {
 
     @Test
     void saveResultToHistory_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
-        BigDecimal result = BigDecimal.valueOf(10);
+        BigDecimal currentResult = BigDecimal.valueOf(10);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.saveResultToHistory(null, result)
+                underTest.saveResultToHistory(null, currentResult)
         );
 
         assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_NULL_ERROR));
@@ -82,17 +234,17 @@ class CheckRunnerTest {
     @Test
     void saveResultToHistory_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
         String checkName = "";
-        BigDecimal result = BigDecimal.valueOf(10);
+        BigDecimal currentResult = BigDecimal.valueOf(10);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.saveResultToHistory(checkName, result)
+                underTest.saveResultToHistory(checkName, currentResult)
         );
 
         assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_EMPTY_ERROR));
     }
 
     @Test
-    void saveResultToHistory_whenResultIsNull_thenThrowIllegalArgumentException() {
+    void saveResultToHistory_whenCurrentResultIsNull_thenThrowIllegalArgumentException() {
         String checkName = "check-name";
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->

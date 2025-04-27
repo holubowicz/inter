@@ -26,6 +26,7 @@ class CheckLoaderTest {
         checkLoaderConfiguration.setChecksPath(checksPath);
     }
 
+
     @Test
     void getCheckDtoList_whenCorrectCheckPathSet_thenReturnListOfCheckDto() {
         List<CheckDto> result = underTest.getCheckDtoList();
@@ -46,6 +47,7 @@ class CheckLoaderTest {
 
         assertTrue(exception.getMessage().contains(CheckLoader.CHECK_DIRECTORY_DONT_EXIST_ERROR));
     }
+
 
     @Test
     void convertCheckDtoToCheck_whenCheckDtoIsNull_thenThrowIllegalArgumentException() {
@@ -91,6 +93,7 @@ class CheckLoaderTest {
         assertNull(check.getQuery());
         assertEquals(CheckLoader.CHECK_DTO_INCORRECT_ERROR, check.getError());
     }
+
 
     @Test
     void getCheck_whenFilepathIsValid_thenReturnCorrectCheck() {

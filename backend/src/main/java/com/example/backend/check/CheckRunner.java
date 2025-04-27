@@ -5,6 +5,7 @@ import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
 import com.example.backend.database.schema.ResultHistory;
 import com.example.backend.database.schema.ResultHistoryRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,12 +14,15 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class CheckRunner {
 
+    public static String CHECK_NULL_ERROR = "Check is null";
     public static String CHECK_NAME_NULL_ERROR = "Check name is null";
     public static String CHECK_NAME_EMPTY_ERROR = "Check name is empty";
     public static String RESULT_NULL_ERROR = "Result is null";
+    public static String FAILED_QUERY_DB_ERROR = "Failed to query database";
 
     private final JdbcTemplate jdbcTemplate;
     private final ResultHistoryRepository resultHistoryRepository;
@@ -30,7 +34,19 @@ public class CheckRunner {
         this.resultHistoryRepository = resultHistoryRepository;
     }
 
+    // TODO: only allow to run SELECT queries
     public CheckResult runCheck(Check check) {
+        if (check == null) {
+            throw new IllegalArgumentException(CHECK_NULL_ERROR);
+        }
+
+        if (check.getName() == null) {
+            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+        }
+        if (check.getName().isEmpty()) {
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+        }
+
         CheckResult.CheckResultBuilder builder = CheckResult.builder()
                 .name(check.getName());
 
@@ -49,11 +65,23 @@ public class CheckRunner {
 
             return builder.result(currentResult).build();
         } catch (Exception e) {
-            return builder.error("Failed to query database").build();
+            log.error(FAILED_QUERY_DB_ERROR);
+            return builder.error(FAILED_QUERY_DB_ERROR).build();
         }
     }
 
     public CheckTrend calculateTrend(String checkName, BigDecimal currentResult) {
+        if (checkName == null) {
+            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+        }
+        if (checkName.isEmpty()) {
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+        }
+
+        if (currentResult == null) {
+            throw new IllegalArgumentException(RESULT_NULL_ERROR);
+        }
+
         Optional<ResultHistory> lastResultOpt = resultHistoryRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
         if (lastResultOpt.isEmpty()) {
             return CheckTrend.builder().build();
