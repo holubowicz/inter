@@ -3,7 +3,7 @@ package com.example.backend.database.schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -12,7 +12,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "results")
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

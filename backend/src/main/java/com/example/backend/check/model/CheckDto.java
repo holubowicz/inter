@@ -1,9 +1,10 @@
 package com.example.backend.check.model;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-// TODO: change the Lombok annotations
-@Data
+@Getter
+@AllArgsConstructor
 public class CheckDto {
 
     private final String name;
