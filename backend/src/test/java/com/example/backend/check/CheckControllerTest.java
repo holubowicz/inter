@@ -64,7 +64,9 @@ class CheckControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[*].name", everyItem(notNullValue())));
+                .andExpect(jsonPath("$[*].name", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].lastResult").exists())
+                .andExpect(jsonPath("$[*].lastTimestamp").exists());
     }
 
     @Test
@@ -85,6 +87,7 @@ class CheckControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[*].name", containsInAnyOrder(EXPECTED_NAMES.toArray())));
+        ;
     }
 
 
@@ -93,7 +96,7 @@ class CheckControllerTest {
         this.mockMvc.perform(post("/api/checks/run"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Check DTO list must be provided and cannot be empty"));
+                .andExpect(content().string(CheckController.CHECK_INPUT_DTO_LIST_INCORRECT_ERROR));
     }
 
     @Test
@@ -103,7 +106,7 @@ class CheckControllerTest {
                         .content(new ArrayList<>().toString()))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Check DTO list must be provided and cannot be empty"));
+                .andExpect(content().string(CheckController.CHECK_INPUT_DTO_LIST_INCORRECT_ERROR));
     }
 
     @Test
@@ -114,7 +117,7 @@ class CheckControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content()
-                        .string("Invalid item found in the list. All items must be of type Check DTO and not null nor any fields")
+                        .string(CheckController.CHECK_INPUT_DTO_LIST_ITEM_INCORRECT_ERROR)
                 );
     }
 
@@ -151,7 +154,10 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[0].name", notNullValue()))
                 .andExpect(jsonPath("$[0].result", nullValue()))
-                .andExpect(jsonPath("$[0].error", notNullValue()));
+                .andExpect(jsonPath("$[0].error", notNullValue()))
+                .andExpect(jsonPath("$[0].lastResult", nullValue()))
+                .andExpect(jsonPath("$[0].lastTimestamp", nullValue()))
+                .andExpect(jsonPath("$[0].trendPercentage", nullValue()));
     }
 
     @Test
@@ -169,7 +175,10 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[0].name", notNullValue()))
                 .andExpect(jsonPath("$[0].result", nullValue()))
-                .andExpect(jsonPath("$[0].error", notNullValue()));
+                .andExpect(jsonPath("$[0].error", notNullValue()))
+                .andExpect(jsonPath("$[0].lastResult", nullValue()))
+                .andExpect(jsonPath("$[0].lastTimestamp", nullValue()))
+                .andExpect(jsonPath("$[0].trendPercentage", nullValue()));
     }
 
     @Test

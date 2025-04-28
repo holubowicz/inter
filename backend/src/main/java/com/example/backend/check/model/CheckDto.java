@@ -1,21 +1,21 @@
 package com.example.backend.check.model;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+
+// TODO: create Factory for CheckDto
+// TODO: add last execution time
+
 @Getter
-@AllArgsConstructor
+@Builder
 public class CheckDto {
 
     private final String name;
-
-    public static final String CHECK_NULL_ERROR = "Check is null";
-
-    public static CheckDto from(Check check) {
-        if (check == null) {
-            throw new IllegalArgumentException(CHECK_NULL_ERROR);
-        }
-        return new CheckDto(check.getName());
-    }
+    private final BigDecimal lastResult;
+    private final Instant lastTimestamp;
+//    private final Long lastExecutionTime;
 
 }

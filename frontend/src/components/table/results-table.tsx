@@ -7,13 +7,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { runChecks } from "@/lib/api/checks";
-import { Check } from "@/types/check";
+import { CheckDTO } from "@/types/checks";
 import { ErrorState } from "../error-state";
 import { LoadingState } from "../loading-state";
 import { ResultsTableRow } from "./results-table-row";
 
 interface ResultsTableProps {
-  checks: Check[];
+  checks: CheckDTO[];
 }
 
 const CHECK_RESULTS_KEY = "checkResults";
@@ -40,6 +40,8 @@ export function ResultsTable({ checks }: ResultsTableProps) {
       />
     );
   }
+
+  console.log(checkResults);
 
   return (
     <Table>

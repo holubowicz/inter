@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getChecks } from "@/lib/api/checks";
+import { formatNumber } from "@/lib/number";
 import { ErrorState } from "../error-state";
 import { LoadingState } from "../loading-state";
 
@@ -138,9 +139,17 @@ export function ChecksTable() {
 
               <TableCell>{check.name}</TableCell>
 
-              <TableCell className="hidden md:table-cell"></TableCell>
+              <TableCell className="hidden md:table-cell">
+                {check.lastResult != null
+                  ? formatNumber(check.lastResult)
+                  : "-"}
+              </TableCell>
 
-              <TableCell className="hidden md:table-cell"></TableCell>
+              <TableCell className="hidden md:table-cell">
+                {check.lastTimestamp != null
+                  ? check.lastTimestamp.toLocaleDateString()
+                  : "-"}
+              </TableCell>
 
               <TableCell className="hidden xl:table-cell"></TableCell>
 

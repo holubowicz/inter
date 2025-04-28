@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { runChecks } from "@/lib/api/checks";
 import { formatNumber } from "@/lib/number";
-import { Check, CheckResult } from "@/types/check";
+import { CheckDTO, CheckResult } from "@/types/checks";
 
 interface ResultsTableRowProps {
-  check: Check;
+  check: CheckDTO;
   checkResult: CheckResult;
 }
 
@@ -23,6 +23,7 @@ function getResultState(checkResult: CheckResult) {
     return {
       result: "-",
       lastResult: "-",
+      lastDate: "-",
       trendPercentage: "-",
       isDisabled: true,
       trendIcon: <MoveRight className="text-muted-foreground w-4" />,
@@ -31,10 +32,12 @@ function getResultState(checkResult: CheckResult) {
 
   let trendIcon = <MoveRight className="text-muted-foreground w-4" />;
   let lastResult = "-";
+  let lastDate = "-";
   let trendPercentage = "-";
 
-  if (checkResult.lastResult != null) {
+  if (checkResult.lastResult != null && checkResult.lastTimestamp != null) {
     lastResult = formatNumber(checkResult.lastResult).toString();
+    lastDate = checkResult.lastTimestamp.toLocaleDateString();
   }
 
   if (checkResult.trendPercentage != null) {
@@ -51,6 +54,7 @@ function getResultState(checkResult: CheckResult) {
   return {
     result: formatNumber(checkResult.result).toString(),
     lastResult,
+    lastDate,
     trendPercentage,
     isDisabled: false,
     trendIcon,
@@ -109,7 +113,9 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         {resultState.lastResult}
       </TableCell>
 
-      <TableCell className="hidden xl:table-cell"></TableCell>
+      <TableCell className="hidden xl:table-cell">
+        {resultState.lastDate}
+      </TableCell>
 
       <TableCell className="hidden sm:table-cell">
         <Button

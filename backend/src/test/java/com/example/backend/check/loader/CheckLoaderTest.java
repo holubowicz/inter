@@ -1,7 +1,7 @@
 package com.example.backend.check.loader;
 
 import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.CheckInputDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,41 +28,40 @@ class CheckLoaderTest {
 
 
     @Test
-    void getCheckDtoList_whenCorrectCheckPathSet_thenReturnListOfCheckDto() {
-        List<CheckDto> result = underTest.getCheckDtoList();
-
-        assertFalse(result.isEmpty());
-        result.forEach(checkDto -> {
-            assertNotNull(checkDto);
-            assertNotNull(checkDto.getName());
-            assertFalse(checkDto.getName().isEmpty());
-        });
-    }
-
-    @Test
-    void getCheckDtoList_whenIncorrectCheckPathSet_thenThrowRuntimeException() {
+    void getCheckNameList_whenIncorrectChecksPathSet_thenThrowRuntimeException() {
         checkLoaderConfiguration.setChecksPath("path/that/does/not/exist");
 
-        Exception exception = assertThrows(RuntimeException.class, underTest::getCheckDtoList);
+        Exception exception = assertThrows(RuntimeException.class, underTest::getCheckNameList);
 
         assertTrue(exception.getMessage().contains(CheckLoader.CHECK_DIRECTORY_DONT_EXIST_ERROR));
     }
 
+    @Test
+    void getCheckNameList_whenCorrectChecksPathSet_thenReturnListOfCheckName() {
+        List<String> result = underTest.getCheckNameList();
+
+        assertFalse(result.isEmpty());
+        result.forEach(checkName -> {
+            assertNotNull(checkName);
+            assertFalse(checkName.isEmpty());
+        });
+    }
+
 
     @Test
-    void convertCheckDtoToCheck_whenCheckDtoIsNull_thenThrowIllegalArgumentException() {
+    void convertCheckInputDtoToCheck_whenCheckInputDtoIsNull_thenThrowIllegalArgumentException() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.convertCheckDtoToCheck(null)
+                underTest.convertCheckInputDtoToCheck(null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckLoader.CHECK_DTO_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CheckLoader.CHECK_INPUT_DTO_NULL_ERROR));
     }
 
     @Test
-    void convertCheckDtoToCheck_whenCheckDtoNameIsValid_thenReturnCheck() {
-        CheckDto checkDto = new CheckDto("absolute-avg");
+    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsValid_thenReturnCheck() {
+        CheckInputDto checkInputDto = new CheckInputDto("absolute-avg");
 
-        Check check = underTest.convertCheckDtoToCheck(checkDto);
+        Check check = underTest.convertCheckInputDtoToCheck(checkInputDto);
 
         assertNotNull(check);
         assertEquals("absolute-avg", check.getName());
@@ -71,10 +70,10 @@ class CheckLoaderTest {
     }
 
     @Test
-    void convertCheckDtoToCheck_whenCheckDtoNameIsInvalid_thenReturnErrorCheck() {
-        CheckDto checkDto = new CheckDto("not-exist");
+    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsInvalid_thenReturnErrorCheck() {
+        CheckInputDto checkInputDto = new CheckInputDto("not-exist");
 
-        Check check = underTest.convertCheckDtoToCheck(checkDto);
+        Check check = underTest.convertCheckInputDtoToCheck(checkInputDto);
 
         assertNotNull(check);
         assertEquals("not-exist", check.getName());
@@ -84,16 +83,34 @@ class CheckLoaderTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void convertCheckDtoToCheck_whenCheckDtoNameIsIncorrect_thenReturnErrorCheck(String checkName) {
-        CheckDto checkDto = new CheckDto(checkName);
+    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsIncorrect_thenReturnErrorCheck(String checkName) {
+        CheckInputDto checkInputDto = new CheckInputDto(checkName);
 
-        Check check = underTest.convertCheckDtoToCheck(checkDto);
+        Check check = underTest.convertCheckInputDtoToCheck(checkInputDto);
 
         assertNotNull(check);
         assertNull(check.getQuery());
-        assertEquals(CheckLoader.CHECK_DTO_INCORRECT_ERROR, check.getError());
+        assertEquals(CheckLoader.CHECK_INPUT_DTO_INCORRECT_ERROR, check.getError());
     }
 
+
+    @Test
+    void getCheck_whenFilepathIsNull_thenReturnCheck() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.getCheck(null)
+        );
+
+        assertTrue(exception.getMessage().contains(CheckLoader.FILEPATH_NULL_ERROR));
+    }
+
+    @Test
+    void getCheck_whenFilepathIsEmpty_thenReturnCheck() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.getCheck(Paths.get(""))
+        );
+
+        assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_EMPTY_ERROR));
+    }
 
     @Test
     void getCheck_whenFilepathIsValid_thenReturnCorrectCheck() {
@@ -115,24 +132,6 @@ class CheckLoaderTest {
         assertEquals("check-not-exist", result.getName());
         assertNull(result.getQuery());
         assertNotNull(result.getError());
-    }
-
-    @Test
-    void getCheck_whenFilepathIsNull_thenReturnCheck() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.getCheck(null)
-        );
-
-        assertTrue(exception.getMessage().contains(CheckLoader.FILEPATH_NULL_ERROR));
-    }
-
-    @Test
-    void getCheck_whenFilepathIsEmpty_thenReturnCheck() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.getCheck(Paths.get(""))
-        );
-
-        assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_EMPTY_ERROR));
     }
 
 }

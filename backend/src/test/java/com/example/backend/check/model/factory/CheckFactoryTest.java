@@ -8,19 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class CheckFactoryTest {
 
     @Test
-    void createCheck_whenCheckNameAndQueryProvided_thenReturnCheck() {
-        String checkName = "check-name";
-        String query = "SELECT * FROM check;";
-
-        Check check = CheckFactory.createCheck(checkName, query);
-
-        assertNotNull(check);
-        assertEquals(checkName, check.getName());
-        assertEquals(query, check.getQuery());
-        assertNull(check.getError());
-    }
-
-    @Test
     void createCheck_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
         String query = "SELECT * FROM check;";
 
@@ -66,18 +53,19 @@ class CheckFactoryTest {
         assertTrue(exception.getMessage().contains(CheckFactory.QUERY_EMPTY_ERROR));
     }
 
-
     @Test
-    void createErrorCheck_whenErrorProvided_thenReturnCheck() {
-        String error = "some error";
+    void createCheck_whenCheckNameAndQueryProvided_thenReturnCheck() {
+        String checkName = "check-name";
+        String query = "SELECT * FROM check;";
 
-        Check check = CheckFactory.createErrorCheck(error);
+        Check check = CheckFactory.createCheck(checkName, query);
 
         assertNotNull(check);
-        assertEquals(error, check.getError());
-        assertNull(check.getName());
-        assertNull(check.getQuery());
+        assertEquals(checkName, check.getName());
+        assertEquals(query, check.getQuery());
+        assertNull(check.getError());
     }
+
 
     @Test
     void createErrorCheck_whenErrorIsNull_thenThrowIllegalArgumentException() {
@@ -99,19 +87,18 @@ class CheckFactoryTest {
         assertTrue(exception.getMessage().contains(CheckFactory.ERROR_EMPTY_ERROR));
     }
 
-
     @Test
-    void createNameErrorCheck_whenCheckNameAndErrorProvided_thenReturnCheck() {
-        String checkName = "check-name";
+    void createErrorCheck_whenErrorProvided_thenReturnCheck() {
         String error = "some error";
 
-        Check check = CheckFactory.createNameErrorCheck(checkName, error);
+        Check check = CheckFactory.createErrorCheck(error);
 
         assertNotNull(check);
-        assertEquals(checkName, check.getName());
         assertEquals(error, check.getError());
+        assertNull(check.getName());
         assertNull(check.getQuery());
     }
+
 
     @Test
     void createNameErrorCheck_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
@@ -157,6 +144,19 @@ class CheckFactoryTest {
         );
 
         assertTrue(exception.getMessage().contains(CheckFactory.ERROR_EMPTY_ERROR));
+    }
+
+    @Test
+    void createNameErrorCheck_whenCheckNameAndErrorProvided_thenReturnCheck() {
+        String checkName = "check-name";
+        String error = "some error";
+
+        Check check = CheckFactory.createNameErrorCheck(checkName, error);
+
+        assertNotNull(check);
+        assertEquals(checkName, check.getName());
+        assertEquals(error, check.getError());
+        assertNull(check.getQuery());
     }
 
 }

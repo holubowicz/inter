@@ -2,6 +2,7 @@ package com.example.backend.check;
 
 import com.example.backend.check.loader.CheckLoader;
 import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.CheckInputDto;
 import com.example.backend.check.model.CheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,17 +24,19 @@ public class CheckService {
     }
 
     public List<CheckDto> getCheckDtoList() {
-        return checkLoader.getCheckDtoList();
+        return checkLoader.getCheckNameList().stream()
+                .map(checkRunner::getCheckDto)
+                .toList();
     }
 
-    public List<CheckResult> runCheckDtoList(List<CheckDto> checkDtoList) {
-        if (checkDtoList == null) {
+    public List<CheckResult> runCheckDtoList(List<CheckInputDto> checkInputDtoList) {
+        if (checkInputDtoList == null) {
             throw new IllegalArgumentException(CHECK_DTO_LIST_NULL_ERROR);
         }
 
-        return checkDtoList
+        return checkInputDtoList
                 .stream()
-                .map(checkLoader::convertCheckDtoToCheck)
+                .map(checkLoader::convertCheckInputDtoToCheck)
                 .map(checkRunner::runCheck)
                 .toList();
     }

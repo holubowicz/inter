@@ -1,6 +1,7 @@
 package com.example.backend.check;
 
 import com.example.backend.check.model.Check;
+import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
 import com.example.backend.database.schema.ResultHistory;
@@ -34,6 +35,32 @@ public class CheckRunner {
         this.resultHistoryRepository = resultHistoryRepository;
     }
 
+    public CheckDto getCheckDto(String checkName) {
+        if (checkName == null) {
+            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+        }
+        if (checkName.isEmpty()) {
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+        }
+
+        Optional<ResultHistory> resultHistoryOpt = resultHistoryRepository
+                .findTopByCheckNameOrderByTimestampDesc(checkName);
+
+        if (resultHistoryOpt.isEmpty()) {
+            return CheckDto.builder()
+                    .name(checkName)
+                    .build();
+        }
+
+        ResultHistory resultHistory = resultHistoryOpt.get();
+
+        return CheckDto.builder()
+                .name(checkName)
+                .lastResult(resultHistory.getResult())
+                .lastTimestamp(resultHistory.getTimestamp())
+                .build();
+    }
+
     // TODO: only allow to run SELECT queries
     public CheckResult runCheck(Check check) {
         if (check == null) {
@@ -59,6 +86,7 @@ public class CheckRunner {
 
             CheckTrend checkTrend = calculateTrend(check.getName(), currentResult);
             builder.lastResult(checkTrend.getLastResult())
+                    .lastTimestamp(checkTrend.getLastTimestamp())
                     .trendPercentage(checkTrend.getTrendPercentage());
 
             saveResultToHistory(check.getName(), currentResult);
@@ -90,7 +118,8 @@ public class CheckRunner {
         CheckTrend.CheckTrendBuilder builder = CheckTrend.builder();
 
         BigDecimal lastResult = lastResultOpt.get().getResult();
-        builder.lastResult(lastResult);
+        builder.lastResult(lastResult)
+                .lastTimestamp(lastResultOpt.get().getTimestamp());
 
         double previous = lastResult.doubleValue();
         double current = currentResult.doubleValue();

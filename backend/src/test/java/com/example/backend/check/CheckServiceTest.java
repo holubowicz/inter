@@ -1,6 +1,7 @@
 package com.example.backend.check;
 
 import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.CheckInputDto;
 import com.example.backend.check.model.CheckResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,10 @@ class CheckServiceTest {
 
     @Test
     void getCheckDtoList_whenApplicationContext_thenReturnCheckDtoList() {
-        List<CheckDto> checkDtoList = underTest.getCheckDtoList();
+        List<CheckDto> checkInputDtoList = underTest.getCheckDtoList();
 
-        assertNotNull(checkDtoList);
-        checkDtoList.forEach(checkDto -> {
+        assertNotNull(checkInputDtoList);
+        checkInputDtoList.forEach(checkDto -> {
             assertNotNull(checkDto);
             assertNotNull(checkDto.getName());
             assertFalse(checkDto.getName().isEmpty());
@@ -55,13 +56,22 @@ class CheckServiceTest {
 
 
     @Test
-    void runCheckDtoList_whenCheckDtoListProvided_thenReturnCheckResultList() {
-        List<CheckDto> checkDtoList = List.of(
-                new CheckDto("absolute-avg"),
-                new CheckDto("total-count")
+    void runCheckDtoList_whenCheckDtoListIsNull_thenReturnCheckResultList() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.runCheckDtoList(null)
         );
 
-        List<CheckResult> results = underTest.runCheckDtoList(checkDtoList);
+        assertTrue(exception.getMessage().contains(CheckService.CHECK_DTO_LIST_NULL_ERROR));
+    }
+
+    @Test
+    void runCheckDtoList_whenCheckDtoListProvided_thenReturnCheckResultList() {
+        List<CheckInputDto> checkInputDtoList = List.of(
+                new CheckInputDto("absolute-avg"),
+                new CheckInputDto("total-count")
+        );
+
+        List<CheckResult> results = underTest.runCheckDtoList(checkInputDtoList);
 
         assertNotNull(results);
         results.forEach(checkResult -> {
@@ -69,15 +79,6 @@ class CheckServiceTest {
             assertNotNull(checkResult.getName());
             assertFalse(checkResult.getName().isEmpty());
         });
-    }
-
-    @Test
-    void runCheckDtoList_whenCheckDtoListIsNull_thenReturnCheckResultList() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.runCheckDtoList(null)
-        );
-
-        assertTrue(exception.getMessage().contains(CheckService.CHECK_DTO_LIST_NULL_ERROR));
     }
 
 }

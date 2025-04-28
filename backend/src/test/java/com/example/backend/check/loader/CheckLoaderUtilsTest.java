@@ -12,15 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class CheckLoaderUtilsTest {
 
     @Test
-    void getCheckNameFromPath_whenFilepathIsValid_thenReturnsCheckName() {
-        Path path = Paths.get("/path/to/folder/check.sql");
-
-        String result = CheckLoaderUtils.getCheckNameFromPath(path);
-
-        assertEquals("check", result);
-    }
-
-    @Test
     void getCheckNameFromPath_whenFilepathIsNull_thenThrowsException() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             CheckLoaderUtils.getCheckNameFromPath(null);
@@ -36,6 +27,15 @@ class CheckLoaderUtilsTest {
         );
 
         assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_EMPTY_ERROR));
+    }
+
+    @Test
+    void getCheckNameFromPath_whenFilepathIsValid_thenReturnsCheckName() {
+        Path path = Paths.get("/path/to/folder/check.sql");
+
+        String result = CheckLoaderUtils.getCheckNameFromPath(path);
+
+        assertEquals("check", result);
     }
 
     @Test
