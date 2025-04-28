@@ -5,9 +5,9 @@ spring:
     import: optional:file:.env[.properties]
   datasource:
     tested:
-      url: ${DB_URL}
-      username: ${DB_USER}
-      password: ${DB_PASS}
+      url: ${TESTED_DB_URL}
+      username: ${TESTED_DB_USER}
+      password: ${TESTED_DB_PASS}
     internal:
       url: ${INTERNAL_DB_URL}
       username: ${INTERNAL_DB_USER}

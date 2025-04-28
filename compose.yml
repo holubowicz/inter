@@ -29,9 +29,9 @@ services:
     container_name: db_tested
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${TESTED_DB_USER}
+      POSTGRES_PASSWORD: ${TESTED_DB_PASS}
+      POSTGRES_DB: ${TESTED_DB_NAME}
     # ports:
     #   - "5432:5432"
     volumes:

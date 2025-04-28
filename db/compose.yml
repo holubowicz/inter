@@ -4,9 +4,9 @@ services:
     container_name: db_tested
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_DB: ${DB_NAME:-tested}
+      POSTGRES_USER: ${TESTED_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${TESTED_DB_PASS}
+      POSTGRES_DB: ${TESTED_DB_NAME:-tested}
     ports:
       - "5432:5432"
     volumes:
