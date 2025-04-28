@@ -6,11 +6,11 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { runChecks } from "@/lib/api/checks";
-import { formatNumber } from "@/lib/number";
+import { formatElapsedTime, formatNumber } from "@/lib/number";
 import { CheckDTO, CheckResult } from "@/types/checks";
 
 interface ResultsTableRowProps {
@@ -18,10 +18,21 @@ interface ResultsTableRowProps {
   checkResult: CheckResult;
 }
 
-function getResultState(checkResult: CheckResult) {
-  if (checkResult.error != null || checkResult.result == null) {
+interface ResultTableRowState {
+  result: string;
+  executionTime: string;
+  lastResult: string;
+  lastDate: string;
+  trendPercentage: string;
+  isDisabled: boolean;
+  trendIcon: JSX.Element;
+}
+
+function buildResultState(result: CheckResult): ResultTableRowState {
+  if (result.error || result.result == null) {
     return {
       result: "-",
+      executionTime: "-",
       lastResult: "-",
       lastDate: "-",
       trendPercentage: "-",
@@ -30,29 +41,36 @@ function getResultState(checkResult: CheckResult) {
     };
   }
 
-  let trendIcon = <MoveRight className="text-muted-foreground w-4" />;
-  let lastResult = "-";
-  let lastDate = "-";
+  const executionTime = result.executionTime
+    ? formatElapsedTime(result.executionTime)
+    : "-";
+
+  const lastResult =
+    result.lastResult != null
+      ? formatNumber(result.lastResult).toString()
+      : "-";
+
+  const lastDate =
+    result.lastTimestamp != null
+      ? result.lastTimestamp.toLocaleDateString()
+      : "-";
+
   let trendPercentage = "-";
+  let trendIcon = <MoveRight className="text-muted-foreground w-4" />;
 
-  if (checkResult.lastResult != null && checkResult.lastTimestamp != null) {
-    lastResult = formatNumber(checkResult.lastResult).toString();
-    lastDate = checkResult.lastTimestamp.toLocaleDateString();
-  }
+  if (result.trendPercentage != null) {
+    trendPercentage = `${formatNumber(result.trendPercentage)}%`;
 
-  if (checkResult.trendPercentage != null) {
-    trendPercentage =
-      formatNumber(checkResult.trendPercentage).toString() + "%";
-
-    if (checkResult.trendPercentage > 0) {
+    if (result.trendPercentage > 0) {
       trendIcon = <TrendingUp className="w-4 text-green-600" />;
-    } else if (checkResult.trendPercentage < 0) {
+    } else if (result.trendPercentage < 0) {
       trendIcon = <TrendingDown className="w-4 text-red-600" />;
     }
   }
 
   return {
-    result: formatNumber(checkResult.result).toString(),
+    result: formatNumber(result.result).toString(),
+    executionTime,
     lastResult,
     lastDate,
     trendPercentage,
@@ -62,69 +80,60 @@ function getResultState(checkResult: CheckResult) {
 }
 
 export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
-  const [resultState, setResultState] = useState(() =>
-    getResultState(checkResult),
-  );
+  const [state, setState] = useState(() => buildResultState(checkResult));
 
   useEffect(() => {
-    setResultState(getResultState(checkResult));
+    setState(buildResultState(checkResult));
   }, [checkResult]);
 
-  const refetchMutation = useMutation({
-    mutationFn: async () => {
-      const results = await runChecks([check]);
-      return results[0];
-    },
-    onSuccess: (result) => {
-      setResultState(getResultState(result));
-    },
-    onError: () => {
-      setResultState(
-        getResultState({ ...checkResult, error: "Failed to refetch check" }),
-      );
-    },
+  const refetch = useMutation({
+    mutationFn: async () => (await runChecks([check]))[0],
+    onSuccess: (result) => setState(buildResultState(result)),
+    onError: () =>
+      setState(
+        buildResultState({
+          ...checkResult,
+          error: "Failed to refetch check",
+        }),
+      ),
   });
 
-  const handleRefetch = () => {
-    refetchMutation.mutate();
-  };
+  const handleRefetch = () => refetch.mutate();
 
   const handleShowGraph = () => {
-    // TODO: show check history graph
-    alert("graph is being shown");
+    // TODO: Replace with actual graph modal/dialog
+    alert("Graph is being shown");
   };
 
   return (
     <TableRow className="*:text-center">
       <TableCell>{checkResult.name}</TableCell>
 
-      <TableCell>{resultState.result}</TableCell>
+      <TableCell>{state.result}</TableCell>
 
-      <TableCell className="hidden xl:table-cell"></TableCell>
+      <TableCell className="hidden xl:table-cell">
+        {state.executionTime}
+      </TableCell>
 
       <TableCell className="hidden md:table-cell">
         <div className="flex items-center justify-center gap-2">
-          <span>{resultState.trendPercentage}</span>
-          {resultState.trendPercentage != "-" && resultState.trendIcon}
+          <span>{state.trendPercentage}</span>
+          {state.trendPercentage !== "-" && state.trendIcon}
         </div>
       </TableCell>
 
-      <TableCell className="hidden lg:table-cell">
-        {resultState.lastResult}
-      </TableCell>
+      <TableCell className="hidden lg:table-cell">{state.lastResult}</TableCell>
 
-      <TableCell className="hidden xl:table-cell">
-        {resultState.lastDate}
-      </TableCell>
+      <TableCell className="hidden xl:table-cell">{state.lastDate}</TableCell>
 
       <TableCell className="hidden sm:table-cell">
         <Button
           className="cursor-pointer"
           variant="ghost"
-          disabled={resultState.isDisabled || refetchMutation.isPending}
+          disabled={state.isDisabled || refetch.isPending}
           onClick={handleRefetch}
         >
-          {refetchMutation.isPending ? (
+          {refetch.isPending ? (
             <RotateCcw className="direction-reverse animate-spin" />
           ) : (
             <RotateCcw />
@@ -134,7 +143,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         <Button
           className="cursor-pointer"
           variant="ghost"
-          disabled={resultState.isDisabled || refetchMutation.isPending}
+          disabled={state.isDisabled || refetch.isPending}
           onClick={handleShowGraph}
         >
           <ChartLine />

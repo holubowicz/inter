@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getChecks } from "@/lib/api/checks";
-import { formatNumber } from "@/lib/number";
+import { formatElapsedTime, formatNumber } from "@/lib/number";
 import { ErrorState } from "../error-state";
 import { LoadingState } from "../loading-state";
 
@@ -151,12 +151,17 @@ export function ChecksTable() {
                   : "-"}
               </TableCell>
 
-              <TableCell className="hidden xl:table-cell"></TableCell>
+              <TableCell className="hidden xl:table-cell">
+                {check.lastExecutionTime != null
+                  ? formatElapsedTime(check.lastExecutionTime)
+                  : "-"}
+              </TableCell>
 
               <TableCell className="hidden sm:table-cell">
                 <Button
                   className="cursor-pointer"
                   variant="ghost"
+                  disabled={check.lastResult == null}
                   onClick={handleShowGraph}
                 >
                   <ChartLine />

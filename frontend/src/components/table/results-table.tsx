@@ -41,8 +41,6 @@ export function ResultsTable({ checks }: ResultsTableProps) {
     );
   }
 
-  console.log(checkResults);
-
   return (
     <Table>
       <TableHeader>
@@ -58,12 +56,8 @@ export function ResultsTable({ checks }: ResultsTableProps) {
       </TableHeader>
 
       <TableBody>
-        {checkResults.map((checkResult, idx) => (
-          <ResultsTableRow
-            key={idx}
-            check={checks[idx]}
-            checkResult={checkResult}
-          />
+        {checkResults.map((result, idx) => (
+          <ResultsTableRow key={idx} check={checks[idx]} checkResult={result} />
         ))}
       </TableBody>
     </Table>
