@@ -3,15 +3,6 @@ spring:
     name: backend
   config:
     import: optional:file:.env[.properties]
-  datasource:
-    tested:
-      url: ${TESTED_DB_URL}
-      username: ${TESTED_DB_USER}
-      password: ${TESTED_DB_PASS}
-    internal:
-      url: ${INTERNAL_DB_URL}
-      username: ${INTERNAL_DB_USER}
-      password: ${INTERNAL_DB_PASS}
 
 app:
   loader:
