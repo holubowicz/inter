@@ -23,13 +23,16 @@ public class ResultHistory {
     private Long id;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private Instant timestamp;
 
-    @Column(name = "check_name", nullable = false, updatable = false)
+    @Column(name = "check_name", nullable = false)
     private String checkName;
 
-    @Column(precision = 38, scale = 16, nullable = false, updatable = false)
+    @Column(precision = 38, scale = 16, nullable = false)
     private BigDecimal result;
+
+    @Column(name = "execution_time", nullable = false)
+    private Long executionTime;
 
 }

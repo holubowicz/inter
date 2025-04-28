@@ -24,6 +24,7 @@ public class CheckRunner {
     public static String CHECK_NAME_NULL_ERROR = "Check name is null";
     public static String CHECK_NAME_EMPTY_ERROR = "Check name is empty";
     public static String RESULT_NULL_ERROR = "Result is null";
+    public static String EXECUTION_TIME_NULL_ERROR = "Execution time is null";
     public static String FAILED_QUERY_DB_ERROR = "Failed to query database";
 
     private final JdbcTemplate jdbcTemplate;
@@ -53,7 +54,12 @@ public class CheckRunner {
 
         ResultHistory resultHistory = resultHistoryOpt.get();
 
-        return CheckDtoFactory.createCheckDto(checkName, resultHistory.getResult(), resultHistory.getTimestamp());
+        return CheckDtoFactory.createCheckDto(
+                checkName,
+                resultHistory.getResult(),
+                resultHistory.getTimestamp(),
+                resultHistory.getExecutionTime()
+        );
     }
 
     // TODO: only allow to run SELECT queries
@@ -77,16 +83,24 @@ public class CheckRunner {
         }
 
         try {
+            long startTime = System.currentTimeMillis();
+
             BigDecimal currentResult = jdbcTemplate.queryForObject(check.getQuery(), BigDecimal.class);
+
+            long endTime = System.currentTimeMillis();
+            long executionTime = endTime - startTime;
 
             CheckTrend checkTrend = calculateTrend(check.getName(), currentResult);
             builder.lastResult(checkTrend.getLastResult())
                     .lastTimestamp(checkTrend.getLastTimestamp())
                     .trendPercentage(checkTrend.getTrendPercentage());
 
-            saveResultToHistory(check.getName(), currentResult);
+            saveResultToHistory(check.getName(), currentResult, executionTime);
 
-            return builder.result(currentResult).build();
+            return builder
+                    .result(currentResult)
+                    .executionTime(executionTime)
+                    .build();
         } catch (Exception e) {
             log.error(FAILED_QUERY_DB_ERROR);
             return builder.error(FAILED_QUERY_DB_ERROR).build();
@@ -128,7 +142,7 @@ public class CheckRunner {
         return builder.build();
     }
 
-    public void saveResultToHistory(String checkName, BigDecimal result) {
+    public void saveResultToHistory(String checkName, BigDecimal result, Long executionTime) {
         if (checkName == null) {
             throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
         }
@@ -140,9 +154,14 @@ public class CheckRunner {
             throw new IllegalArgumentException(RESULT_NULL_ERROR);
         }
 
+        if (executionTime == null) {
+            throw new IllegalArgumentException(EXECUTION_TIME_NULL_ERROR);
+        }
+
         ResultHistory resultHistory = ResultHistory.builder()
                 .checkName(checkName)
                 .result(result)
+                .executionTime(executionTime)
                 .build();
 
         resultHistoryRepository.save(resultHistory);

@@ -85,15 +85,18 @@ class CheckRunnerTest {
         assertEquals(checkName, checkDto.getName());
         assertNull(checkDto.getLastResult());
         assertNull(checkDto.getLastTimestamp());
+        assertNull(checkDto.getLastExecutionTime());
     }
 
     @Test
     void getCheckDto_whenResultHistorySaved_thenReturnNotFullCheckDto() {
         String checkName = "check-name";
         BigDecimal lastResult = BigDecimal.valueOf(10);
+        Long lastExecutionTime = 10L;
         resultHistoryRepository.save(ResultHistory.builder()
                 .checkName(checkName)
                 .result(lastResult)
+                .executionTime(lastExecutionTime)
                 .build()
         );
 
@@ -103,6 +106,7 @@ class CheckRunnerTest {
         assertEquals(checkName, checkDto.getName());
         assertEquals(0, lastResult.compareTo(checkDto.getLastResult()));
         assertNotNull(checkDto.getLastTimestamp());
+        assertEquals(lastExecutionTime, checkDto.getLastExecutionTime());
     }
 
 
@@ -143,6 +147,7 @@ class CheckRunnerTest {
         assertNotNull(checkResult);
         assertEquals(check.getName(), checkResult.getName());
         assertEquals(0, result.compareTo(checkResult.getResult()));
+        assertNotNull(checkResult.getExecutionTime());
     }
 
     @Test
@@ -221,9 +226,11 @@ class CheckRunnerTest {
         String checkName = "check-name";
         BigDecimal currentResult = BigDecimal.valueOf(10);
         BigDecimal lastResult = BigDecimal.valueOf(5);
+        long executionTime = 1;
         resultHistoryRepository.save(ResultHistory.builder()
                 .checkName(checkName)
                 .result(lastResult)
+                .executionTime(executionTime)
                 .build());
 
         CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
@@ -237,9 +244,11 @@ class CheckRunnerTest {
         String checkName = "check-name";
         BigDecimal currentResult = BigDecimal.valueOf(10);
         BigDecimal lastResult = BigDecimal.valueOf(0);
+        long executionTime = 1;
         resultHistoryRepository.save(ResultHistory.builder()
                 .checkName(checkName)
                 .result(lastResult)
+                .executionTime(executionTime)
                 .build());
 
         CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
@@ -262,10 +271,11 @@ class CheckRunnerTest {
 
     @Test
     void saveResultToHistory_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
-        BigDecimal currentResult = BigDecimal.valueOf(10);
+        BigDecimal result = BigDecimal.valueOf(10);
+        long executionTime = 1;
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.saveResultToHistory(null, currentResult)
+                underTest.saveResultToHistory(null, result, executionTime)
         );
 
         assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_NULL_ERROR));
@@ -274,33 +284,48 @@ class CheckRunnerTest {
     @Test
     void saveResultToHistory_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
         String checkName = "";
-        BigDecimal currentResult = BigDecimal.valueOf(10);
+        BigDecimal result = BigDecimal.valueOf(10);
+        long executionTime = 1;
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.saveResultToHistory(checkName, currentResult)
+                underTest.saveResultToHistory(checkName, result, executionTime)
         );
 
         assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_EMPTY_ERROR));
     }
 
     @Test
-    void saveResultToHistory_whenCurrentResultIsNull_thenThrowIllegalArgumentException() {
+    void saveResultToHistory_whenResultIsNull_thenThrowIllegalArgumentException() {
         String checkName = "check-name";
+        long executionTime = 1;
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.saveResultToHistory(checkName, null)
+                underTest.saveResultToHistory(checkName, null, executionTime)
         );
 
         assertTrue(exception.getMessage().contains(CheckRunner.RESULT_NULL_ERROR));
     }
 
     @Test
-    void saveResultToHistory_whenCheckNameAndResultProvided_thenSaveResult() {
+    void saveResultToHistory_whenExecutionTimeIsNull_thenThrowIllegalArgumentException() {
         String checkName = "check-name";
         BigDecimal result = BigDecimal.valueOf(10);
 
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.saveResultToHistory(checkName, result, null)
+        );
+
+        assertTrue(exception.getMessage().contains(CheckRunner.EXECUTION_TIME_NULL_ERROR));
+    }
+
+    @Test
+    void saveResultToHistory_whenCheckNameAndResultProvided_thenSaveResult() {
+        String checkName = "check-name";
+        BigDecimal result = BigDecimal.valueOf(10);
+        long executionTime = 1;
+
         assertDoesNotThrow(() ->
-                underTest.saveResultToHistory(checkName, result)
+                underTest.saveResultToHistory(checkName, result, executionTime)
         );
     }
 

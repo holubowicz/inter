@@ -78,6 +78,7 @@ class CheckServiceTest {
             assertNotNull(checkResult);
             assertNotNull(checkResult.getName());
             assertFalse(checkResult.getName().isEmpty());
+            assertNotNull(checkResult.getExecutionTime());
         });
     }
 

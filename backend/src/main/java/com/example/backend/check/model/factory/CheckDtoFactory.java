@@ -11,8 +11,9 @@ public class CheckDtoFactory {
     public static final String CHECK_NAME_EMPTY_ERROR = "Check name is empty";
     public static final String LAST_RESULT_NULL_ERROR = "Last result is null";
     public static final String LAST_TIMESTAMP_NULL_ERROR = "Last timestamp is null";
+    public static final String LAST_EXECUTION_TIME_NULL_ERROR = "Last execution time is null";
 
-    public static CheckDto createCheckDto(String checkName, BigDecimal lastResult, Instant lastTimestamp) {
+    public static CheckDto createCheckDto(String checkName, BigDecimal lastResult, Instant lastTimestamp, Long lastExecutionTime) {
         if (checkName == null) {
             throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
         }
@@ -28,10 +29,15 @@ public class CheckDtoFactory {
             throw new IllegalArgumentException(LAST_TIMESTAMP_NULL_ERROR);
         }
 
+        if (lastExecutionTime == null) {
+            throw new IllegalArgumentException(LAST_EXECUTION_TIME_NULL_ERROR);
+        }
+
         return CheckDto.builder()
                 .name(checkName)
                 .lastResult(lastResult)
                 .lastTimestamp(lastTimestamp)
+                .lastExecutionTime(lastExecutionTime)
                 .build();
     }
 

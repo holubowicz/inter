@@ -135,8 +135,9 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[0].name", notNullValue()))
+                .andExpect(jsonPath("$[0].error", nullValue()))
                 .andExpect(jsonPath("$[0].result", notNullValue()))
-                .andExpect(jsonPath("$[0].error", nullValue()));
+                .andExpect(jsonPath("$[0].executionTime", notNullValue()));
     }
 
     @Test
@@ -153,8 +154,9 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[0].name", notNullValue()))
-                .andExpect(jsonPath("$[0].result", nullValue()))
                 .andExpect(jsonPath("$[0].error", notNullValue()))
+                .andExpect(jsonPath("$[0].result", nullValue()))
+                .andExpect(jsonPath("$[0].executionTime", nullValue()))
                 .andExpect(jsonPath("$[0].lastResult", nullValue()))
                 .andExpect(jsonPath("$[0].lastTimestamp", nullValue()))
                 .andExpect(jsonPath("$[0].trendPercentage", nullValue()));
@@ -174,8 +176,9 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[0].name", notNullValue()))
-                .andExpect(jsonPath("$[0].result", nullValue()))
                 .andExpect(jsonPath("$[0].error", notNullValue()))
+                .andExpect(jsonPath("$[0].result", nullValue()))
+                .andExpect(jsonPath("$[0].executionTime", nullValue()))
                 .andExpect(jsonPath("$[0].lastResult", nullValue()))
                 .andExpect(jsonPath("$[0].lastTimestamp", nullValue()))
                 .andExpect(jsonPath("$[0].trendPercentage", nullValue()));
@@ -195,8 +198,9 @@ class CheckControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].name", equalTo(EXPECTED_NAME)))
+                .andExpect(jsonPath("$[0].error", nullValue()))
                 .andExpect(jsonPath("$[0].result", equalTo(EXPECTED_RESULT)))
-                .andExpect(jsonPath("$[0].error", nullValue()));
+                .andExpect(jsonPath("$[0].executionTime", notNullValue()));
     }
 
     @Test
@@ -214,8 +218,9 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$", everyItem(not(empty()))))
                 .andExpect(jsonPath("$[*].name", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].error", everyItem(nullValue())))
                 .andExpect(jsonPath("$[*].result", everyItem(notNullValue())))
-                .andExpect(jsonPath("$[*].error", everyItem(nullValue())));
+                .andExpect(jsonPath("$[*].executionTime", everyItem(notNullValue())));
     }
 
     @Test
@@ -233,8 +238,9 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$", everyItem(not(empty()))))
                 .andExpect(jsonPath("$[*].name", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].error", everyItem(notNullValue())))
                 .andExpect(jsonPath("$[*].result", everyItem(nullValue())))
-                .andExpect(jsonPath("$[*].error", everyItem(notNullValue())));
+                .andExpect(jsonPath("$[*].executionTime", everyItem(nullValue())));
     }
 
     @Test
@@ -252,8 +258,9 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$", everyItem(not(empty()))))
                 .andExpect(jsonPath("$[*].name", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].error", everyItem(notNullValue())))
                 .andExpect(jsonPath("$[*].result", everyItem(nullValue())))
-                .andExpect(jsonPath("$[*].error", everyItem(notNullValue())));
+                .andExpect(jsonPath("$[*].executionTime", everyItem(nullValue())));
     }
 
     @Test

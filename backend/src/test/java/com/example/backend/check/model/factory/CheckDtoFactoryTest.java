@@ -14,9 +14,10 @@ class CheckDtoFactoryTest {
     void createCheckDto_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
         BigDecimal lastResult = BigDecimal.valueOf(10);
         Instant lastTimestamp = Instant.now();
+        long lastExecutionTime = 1;
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                CheckDtoFactory.createCheckDto(null, lastResult, lastTimestamp)
+                CheckDtoFactory.createCheckDto(null, lastResult, lastTimestamp, lastExecutionTime)
         );
 
         assertTrue(exception.getMessage().contains(CheckDtoFactory.CHECK_NAME_NULL_ERROR));
@@ -27,9 +28,10 @@ class CheckDtoFactoryTest {
         String checkName = "";
         BigDecimal lastResult = BigDecimal.valueOf(10);
         Instant lastTimestamp = Instant.now();
+        long lastExecutionTime = 1;
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                CheckDtoFactory.createCheckDto(checkName, lastResult, lastTimestamp)
+                CheckDtoFactory.createCheckDto(checkName, lastResult, lastTimestamp, lastExecutionTime)
         );
 
         assertTrue(exception.getMessage().contains(CheckDtoFactory.CHECK_NAME_EMPTY_ERROR));
@@ -39,9 +41,10 @@ class CheckDtoFactoryTest {
     void createCheckDto_whenLastResultIsNull_thenThrowIllegalArgumentException() {
         String checkName = "check-name";
         Instant lastTimestamp = Instant.now();
+        long lastExecutionTime = 1;
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                CheckDtoFactory.createCheckDto(checkName, null, lastTimestamp)
+                CheckDtoFactory.createCheckDto(checkName, null, lastTimestamp, lastExecutionTime)
         );
 
         assertTrue(exception.getMessage().contains(CheckDtoFactory.LAST_RESULT_NULL_ERROR));
@@ -51,12 +54,26 @@ class CheckDtoFactoryTest {
     void createCheckDto_whenLastTimestampIsNull_thenThrowIllegalArgumentException() {
         String checkName = "check-name";
         BigDecimal lastResult = BigDecimal.valueOf(10);
+        long lastExecutionTime = 1;
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                CheckDtoFactory.createCheckDto(checkName, lastResult, null)
+                CheckDtoFactory.createCheckDto(checkName, lastResult, null, lastExecutionTime)
         );
 
         assertTrue(exception.getMessage().contains(CheckDtoFactory.LAST_TIMESTAMP_NULL_ERROR));
+    }
+
+    @Test
+    void createCheckDto_whenLastExecutionTimeIsNull_thenThrowIllegalArgumentException() {
+        String checkName = "check-name";
+        BigDecimal lastResult = BigDecimal.valueOf(10);
+        Instant lastTimestamp = Instant.now();
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                CheckDtoFactory.createCheckDto(checkName, lastResult, lastTimestamp, null)
+        );
+
+        assertTrue(exception.getMessage().contains(CheckDtoFactory.LAST_EXECUTION_TIME_NULL_ERROR));
     }
 
     @Test
@@ -64,13 +81,15 @@ class CheckDtoFactoryTest {
         String checkName = "check-name";
         BigDecimal lastResult = BigDecimal.valueOf(10);
         Instant lastTimestamp = Instant.now();
+        long lastExecutionTime = 1;
 
-        CheckDto checkDto = CheckDtoFactory.createCheckDto(checkName, lastResult, lastTimestamp);
+        CheckDto checkDto = CheckDtoFactory.createCheckDto(checkName, lastResult, lastTimestamp, lastExecutionTime);
 
         assertNotNull(checkDto);
         assertEquals(checkName, checkDto.getName());
         assertEquals(lastResult, checkDto.getLastResult());
         assertEquals(lastTimestamp, checkDto.getLastTimestamp());
+        assertEquals(lastExecutionTime, checkDto.getLastExecutionTime());
     }
 
 
