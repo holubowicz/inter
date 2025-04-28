@@ -55,7 +55,6 @@ class CheckRunnerTest {
     }
 
 
-    // TODO: make unit tests for getCheckDto(String checkName)
     @Test
     void getCheckDto_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->

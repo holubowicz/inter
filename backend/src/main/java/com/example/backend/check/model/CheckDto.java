@@ -6,7 +6,6 @@ import lombok.Getter;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-// TODO: create Factory for CheckDto
 // TODO: add last execution time
 
 @Getter

@@ -4,6 +4,7 @@ import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
+import com.example.backend.check.model.factory.CheckDtoFactory;
 import com.example.backend.database.schema.ResultHistory;
 import com.example.backend.database.schema.ResultHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -47,18 +48,12 @@ public class CheckRunner {
                 .findTopByCheckNameOrderByTimestampDesc(checkName);
 
         if (resultHistoryOpt.isEmpty()) {
-            return CheckDto.builder()
-                    .name(checkName)
-                    .build();
+            return CheckDtoFactory.createNameCheckDto(checkName);
         }
 
         ResultHistory resultHistory = resultHistoryOpt.get();
 
-        return CheckDto.builder()
-                .name(checkName)
-                .lastResult(resultHistory.getResult())
-                .lastTimestamp(resultHistory.getTimestamp())
-                .build();
+        return CheckDtoFactory.createCheckDto(checkName, resultHistory.getResult(), resultHistory.getTimestamp());
     }
 
     // TODO: only allow to run SELECT queries
