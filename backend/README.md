@@ -1,8 +1,6 @@
-# Inter
+# Inter - Backend
 
 ## Environmental Variables
-
-- `API_URL` - url to backend's API
 
 ### Tested Database
 
@@ -19,3 +17,4 @@ Same as the tested database's environmental variables.
 - `INTERNAL_DB_NAME`
 - `INTERNAL_DB_USER`
 - `INTERNAL_DB_PASS`
+
