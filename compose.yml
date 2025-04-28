@@ -3,6 +3,8 @@ services:
     build: ./frontend
     container_name: frontend
     restart: always
+    env_file:
+      - ./.env
     ports:
       - "80:80"
     depends_on:
@@ -14,8 +16,8 @@ services:
     restart: always
     env_file:
       - ./.env
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
     depends_on:
       db_tested:
         condition: service_healthy

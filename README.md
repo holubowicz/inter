@@ -2,6 +2,8 @@
 
 ## Environmental Variables
 
+- `API_URL` - url to backend's API
+
 ### Tested Database
 
 - `DB_URL` - JDBC connection link, needs to be the name of the database container
