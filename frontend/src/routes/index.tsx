@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageLayout } from "@/components/layout/page-layout";
+import { TablePageLayout } from "@/components/layout/table-page-layout";
 import { ChecksTable } from "@/components/table/checks-table";
 import { Title } from "@/components/title";
 
@@ -9,10 +9,10 @@ export const Route = createFileRoute("/")({
 
 function IndexPage() {
   return (
-    <PageLayout>
+    <TablePageLayout>
       <Title>Check Selection</Title>
 
       <ChecksTable />
-    </PageLayout>
+    </TablePageLayout>
   );
 }

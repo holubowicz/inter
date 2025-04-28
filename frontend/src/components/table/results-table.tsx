@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableHead,
   TableHeader,
   TableRow,
@@ -44,15 +43,15 @@ export function ResultsTable({ checks }: ResultsTableProps) {
 
   return (
     <Table>
-      <TableCaption>Ran checks results</TableCaption>
-
       <TableHeader>
         <TableRow className="*:text-center *:font-bold *:capitalize">
           <TableHead>Name</TableHead>
           <TableHead>Result</TableHead>
-          <TableHead>Last Result</TableHead>
-          <TableHead>Trend</TableHead>
-          <TableHead></TableHead>
+          <TableHead className="hidden xl:table-cell">Execution</TableHead>
+          <TableHead className="hidden md:table-cell">Trend</TableHead>
+          <TableHead className="hidden lg:table-cell">Last Result</TableHead>
+          <TableHead className="hidden xl:table-cell">Last Date</TableHead>
+          <TableHead className="hidden sm:table-cell">Actions</TableHead>
         </TableRow>
       </TableHeader>
 

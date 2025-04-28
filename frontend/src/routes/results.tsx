@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { PageLayout } from "@/components/layout/page-layout";
+import { TablePageLayout } from "@/components/layout/table-page-layout";
 import { ResultsTable } from "@/components/table/results-table";
 import { Title } from "@/components/title";
 
@@ -61,10 +61,10 @@ function CheckResultsPage() {
   }));
 
   return (
-    <PageLayout>
+    <TablePageLayout>
       <Title>Check Results</Title>
 
       <ResultsTable checks={selectedChecks} />
-    </PageLayout>
+    </TablePageLayout>
   );
 }

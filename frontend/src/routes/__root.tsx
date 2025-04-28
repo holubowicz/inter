@@ -14,7 +14,7 @@ function RootLayout() {
       <div className="flex min-h-dvh flex-col gap-4 md:gap-6">
         <Header />
 
-        <main className="mx-auto flex w-11/12 max-w-5xl flex-row items-center">
+        <main className="mx-auto flex w-11/12 justify-center">
           <Outlet />
         </main>
 

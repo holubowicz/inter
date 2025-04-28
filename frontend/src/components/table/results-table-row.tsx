@@ -86,6 +86,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
   };
 
   const handleShowGraph = () => {
+    // TODO: show check history graph
     alert("graph is being shown");
   };
 
@@ -95,16 +96,22 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
 
       <TableCell>{resultState.result}</TableCell>
 
-      <TableCell>{resultState.lastResult}</TableCell>
+      <TableCell className="hidden xl:table-cell"></TableCell>
 
-      <TableCell>
+      <TableCell className="hidden md:table-cell">
         <div className="flex items-center justify-center gap-2">
           <span>{resultState.trendPercentage}</span>
           {resultState.trendPercentage != "-" && resultState.trendIcon}
         </div>
       </TableCell>
 
-      <TableCell>
+      <TableCell className="hidden lg:table-cell">
+        {resultState.lastResult}
+      </TableCell>
+
+      <TableCell className="hidden xl:table-cell"></TableCell>
+
+      <TableCell className="hidden sm:table-cell">
         <Button
           className="cursor-pointer"
           variant="ghost"

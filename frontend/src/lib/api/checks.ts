@@ -1,7 +1,9 @@
 import { Check, CheckResult } from "@/types/check";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export async function getChecks(): Promise<Check[]> {
-  const res = await fetch("http://localhost:8080/api/checks");
+  const res = await fetch(API_URL + "/api/checks");
 
   if (!res.ok) {
     const errorText = await res.text();
@@ -14,7 +16,7 @@ export async function getChecks(): Promise<Check[]> {
 }
 
 export async function runChecks(checks: Check[]): Promise<CheckResult[]> {
-  const res = await fetch("http://localhost:8080/api/checks/run", {
+  const res = await fetch(API_URL + "/api/checks/run", {
     headers: {
       "Content-Type": "application/json",
     },
