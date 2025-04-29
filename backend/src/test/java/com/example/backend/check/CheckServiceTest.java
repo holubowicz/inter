@@ -14,6 +14,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
+import static com.example.backend.check.CheckErrorMessages.CHECK_DTO_LIST_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -61,7 +62,7 @@ class CheckServiceTest {
                 underTest.runCheckDtoList(null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckService.CHECK_DTO_LIST_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_DTO_LIST_NULL));
     }
 
     @Test

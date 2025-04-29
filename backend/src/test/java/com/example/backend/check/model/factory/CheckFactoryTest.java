@@ -3,6 +3,7 @@ package com.example.backend.check.model.factory;
 import com.example.backend.check.model.Check;
 import org.junit.jupiter.api.Test;
 
+import static com.example.backend.check.CheckErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckFactoryTest {
@@ -15,7 +16,7 @@ class CheckFactoryTest {
                 CheckFactory.createCheck(null, query)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.CHECK_NAME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
@@ -27,7 +28,7 @@ class CheckFactoryTest {
                 CheckFactory.createCheck(checkName, query)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.CHECK_NAME_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
@@ -38,7 +39,7 @@ class CheckFactoryTest {
                 CheckFactory.createCheck(checkName, null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.QUERY_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(QUERY_NULL));
     }
 
     @Test
@@ -50,7 +51,7 @@ class CheckFactoryTest {
                 CheckFactory.createCheck(checkName, query)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.QUERY_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(QUERY_EMPTY));
     }
 
     @Test
@@ -73,7 +74,7 @@ class CheckFactoryTest {
                 CheckFactory.createErrorCheck(null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.ERROR_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(ERROR_NULL));
     }
 
     @Test
@@ -84,7 +85,7 @@ class CheckFactoryTest {
                 CheckFactory.createErrorCheck(error)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.ERROR_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(ERROR_EMPTY));
     }
 
     @Test
@@ -108,7 +109,7 @@ class CheckFactoryTest {
                 CheckFactory.createNameErrorCheck(null, error)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.CHECK_NAME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
@@ -120,7 +121,7 @@ class CheckFactoryTest {
                 CheckFactory.createNameErrorCheck(checkName, error)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.CHECK_NAME_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
@@ -131,7 +132,7 @@ class CheckFactoryTest {
                 CheckFactory.createNameErrorCheck(checkName, null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.ERROR_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(ERROR_NULL));
     }
 
     @Test
@@ -143,7 +144,7 @@ class CheckFactoryTest {
                 CheckFactory.createNameErrorCheck(checkName, error)
         );
 
-        assertTrue(exception.getMessage().contains(CheckFactory.ERROR_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(ERROR_EMPTY));
     }
 
     @Test

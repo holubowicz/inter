@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.backend.check.CheckErrorMessages.CHECK_INPUT_DTO_LIST_INCORRECT;
+import static com.example.backend.check.CheckErrorMessages.CHECK_INPUT_DTO_LIST_ITEM_INCORRECT;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -87,7 +89,6 @@ class CheckControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[*].name", containsInAnyOrder(EXPECTED_NAMES.toArray())));
-        ;
     }
 
 
@@ -96,7 +97,7 @@ class CheckControllerTest {
         this.mockMvc.perform(post("/api/checks/run"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(CheckController.CHECK_INPUT_DTO_LIST_INCORRECT_ERROR));
+                .andExpect(content().string(CHECK_INPUT_DTO_LIST_INCORRECT));
     }
 
     @Test
@@ -106,7 +107,7 @@ class CheckControllerTest {
                         .content(new ArrayList<>().toString()))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(CheckController.CHECK_INPUT_DTO_LIST_INCORRECT_ERROR));
+                .andExpect(content().string(CHECK_INPUT_DTO_LIST_INCORRECT));
     }
 
     @Test
@@ -117,7 +118,7 @@ class CheckControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content()
-                        .string(CheckController.CHECK_INPUT_DTO_LIST_ITEM_INCORRECT_ERROR)
+                        .string(CHECK_INPUT_DTO_LIST_ITEM_INCORRECT)
                 );
     }
 

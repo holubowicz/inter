@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static com.example.backend.check.CheckErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckLoaderTest {
@@ -33,7 +34,7 @@ class CheckLoaderTest {
 
         Exception exception = assertThrows(RuntimeException.class, underTest::getCheckNameList);
 
-        assertTrue(exception.getMessage().contains(CheckLoader.CHECK_DIRECTORY_DONT_EXIST_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_DIRECTORY_DONT_EXIST));
     }
 
     @Test
@@ -54,7 +55,7 @@ class CheckLoaderTest {
                 underTest.convertCheckInputDtoToCheck(null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckLoader.CHECK_INPUT_DTO_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_INPUT_DTO_NULL));
     }
 
     @Test
@@ -90,7 +91,7 @@ class CheckLoaderTest {
 
         assertNotNull(check);
         assertNull(check.getQuery());
-        assertEquals(CheckLoader.CHECK_INPUT_DTO_INCORRECT_ERROR, check.getError());
+        assertEquals(CHECK_INPUT_DTO_INCORRECT, check.getError());
     }
 
 
@@ -100,7 +101,7 @@ class CheckLoaderTest {
                 underTest.getCheck(null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckLoader.FILEPATH_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(FILEPATH_NULL));
     }
 
     @Test
@@ -109,7 +110,7 @@ class CheckLoaderTest {
                 underTest.getCheck(Paths.get(""))
         );
 
-        assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(FILEPATH_EMPTY));
     }
 
     @Test

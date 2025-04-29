@@ -12,16 +12,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static com.example.backend.check.CheckErrorMessages.*;
+
+
 @Slf4j
 @Component
 public class CheckLoader {
-
-    public static final String CHECK_INPUT_DTO_NULL_ERROR = "CheckInputDto is null";
-    public static final String CHECK_INPUT_DTO_INCORRECT_ERROR = "CheckInputDto is incorrect";
-    public static final String FILEPATH_NULL_ERROR = "File path is null";
-    public static final String FAILED_TO_LOAD_CONTENT_ERROR = "Failed to load check content";
-    public static final String CHECK_DIRECTORY_DONT_EXIST_ERROR = "Check directory does not exist";
-    public static final String FAILED_TO_LOAD_CHECKS_ERROR = "Failed to load checks";
 
     private final CheckLoaderConfiguration checkLoaderConfiguration;
 
@@ -35,7 +31,7 @@ public class CheckLoader {
                 .toAbsolutePath();
 
         if (!Files.exists(checksPath)) {
-            throw new RuntimeException(CHECK_DIRECTORY_DONT_EXIST_ERROR);
+            throw new RuntimeException(CHECK_DIRECTORY_DONT_EXIST);
         }
 
         try {
@@ -45,17 +41,17 @@ public class CheckLoader {
                     .map(CheckLoaderUtils::getCheckNameFromPath)
                     .toList();
         } catch (Exception e) {
-            throw new RuntimeException(FAILED_TO_LOAD_CHECKS_ERROR);
+            throw new RuntimeException(FAILED_TO_LOAD_CHECKS);
         }
     }
 
     public Check convertCheckInputDtoToCheck(CheckInputDto checkInputDto) {
         if (checkInputDto == null) {
-            throw new IllegalArgumentException(CHECK_INPUT_DTO_NULL_ERROR);
+            throw new IllegalArgumentException(CHECK_INPUT_DTO_NULL);
         }
 
         if (checkInputDto.getName() == null || checkInputDto.getName().isEmpty()) {
-            return CheckFactory.createErrorCheck(CHECK_INPUT_DTO_INCORRECT_ERROR);
+            return CheckFactory.createErrorCheck(CHECK_INPUT_DTO_INCORRECT);
         }
 
         String filename = checkInputDto.getName() + CheckLoaderUtils.CHECK_FILE_EXTENSION;
@@ -66,7 +62,7 @@ public class CheckLoader {
 
     public Check getCheck(Path filepath) {
         if (filepath == null) {
-            throw new IllegalArgumentException(FILEPATH_NULL_ERROR);
+            throw new IllegalArgumentException(FILEPATH_NULL);
         }
 
         String queryName = CheckLoaderUtils.getCheckNameFromPath(filepath);
@@ -75,8 +71,8 @@ public class CheckLoader {
             String content = Files.readString(filepath);
             return CheckFactory.createCheck(queryName, content);
         } catch (Exception e) {
-            log.error(FAILED_TO_LOAD_CHECKS_ERROR);
-            return CheckFactory.createNameErrorCheck(queryName, FAILED_TO_LOAD_CONTENT_ERROR);
+            log.error(FAILED_TO_LOAD_CHECKS);
+            return CheckFactory.createNameErrorCheck(queryName, FAILED_TO_LOAD_CONTENT);
         }
     }
 

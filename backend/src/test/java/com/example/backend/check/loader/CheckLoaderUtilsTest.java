@@ -7,17 +7,19 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.example.backend.check.CheckErrorMessages.FILEPATH_EMPTY;
+import static com.example.backend.check.CheckErrorMessages.FILEPATH_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckLoaderUtilsTest {
 
     @Test
     void getCheckNameFromPath_whenFilepathIsNull_thenThrowsException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            CheckLoaderUtils.getCheckNameFromPath(null);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                CheckLoaderUtils.getCheckNameFromPath(null)
+        );
 
-        assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(FILEPATH_NULL));
     }
 
     @Test
@@ -26,7 +28,7 @@ class CheckLoaderUtilsTest {
                 CheckLoaderUtils.getCheckNameFromPath(Paths.get(""))
         );
 
-        assertTrue(exception.getMessage().contains(CheckLoaderUtils.FILEPATH_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(FILEPATH_EMPTY));
     }
 
     @Test

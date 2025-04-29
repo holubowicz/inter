@@ -5,8 +5,8 @@ import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
 import com.example.backend.check.model.factory.CheckFactory;
-import com.example.backend.database.schema.ResultHistory;
-import com.example.backend.database.schema.ResultHistoryRepository;
+import com.example.backend.database.schema.CheckHistory;
+import com.example.backend.database.schema.CheckHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 
+import static com.example.backend.check.CheckErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -29,7 +30,7 @@ class CheckRunnerTest {
     private CheckRunner underTest;
 
     @Autowired
-    private ResultHistoryRepository resultHistoryRepository;
+    private CheckHistoryRepository checkHistoryRepository;
 
     @Container
     private static final PostgreSQLContainer<?> testedPostgreSQLContainer = new PostgreSQLContainer<>("postgres:17-alpine")
@@ -51,7 +52,7 @@ class CheckRunnerTest {
 
     @BeforeEach
     void setupBeforeEach() {
-        resultHistoryRepository.deleteAll();
+        checkHistoryRepository.deleteAll();
     }
 
 
@@ -61,7 +62,7 @@ class CheckRunnerTest {
                 underTest.getCheckDto(null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
@@ -72,7 +73,7 @@ class CheckRunnerTest {
                 underTest.getCheckDto(checkName)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
@@ -93,7 +94,7 @@ class CheckRunnerTest {
         String checkName = "check-name";
         BigDecimal lastResult = BigDecimal.valueOf(10);
         Long lastExecutionTime = 10L;
-        resultHistoryRepository.save(ResultHistory.builder()
+        checkHistoryRepository.save(CheckHistory.builder()
                 .checkName(checkName)
                 .result(lastResult)
                 .executionTime(lastExecutionTime)
@@ -120,7 +121,7 @@ class CheckRunnerTest {
                 underTest.runCheck(check)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
@@ -134,7 +135,7 @@ class CheckRunnerTest {
                 underTest.runCheck(check)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
@@ -169,7 +170,7 @@ class CheckRunnerTest {
 
         assertNotNull(checkResult);
         assertEquals(check.getName(), checkResult.getName());
-        assertEquals(CheckRunner.FAILED_QUERY_DB_ERROR, checkResult.getError());
+        assertEquals(FAILED_QUERY_DB, checkResult.getError());
     }
 
     @Test
@@ -183,7 +184,7 @@ class CheckRunnerTest {
 
         assertNotNull(checkResult);
         assertEquals(check.getName(), checkResult.getName());
-        assertEquals(CheckRunner.FAILED_QUERY_DB_ERROR, checkResult.getError());
+        assertEquals(FAILED_QUERY_DB, checkResult.getError());
     }
 
 
@@ -195,7 +196,7 @@ class CheckRunnerTest {
                 underTest.calculateTrend(null, currentResult)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
@@ -207,7 +208,7 @@ class CheckRunnerTest {
                 underTest.calculateTrend(checkName, currentResult)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
@@ -218,7 +219,7 @@ class CheckRunnerTest {
                 underTest.calculateTrend(checkName, null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.RESULT_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(RESULT_NULL));
     }
 
     @Test
@@ -227,7 +228,7 @@ class CheckRunnerTest {
         BigDecimal currentResult = BigDecimal.valueOf(10);
         BigDecimal lastResult = BigDecimal.valueOf(5);
         long executionTime = 1;
-        resultHistoryRepository.save(ResultHistory.builder()
+        checkHistoryRepository.save(CheckHistory.builder()
                 .checkName(checkName)
                 .result(lastResult)
                 .executionTime(executionTime)
@@ -245,7 +246,7 @@ class CheckRunnerTest {
         BigDecimal currentResult = BigDecimal.valueOf(10);
         BigDecimal lastResult = BigDecimal.valueOf(0);
         long executionTime = 1;
-        resultHistoryRepository.save(ResultHistory.builder()
+        checkHistoryRepository.save(CheckHistory.builder()
                 .checkName(checkName)
                 .result(lastResult)
                 .executionTime(executionTime)
@@ -278,7 +279,7 @@ class CheckRunnerTest {
                 underTest.saveResultToHistory(null, result, executionTime)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
@@ -291,7 +292,7 @@ class CheckRunnerTest {
                 underTest.saveResultToHistory(checkName, result, executionTime)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.CHECK_NAME_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
@@ -303,7 +304,7 @@ class CheckRunnerTest {
                 underTest.saveResultToHistory(checkName, null, executionTime)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.RESULT_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(RESULT_NULL));
     }
 
     @Test
@@ -315,7 +316,7 @@ class CheckRunnerTest {
                 underTest.saveResultToHistory(checkName, result, null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckRunner.EXECUTION_TIME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(EXECUTION_TIME_NULL));
     }
 
     @Test

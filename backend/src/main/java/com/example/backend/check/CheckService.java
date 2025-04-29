@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.example.backend.check.CheckErrorMessages.CHECK_DTO_LIST_NULL;
+
 @Service
 public class CheckService {
-
-    public static final String CHECK_DTO_LIST_NULL_ERROR = "Check DTO list is null";
 
     private final CheckLoader checkLoader;
     private final CheckRunner checkRunner;
@@ -31,7 +31,7 @@ public class CheckService {
 
     public List<CheckResult> runCheckDtoList(List<CheckInputDto> checkInputDtoList) {
         if (checkInputDtoList == null) {
-            throw new IllegalArgumentException(CHECK_DTO_LIST_NULL_ERROR);
+            throw new IllegalArgumentException(CHECK_DTO_LIST_NULL);
         }
 
         return checkInputDtoList

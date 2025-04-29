@@ -10,14 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.backend.check.CheckErrorMessages.CHECK_INPUT_DTO_LIST_INCORRECT;
+import static com.example.backend.check.CheckErrorMessages.CHECK_INPUT_DTO_LIST_ITEM_INCORRECT;
+
 @RestController
 @RequestMapping("api/checks")
 public class CheckController {
-
-    public static final String CHECK_INPUT_DTO_LIST_INCORRECT_ERROR =
-            "CheckInputDto list must be provided and cannot be empty";
-    public static final String CHECK_INPUT_DTO_LIST_ITEM_INCORRECT_ERROR =
-            "Invalid item found in the list. All items must be of type CheckInputDto and not null nor empty any fields";
 
     private final CheckService checkService;
 
@@ -34,14 +32,14 @@ public class CheckController {
     @PostMapping("/run")
     public ResponseEntity<?> runCheckDtoList(@Nullable @RequestBody List<CheckInputDto> checkInputDtoList) {
         if (checkInputDtoList == null || checkInputDtoList.isEmpty()) {
-            return ResponseEntity.badRequest().body(CHECK_INPUT_DTO_LIST_INCORRECT_ERROR);
+            return ResponseEntity.badRequest().body(CHECK_INPUT_DTO_LIST_INCORRECT);
         }
 
         boolean allMatchCheckDto = checkInputDtoList.stream()
                 .allMatch(item -> item != null && item.getName() != null && !item.getName().isEmpty());
 
         if (!allMatchCheckDto) {
-            return ResponseEntity.badRequest().body(CHECK_INPUT_DTO_LIST_ITEM_INCORRECT_ERROR);
+            return ResponseEntity.badRequest().body(CHECK_INPUT_DTO_LIST_ITEM_INCORRECT);
         }
 
         List<CheckResult> results = checkService.runCheckDtoList(checkInputDtoList);

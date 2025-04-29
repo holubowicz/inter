@@ -1,31 +1,26 @@
 package com.example.backend.check.model.factory;
 
 import com.example.backend.check.model.Check;
+import lombok.experimental.UtilityClass;
 
-public class CheckFactory {
+import static com.example.backend.check.CheckErrorMessages.*;
 
-    public static final String CHECK_NAME_NULL_ERROR = "Check name is null";
-    public static final String CHECK_NAME_EMPTY_ERROR = "Check name is empty";
-
-    public static final String QUERY_NULL_ERROR = "Query is null";
-    public static final String QUERY_EMPTY_ERROR = "Query is empty";
-
-    public static final String ERROR_NULL_ERROR = "Error is null";
-    public static final String ERROR_EMPTY_ERROR = "Error is empty";
+@UtilityClass
+public final class CheckFactory {
 
     public static Check createCheck(String checkName, String query) {
         if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_NULL);
         }
         if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
         }
 
         if (query == null) {
-            throw new IllegalArgumentException(QUERY_NULL_ERROR);
+            throw new IllegalArgumentException(QUERY_NULL);
         }
         if (query.isEmpty()) {
-            throw new IllegalArgumentException(QUERY_EMPTY_ERROR);
+            throw new IllegalArgumentException(QUERY_EMPTY);
         }
 
         return Check.builder().name(checkName).query(query).build();
@@ -33,10 +28,10 @@ public class CheckFactory {
 
     public static Check createErrorCheck(String error) {
         if (error == null) {
-            throw new IllegalArgumentException(ERROR_NULL_ERROR);
+            throw new IllegalArgumentException(ERROR_NULL);
         }
         if (error.isEmpty()) {
-            throw new IllegalArgumentException(ERROR_EMPTY_ERROR);
+            throw new IllegalArgumentException(ERROR_EMPTY);
         }
 
         return Check.builder().error(error).build();
@@ -44,17 +39,17 @@ public class CheckFactory {
 
     public static Check createNameErrorCheck(String checkName, String error) {
         if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_NULL);
         }
         if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
         }
 
         if (error == null) {
-            throw new IllegalArgumentException(ERROR_NULL_ERROR);
+            throw new IllegalArgumentException(ERROR_NULL);
         }
         if (error.isEmpty()) {
-            throw new IllegalArgumentException(ERROR_EMPTY_ERROR);
+            throw new IllegalArgumentException(ERROR_EMPTY);
         }
 
         return Check.builder().name(checkName).error(error).build();

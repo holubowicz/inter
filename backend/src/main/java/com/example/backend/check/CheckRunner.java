@@ -5,8 +5,8 @@ import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
 import com.example.backend.check.model.factory.CheckDtoFactory;
-import com.example.backend.database.schema.ResultHistory;
-import com.example.backend.database.schema.ResultHistoryRepository;
+import com.example.backend.database.schema.CheckHistory;
+import com.example.backend.database.schema.CheckHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,63 +16,58 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static com.example.backend.check.CheckErrorMessages.*;
+
 @Slf4j
 @Component
 public class CheckRunner {
 
-    public static String CHECK_NULL_ERROR = "Check is null";
-    public static String CHECK_NAME_NULL_ERROR = "Check name is null";
-    public static String CHECK_NAME_EMPTY_ERROR = "Check name is empty";
-    public static String RESULT_NULL_ERROR = "Result is null";
-    public static String EXECUTION_TIME_NULL_ERROR = "Execution time is null";
-    public static String FAILED_QUERY_DB_ERROR = "Failed to query database";
-
     private final JdbcTemplate jdbcTemplate;
-    private final ResultHistoryRepository resultHistoryRepository;
+    private final CheckHistoryRepository checkHistoryRepository;
 
     @Autowired
     public CheckRunner(@Qualifier("testedJdbcTemplate") JdbcTemplate jdbcTemplate,
-                       ResultHistoryRepository resultHistoryRepository) {
+                       CheckHistoryRepository checkHistoryRepository) {
         this.jdbcTemplate = jdbcTemplate;
-        this.resultHistoryRepository = resultHistoryRepository;
+        this.checkHistoryRepository = checkHistoryRepository;
     }
 
     public CheckDto getCheckDto(String checkName) {
         if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_NULL);
         }
         if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
         }
 
-        Optional<ResultHistory> resultHistoryOpt = resultHistoryRepository
+        Optional<CheckHistory> resultHistoryOpt = checkHistoryRepository
                 .findTopByCheckNameOrderByTimestampDesc(checkName);
 
         if (resultHistoryOpt.isEmpty()) {
             return CheckDtoFactory.createNameCheckDto(checkName);
         }
 
-        ResultHistory resultHistory = resultHistoryOpt.get();
+        CheckHistory checkHistory = resultHistoryOpt.get();
 
         return CheckDtoFactory.createCheckDto(
                 checkName,
-                resultHistory.getResult(),
-                resultHistory.getTimestamp(),
-                resultHistory.getExecutionTime()
+                checkHistory.getResult(),
+                checkHistory.getTimestamp(),
+                checkHistory.getExecutionTime()
         );
     }
 
     // TODO: only allow to run SELECT queries
     public CheckResult runCheck(Check check) {
         if (check == null) {
-            throw new IllegalArgumentException(CHECK_NULL_ERROR);
+            throw new IllegalArgumentException(CHECK_NULL);
         }
 
         if (check.getName() == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_NULL);
         }
         if (check.getName().isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
         }
 
         CheckResult.CheckResultBuilder builder = CheckResult.builder()
@@ -102,24 +97,24 @@ public class CheckRunner {
                     .executionTime(executionTime)
                     .build();
         } catch (Exception e) {
-            log.error(FAILED_QUERY_DB_ERROR);
-            return builder.error(FAILED_QUERY_DB_ERROR).build();
+            log.error(FAILED_QUERY_DB);
+            return builder.error(FAILED_QUERY_DB).build();
         }
     }
 
     public CheckTrend calculateTrend(String checkName, BigDecimal currentResult) {
         if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_NULL);
         }
         if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
         }
 
         if (currentResult == null) {
-            throw new IllegalArgumentException(RESULT_NULL_ERROR);
+            throw new IllegalArgumentException(RESULT_NULL);
         }
 
-        Optional<ResultHistory> lastResultOpt = resultHistoryRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
+        Optional<CheckHistory> lastResultOpt = checkHistoryRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
         if (lastResultOpt.isEmpty()) {
             return CheckTrend.builder().build();
         }
@@ -144,27 +139,27 @@ public class CheckRunner {
 
     public void saveResultToHistory(String checkName, BigDecimal result, Long executionTime) {
         if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_NULL);
         }
         if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY_ERROR);
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
         }
 
         if (result == null) {
-            throw new IllegalArgumentException(RESULT_NULL_ERROR);
+            throw new IllegalArgumentException(RESULT_NULL);
         }
 
         if (executionTime == null) {
-            throw new IllegalArgumentException(EXECUTION_TIME_NULL_ERROR);
+            throw new IllegalArgumentException(EXECUTION_TIME_NULL);
         }
 
-        ResultHistory resultHistory = ResultHistory.builder()
+        CheckHistory checkHistory = CheckHistory.builder()
                 .checkName(checkName)
                 .result(result)
                 .executionTime(executionTime)
                 .build();
 
-        resultHistoryRepository.save(resultHistory);
+        checkHistoryRepository.save(checkHistory);
     }
 
 }

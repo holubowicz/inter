@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import static com.example.backend.check.CheckErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckDtoFactoryTest {
@@ -20,7 +21,7 @@ class CheckDtoFactoryTest {
                 CheckDtoFactory.createCheckDto(null, lastResult, lastTimestamp, lastExecutionTime)
         );
 
-        assertTrue(exception.getMessage().contains(CheckDtoFactory.CHECK_NAME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
@@ -34,7 +35,7 @@ class CheckDtoFactoryTest {
                 CheckDtoFactory.createCheckDto(checkName, lastResult, lastTimestamp, lastExecutionTime)
         );
 
-        assertTrue(exception.getMessage().contains(CheckDtoFactory.CHECK_NAME_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
@@ -47,7 +48,7 @@ class CheckDtoFactoryTest {
                 CheckDtoFactory.createCheckDto(checkName, null, lastTimestamp, lastExecutionTime)
         );
 
-        assertTrue(exception.getMessage().contains(CheckDtoFactory.LAST_RESULT_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(LAST_RESULT_NULL));
     }
 
     @Test
@@ -60,7 +61,7 @@ class CheckDtoFactoryTest {
                 CheckDtoFactory.createCheckDto(checkName, lastResult, null, lastExecutionTime)
         );
 
-        assertTrue(exception.getMessage().contains(CheckDtoFactory.LAST_TIMESTAMP_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(LAST_TIMESTAMP_NULL));
     }
 
     @Test
@@ -73,7 +74,7 @@ class CheckDtoFactoryTest {
                 CheckDtoFactory.createCheckDto(checkName, lastResult, lastTimestamp, null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckDtoFactory.LAST_EXECUTION_TIME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(LAST_EXECUTION_TIME_NULL));
     }
 
     @Test
@@ -99,7 +100,7 @@ class CheckDtoFactoryTest {
                 CheckDtoFactory.createNameCheckDto(null)
         );
 
-        assertTrue(exception.getMessage().contains(CheckDtoFactory.CHECK_NAME_NULL_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
@@ -110,7 +111,7 @@ class CheckDtoFactoryTest {
                 CheckDtoFactory.createNameCheckDto(checkName)
         );
 
-        assertTrue(exception.getMessage().contains(CheckDtoFactory.CHECK_NAME_EMPTY_ERROR));
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
