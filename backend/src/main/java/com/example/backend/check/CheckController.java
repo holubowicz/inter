@@ -3,6 +3,7 @@ package com.example.backend.check;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckInputDto;
 import com.example.backend.check.model.CheckResult;
+import com.example.backend.database.schema.CheckHistory;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,12 @@ public class CheckController {
         return checkService.getCheckDtoList();
     }
 
-    @PostMapping("/run")
+    @GetMapping("{checkName}/history")
+    public List<CheckHistory> getCheckHistoryList(@PathVariable String checkName) {
+        return checkService.getCheckHistoryList(checkName);
+    }
+
+    @PostMapping("run")
     public ResponseEntity<?> runCheckDtoList(@Nullable @RequestBody List<CheckInputDto> checkInputDtoList) {
         if (checkInputDtoList == null || checkInputDtoList.isEmpty()) {
             return ResponseEntity.badRequest().body(CHECK_INPUT_DTO_LIST_INCORRECT);

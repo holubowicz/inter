@@ -11,7 +11,12 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@Table(name = "results")
+@Table(
+        name = "results",
+        indexes = {
+                @Index(name = "idx_check_name", columnList = "check_name")
+        }
+)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

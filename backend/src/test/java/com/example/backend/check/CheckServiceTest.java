@@ -3,6 +3,7 @@ package com.example.backend.check;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckInputDto;
 import com.example.backend.check.model.CheckResult;
+import com.example.backend.database.schema.CheckHistory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
-import static com.example.backend.check.CheckErrorMessages.CHECK_DTO_LIST_NULL;
+import static com.example.backend.check.CheckErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -57,12 +58,42 @@ class CheckServiceTest {
 
 
     @Test
+    void getCheckHistoryList_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.getCheckHistoryList(null)
+        );
+
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
+    }
+
+    @Test
+    void getCheckHistoryList_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
+        String checkName = "";
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.getCheckHistoryList(checkName)
+        );
+
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
+    }
+
+    @Test
+    void getCheckHistoryList_whenCheckNameProvided_thenReturnCheckHistoryList() {
+        String checkName = "check-name";
+
+        List<CheckHistory> checkHistoryList = underTest.getCheckHistoryList(checkName);
+
+        assertNotNull(checkHistoryList);
+    }
+
+
+    @Test
     void runCheckDtoList_whenCheckDtoListIsNull_thenReturnCheckResultList() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 underTest.runCheckDtoList(null)
         );
 
-        assertTrue(exception.getMessage().contains(CHECK_DTO_LIST_NULL));
+        assertTrue(exception.getMessage().contains(CHECK_INPUT_DTO_LIST_NULL));
     }
 
     @Test

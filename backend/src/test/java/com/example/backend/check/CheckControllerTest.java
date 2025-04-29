@@ -60,7 +60,7 @@ class CheckControllerTest {
 
 
     @Test
-    public void getCheckDtoList_whenRequestSent_thenVerifyIfResponseStructure() throws Exception {
+    public void getCheckDtoList_whenRequestSent_thenVerifyResponseStructure() throws Exception {
         this.mockMvc.perform(get("/api/checks"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -89,6 +89,15 @@ class CheckControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[*].name", containsInAnyOrder(EXPECTED_NAMES.toArray())));
+    }
+
+
+    @Test
+    public void getCheckHistoryList_whenRequestSent_thenVerifyResponseStructure() throws Exception {
+        this.mockMvc.perform(get("/api/checks/check-name/history"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
 

@@ -8,3 +8,5 @@ CREATE TABLE results
     result         NUMERIC(38, 16) NOT NULL,
     execution_time BIGINT          NOT NULL
 );
+
+CREATE INDEX idx_check_name ON results (check_name);

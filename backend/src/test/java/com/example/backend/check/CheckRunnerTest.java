@@ -18,6 +18,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.example.backend.check.CheckErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -108,6 +109,74 @@ class CheckRunnerTest {
         assertEquals(0, lastResult.compareTo(checkDto.getLastResult()));
         assertNotNull(checkDto.getLastTimestamp());
         assertEquals(lastExecutionTime, checkDto.getLastExecutionTime());
+    }
+
+
+    @Test
+    void getCheckHistoryList_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.getCheckHistoryList(null)
+        );
+
+        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
+    }
+
+    @Test
+    void getCheckHistoryList_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
+        String checkName = "";
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                underTest.getCheckHistoryList(checkName)
+        );
+
+        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
+    }
+
+    @Test
+    void getCheckHistoryList_whenCheckNameProvidedNoHistorySaved_thenReturnEmptyCheckHistoryList() {
+        String checkName = "check-name";
+
+        List<CheckHistory> checkHistoryList = underTest.getCheckHistoryList(checkName);
+
+        assertNotNull(checkHistoryList);
+        assertEquals(0, checkHistoryList.size());
+    }
+
+    @Test
+    void getCheckHistoryList_whenCheckNameProvidedOneHistorySaved_thenReturnCheckHistoryList() {
+        String checkName = "check-name";
+        int expectedSize = 1;
+        BigDecimal lastResult = BigDecimal.valueOf(10);
+        long lastExecutionTime = 10;
+        checkHistoryRepository.save(CheckHistory.builder()
+                .checkName(checkName)
+                .result(lastResult)
+                .executionTime(lastExecutionTime)
+                .build());
+
+        List<CheckHistory> checkHistoryList = underTest.getCheckHistoryList(checkName);
+
+        assertNotNull(checkHistoryList);
+        assertEquals(expectedSize, checkHistoryList.size());
+        assertEquals(checkName, checkHistoryList.get(0).getCheckName());
+        assertEquals(0, lastResult.compareTo(checkHistoryList.get(0).getResult()));
+        assertEquals(lastExecutionTime, checkHistoryList.get(0).getExecutionTime());
+    }
+
+    @Test
+    void getCheckHistoryList_whenCheckNameProvidedMultipleHistoriesSaved_thenReturnCheckHistoryList() {
+        String checkName = "check-name";
+        int expectedSize = 3;
+        checkHistoryRepository.saveAll(List.of(
+                CheckHistory.builder().checkName(checkName).result(BigDecimal.valueOf(10)).executionTime(5L).build(),
+                CheckHistory.builder().checkName(checkName).result(BigDecimal.valueOf(11)).executionTime(7L).build(),
+                CheckHistory.builder().checkName(checkName).result(BigDecimal.valueOf(12)).executionTime(10L).build()
+        ));
+
+        List<CheckHistory> checkHistoryList = underTest.getCheckHistoryList(checkName);
+
+        assertNotNull(checkHistoryList);
+        assertEquals(expectedSize, checkHistoryList.size());
     }
 
 

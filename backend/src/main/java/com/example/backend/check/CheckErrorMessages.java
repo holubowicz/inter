@@ -7,14 +7,15 @@ public final class CheckErrorMessages {
 
     public static final String CHECK_DIRECTORY_DONT_EXIST = "Check directory does not exist";
 
-    public static final String CHECK_DTO_LIST_NULL = "Check DTO list is null";
-
     public static final String CHECK_INPUT_DTO_INCORRECT = "CheckInputDto is incorrect";
+    public static final String CHECK_INPUT_DTO_NULL = "CheckInputDto is null";
+
     public static final String CHECK_INPUT_DTO_LIST_INCORRECT =
             "CheckInputDto list must be provided and cannot be empty";
+    public static final String CHECK_INPUT_DTO_LIST_NULL = "CheckInputDto list is null";
+
     public static final String CHECK_INPUT_DTO_LIST_ITEM_INCORRECT =
             "Invalid item found in the list. All items must be of type CheckInputDto and not null nor empty any fields";
-    public static final String CHECK_INPUT_DTO_NULL = "CheckInputDto is null";
 
     public static final String CHECK_NAME_EMPTY = "Check name is empty";
     public static final String CHECK_NAME_NULL = "Check name is null";
@@ -44,4 +45,5 @@ public final class CheckErrorMessages {
     public static final String QUERY_NULL = "Query is null";
 
     public static final String RESULT_NULL = "Result is null";
+
 }

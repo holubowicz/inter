@@ -4,12 +4,13 @@ import com.example.backend.check.loader.CheckLoader;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckInputDto;
 import com.example.backend.check.model.CheckResult;
+import com.example.backend.database.schema.CheckHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.example.backend.check.CheckErrorMessages.CHECK_DTO_LIST_NULL;
+import static com.example.backend.check.CheckErrorMessages.*;
 
 @Service
 public class CheckService {
@@ -29,9 +30,20 @@ public class CheckService {
                 .toList();
     }
 
+    public List<CheckHistory> getCheckHistoryList(String checkName) {
+        if (checkName == null) {
+            throw new IllegalArgumentException(CHECK_NAME_NULL);
+        }
+        if (checkName.isEmpty()) {
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
+        }
+
+        return checkRunner.getCheckHistoryList(checkName.toLowerCase());
+    }
+
     public List<CheckResult> runCheckDtoList(List<CheckInputDto> checkInputDtoList) {
         if (checkInputDtoList == null) {
-            throw new IllegalArgumentException(CHECK_DTO_LIST_NULL);
+            throw new IllegalArgumentException(CHECK_INPUT_DTO_LIST_NULL);
         }
 
         return checkInputDtoList

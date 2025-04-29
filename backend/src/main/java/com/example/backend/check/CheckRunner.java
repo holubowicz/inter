@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.backend.check.CheckErrorMessages.*;
@@ -55,6 +56,17 @@ public class CheckRunner {
                 checkHistory.getTimestamp(),
                 checkHistory.getExecutionTime()
         );
+    }
+
+    public List<CheckHistory> getCheckHistoryList(String checkName) {
+        if (checkName == null) {
+            throw new IllegalArgumentException(CHECK_NAME_NULL);
+        }
+        if (checkName.isEmpty()) {
+            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
+        }
+
+        return checkHistoryRepository.findByCheckNameOrderByTimestamp(checkName);
     }
 
     // TODO: only allow to run SELECT queries
