@@ -7,6 +7,8 @@ public final class CheckErrorMessages {
 
     public static final String CHECK_DIRECTORY_DONT_EXIST = "Check directory does not exist";
 
+    public static final String CHECK_HISTORY_NULL = "Check history is null";
+
     public static final String CHECK_INPUT_DTO_INCORRECT = "CheckInputDto is incorrect";
     public static final String CHECK_INPUT_DTO_NULL = "CheckInputDto is null";
 
@@ -45,5 +47,7 @@ public final class CheckErrorMessages {
     public static final String QUERY_NULL = "Query is null";
 
     public static final String RESULT_NULL = "Result is null";
+
+    public static final String TIMESTAMP_NULL = "Timestamp is null";
 
 }

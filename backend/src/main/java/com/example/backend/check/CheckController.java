@@ -1,9 +1,9 @@
 package com.example.backend.check;
 
 import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.CheckHistoryDto;
 import com.example.backend.check.model.CheckInputDto;
 import com.example.backend.check.model.CheckResult;
-import com.example.backend.database.schema.CheckHistory;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class CheckController {
     }
 
     @GetMapping("{checkName}/history")
-    public List<CheckHistory> getCheckHistoryList(@PathVariable String checkName) {
+    public List<CheckHistoryDto> getCheckHistoryList(@PathVariable String checkName) {
         return checkService.getCheckHistoryList(checkName);
     }
 

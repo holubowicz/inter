@@ -2,9 +2,10 @@ package com.example.backend.check;
 
 import com.example.backend.check.loader.CheckLoader;
 import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.CheckHistoryDto;
 import com.example.backend.check.model.CheckInputDto;
 import com.example.backend.check.model.CheckResult;
-import com.example.backend.database.schema.CheckHistory;
+import com.example.backend.check.model.factory.CheckHistoryDtoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class CheckService {
                 .toList();
     }
 
-    public List<CheckHistory> getCheckHistoryList(String checkName) {
+    public List<CheckHistoryDto> getCheckHistoryList(String checkName) {
         if (checkName == null) {
             throw new IllegalArgumentException(CHECK_NAME_NULL);
         }
@@ -38,7 +39,9 @@ public class CheckService {
             throw new IllegalArgumentException(CHECK_NAME_EMPTY);
         }
 
-        return checkRunner.getCheckHistoryList(checkName.toLowerCase());
+        return checkRunner.getCheckHistoryList(checkName.toLowerCase()).stream()
+                .map(CheckHistoryDtoFactory::getCheckHistoryDto)
+                .toList();
     }
 
     public List<CheckResult> runCheckDtoList(List<CheckInputDto> checkInputDtoList) {

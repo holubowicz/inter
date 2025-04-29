@@ -1,9 +1,9 @@
 package com.example.backend.check;
 
 import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.CheckHistoryDto;
 import com.example.backend.check.model.CheckInputDto;
 import com.example.backend.check.model.CheckResult;
-import com.example.backend.database.schema.CheckHistory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -81,7 +81,7 @@ class CheckServiceTest {
     void getCheckHistoryList_whenCheckNameProvided_thenReturnCheckHistoryList() {
         String checkName = "check-name";
 
-        List<CheckHistory> checkHistoryList = underTest.getCheckHistoryList(checkName);
+        List<CheckHistoryDto> checkHistoryList = underTest.getCheckHistoryList(checkName);
 
         assertNotNull(checkHistoryList);
     }
