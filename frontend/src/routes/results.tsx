@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { TablePageLayout } from "@/components/layout/table-page-layout";
-import { ResultsTable } from "@/components/table/results-table";
+import { PageLayout } from "@/components/layout/page-layout";
+import { ResultsTable } from "@/components/results-table/results-table";
 import { Title } from "@/components/title";
 
 type ChecksArray = string[];
@@ -61,10 +61,10 @@ function CheckResultsPage() {
   }));
 
   return (
-    <TablePageLayout>
+    <PageLayout>
       <Title>Check Results</Title>
 
       <ResultsTable checks={selectedChecks} />
-    </TablePageLayout>
+    </PageLayout>
   );
 }

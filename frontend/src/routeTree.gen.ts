@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as ResultsImport } from './routes/results'
 import { Route as IndexImport } from './routes/index'
+import { Route as ChecksCheckNameHistoryImport } from './routes/checks.$checkName.history'
 
 // Create/Update Routes
 
@@ -25,6 +26,12 @@ const ResultsRoute = ResultsImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ChecksCheckNameHistoryRoute = ChecksCheckNameHistoryImport.update({
+  id: '/checks/$checkName/history',
+  path: '/checks/$checkName/history',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,6 +53,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultsImport
       parentRoute: typeof rootRoute
     }
+    '/checks/$checkName/history': {
+      id: '/checks/$checkName/history'
+      path: '/checks/$checkName/history'
+      fullPath: '/checks/$checkName/history'
+      preLoaderRoute: typeof ChecksCheckNameHistoryImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -54,36 +68,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/results': typeof ResultsRoute
+  '/checks/$checkName/history': typeof ChecksCheckNameHistoryRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/results': typeof ResultsRoute
+  '/checks/$checkName/history': typeof ChecksCheckNameHistoryRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/results': typeof ResultsRoute
+  '/checks/$checkName/history': typeof ChecksCheckNameHistoryRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/results'
+  fullPaths: '/' | '/results' | '/checks/$checkName/history'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/results'
-  id: '__root__' | '/' | '/results'
+  to: '/' | '/results' | '/checks/$checkName/history'
+  id: '__root__' | '/' | '/results' | '/checks/$checkName/history'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ResultsRoute: typeof ResultsRoute
+  ChecksCheckNameHistoryRoute: typeof ChecksCheckNameHistoryRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ResultsRoute: ResultsRoute,
+  ChecksCheckNameHistoryRoute: ChecksCheckNameHistoryRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,7 +116,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/results"
+        "/results",
+        "/checks/$checkName/history"
       ]
     },
     "/": {
@@ -105,6 +125,9 @@ export const routeTree = rootRoute
     },
     "/results": {
       "filePath": "results.tsx"
+    },
+    "/checks/$checkName/history": {
+      "filePath": "checks.$checkName.history.tsx"
     }
   }
 }

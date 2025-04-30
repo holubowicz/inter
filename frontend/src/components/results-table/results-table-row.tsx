@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import {
   ChartLine,
   MoveRight,
@@ -80,6 +81,8 @@ function buildResultState(result: CheckResult): ResultTableRowState {
 }
 
 export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
+  const navigate = useNavigate();
+
   const [state, setState] = useState(() => buildResultState(checkResult));
 
   useEffect(() => {
@@ -100,9 +103,13 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
 
   const handleRefetch = () => refetch.mutate();
 
-  const handleShowGraph = () => {
-    // TODO: Replace with actual graph modal/dialog
-    alert("Graph is being shown");
+  const handleShowHistoryGraph = (checkName: string) => {
+    navigate({
+      to: "/checks/$checkName/history",
+      params: {
+        checkName,
+      },
+    });
   };
 
   return (
@@ -144,7 +151,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
           className="cursor-pointer"
           variant="ghost"
           disabled={state.isDisabled || refetch.isPending}
-          onClick={handleShowGraph}
+          onClick={() => handleShowHistoryGraph(check.name)}
         >
           <ChartLine />
         </Button>

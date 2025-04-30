@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/table";
 import { getChecks } from "@/lib/api/checks";
 import { formatElapsedTime, formatNumber } from "@/lib/number";
-import { ErrorState } from "../error-state";
-import { LoadingState } from "../loading-state";
+import { ErrorState } from "./error-state";
+import { LoadingState } from "./loading-state";
 
 const AVAILABLE_CHECKS_KEY = "availableChecks";
 
@@ -52,9 +52,13 @@ export function ChecksTable() {
     setCheckboxes(newCheckboxes);
   };
 
-  const handleShowGraph = () => {
-    // TODO: show check history graph
-    alert("graph is being shown");
+  const handleShowHistoryGraph = (checkName: string) => {
+    navigate({
+      to: "/checks/$checkName/history",
+      params: {
+        checkName,
+      },
+    });
   };
 
   const handleSubmitButtonClick = () => {
@@ -162,7 +166,7 @@ export function ChecksTable() {
                   className="cursor-pointer"
                   variant="ghost"
                   disabled={check.lastResult == null}
-                  onClick={handleShowGraph}
+                  onClick={() => handleShowHistoryGraph(check.name)}
                 >
                   <ChartLine />
                 </Button>

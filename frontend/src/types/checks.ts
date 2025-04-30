@@ -9,6 +9,13 @@ export interface Check {
   lastExecutionTime: Nullable<number>;
 }
 
+export interface CheckHistory {
+  checkName: string;
+  timestamp: Date;
+  result: number;
+  executionTime: number;
+}
+
 export interface CheckResult {
   name: string;
   error: Nullable<string>;
