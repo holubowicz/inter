@@ -1,6 +1,7 @@
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { Toaster } from "@/components/ui/sonner";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header/header";
 
@@ -20,6 +21,8 @@ function RootLayout() {
 
         <Footer />
       </div>
+
+      <Toaster richColors />
 
       <TanStackRouterDevtools />
       <ReactQueryDevtools buttonPosition="bottom-right" />

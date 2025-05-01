@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { ChartLine } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -12,10 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ErrorState } from "@/components/error-state";
+import { LoadingState } from "@/components/loading-state";
 import { getChecks } from "@/lib/api/checks";
 import { formatElapsedTime, formatNumber } from "@/lib/number";
-import { ErrorState } from "./error-state";
-import { LoadingState } from "./loading-state";
 
 const AVAILABLE_CHECKS_KEY = "availableChecks";
 
@@ -71,7 +72,9 @@ export function ChecksTable() {
       .map((check) => check.name);
 
     if (selectedChecks.length === 0) {
-      // TODO: give user some feedback
+      toast.info("No Checks Selected", {
+        description: "Please select at least 1 check, then click execute",
+      });
       return;
     }
 
