@@ -31,7 +31,7 @@ public class CheckService {
                 .toList();
     }
 
-    public List<CheckHistoryDto> getCheckHistoryList(String checkName) {
+    public List<CheckHistoryDto> getCheckHistoryDtoList(String checkName) {
         if (checkName == null) {
             throw new IllegalArgumentException(CHECK_NAME_NULL);
         }

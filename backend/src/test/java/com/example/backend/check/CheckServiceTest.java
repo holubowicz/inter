@@ -58,30 +58,30 @@ class CheckServiceTest {
 
 
     @Test
-    void getCheckHistoryList_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
+    void getCheckHistoryDtoList_whenCheckNameIsNull_thenThrowIllegalArgumentExceptionDto() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.getCheckHistoryList(null)
+                underTest.getCheckHistoryDtoList(null)
         );
 
         assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
-    void getCheckHistoryList_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
+    void getCheckHistoryDtoList_whenCheckNameIsEmpty_thenThrowIllegalArgumentExceptionDto() {
         String checkName = "";
 
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                underTest.getCheckHistoryList(checkName)
+                underTest.getCheckHistoryDtoList(checkName)
         );
 
         assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
-    void getCheckHistoryList_whenCheckNameProvided_thenReturnCheckHistoryList() {
+    void getCheckHistoryDtoList_whenCheckNameProvided_thenReturnCheckHistoryDtoList() {
         String checkName = "check-name";
 
-        List<CheckHistoryDto> checkHistoryList = underTest.getCheckHistoryList(checkName);
+        List<CheckHistoryDto> checkHistoryList = underTest.getCheckHistoryDtoList(checkName);
 
         assertNotNull(checkHistoryList);
     }

@@ -31,8 +31,8 @@ public class CheckController {
     }
 
     @GetMapping("{checkName}/history")
-    public List<CheckHistoryDto> getCheckHistoryList(@PathVariable String checkName) {
-        return checkService.getCheckHistoryList(checkName);
+    public List<CheckHistoryDto> getCheckHistoryDtoList(@PathVariable String checkName) {
+        return checkService.getCheckHistoryDtoList(checkName);
     }
 
     @PostMapping("run")
