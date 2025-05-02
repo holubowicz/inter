@@ -1,20 +1,17 @@
 import { Check, CheckDTO, CheckHistory, CheckResult } from "@/types/checks";
 
-function getApiUrl(path: string): URL {
-  const baseUrl = import.meta.env.VITE_API_URL.trim();
+function getApiBase(): string {
+  const { host, protocol } = window.location;
+  return import.meta.env.VITE_API_URL?.trim() ?? `${protocol}//${host}/api`;
+}
 
-  if (!path.trim()) {
-    return new URL(baseUrl);
-  }
-
-  return new URL(
-    path.replace(/^\/+/, ""),
-    baseUrl.endsWith("/") ? baseUrl : baseUrl + "/",
-  );
+function getApiUrl(path: string): string {
+  const base = getApiBase();
+  return `${base.replace(/\/$/, "")}/${path.replace(/^\/+/, "")}`;
 }
 
 export async function getChecks(): Promise<Check[]> {
-  const res = await fetch(getApiUrl("api/checks"));
+  const res = await fetch(getApiUrl("checks"));
 
   if (!res.ok) {
     const errorText = await res.text();
@@ -34,7 +31,7 @@ export async function getChecks(): Promise<Check[]> {
 export async function getCheckHistories(
   checkName: string,
 ): Promise<CheckHistory[]> {
-  const res = await fetch(getApiUrl(`api/checks/${checkName}/history`));
+  const res = await fetch(getApiUrl(`checks/${checkName}/history`));
 
   if (!res.ok) {
     const errorText = await res.text();
@@ -52,7 +49,7 @@ export async function getCheckHistories(
 }
 
 export async function runChecks(checks: CheckDTO[]): Promise<CheckResult[]> {
-  const res = await fetch(getApiUrl("api/checks/run"), {
+  const res = await fetch(getApiUrl("checks/run"), {
     headers: {
       "Content-Type": "application/json",
     },
