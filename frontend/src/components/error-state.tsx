@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { CircleX } from "lucide-react";
+import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 
 interface ErrorStateProps {
@@ -10,9 +11,9 @@ interface ErrorStateProps {
 export function ErrorState({ message, invalidateQueryKey }: ErrorStateProps) {
   const queryClient = useQueryClient();
 
-  const handleTryAgain = () => {
+  const handleTryAgain = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: invalidateQueryKey });
-  };
+  }, [invalidateQueryKey, queryClient]);
 
   return (
     <div className="flex flex-col items-center py-8 text-red-600 md:py-12 lg:py-16">

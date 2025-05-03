@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { PageLayout } from "@/components/layout/page-layout";
 import { ResultsTable } from "@/components/results-table/results-table";
 import { Title } from "@/components/title";
@@ -56,9 +57,13 @@ export const Route = createFileRoute("/results")({
 function CheckResultsPage() {
   const { checks } = Route.useSearch();
 
-  const selectedChecks = checks.map((check) => ({
-    name: check,
-  }));
+  const selectedChecks = useMemo(
+    () =>
+      checks.map((check) => ({
+        name: check,
+      })),
+    [checks],
+  );
 
   return (
     <PageLayout>

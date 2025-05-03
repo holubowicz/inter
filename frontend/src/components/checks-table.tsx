@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { ChartLine } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -39,30 +39,39 @@ export function ChecksTable() {
     }
   }, [checks]);
 
-  const handleAllCheckboxesChange = (checked: boolean) => {
-    if (!checks) {
-      return;
-    }
+  const handleAllCheckboxesChange = useCallback(
+    (checked: boolean) => {
+      if (!checks) {
+        return;
+      }
 
-    setCheckboxes(Array(checks.length).fill(checked));
-  };
+      setCheckboxes(Array(checks.length).fill(checked));
+    },
+    [checks],
+  );
 
-  const handleCheckboxChange = (idx: number) => {
-    const newCheckboxes = [...checkboxes];
-    newCheckboxes[idx] = !newCheckboxes[idx];
-    setCheckboxes(newCheckboxes);
-  };
+  const handleCheckboxChange = useCallback(
+    (idx: number) => {
+      const newCheckboxes = [...checkboxes];
+      newCheckboxes[idx] = !newCheckboxes[idx];
+      setCheckboxes(newCheckboxes);
+    },
+    [checkboxes],
+  );
 
-  const handleShowHistoryGraph = (checkName: string) => {
-    navigate({
-      to: "/checks/$checkName/history",
-      params: {
-        checkName,
-      },
-    });
-  };
+  const handleShowHistoryGraph = useCallback(
+    (checkName: string) => {
+      navigate({
+        to: "/checks/$checkName/history",
+        params: {
+          checkName,
+        },
+      });
+    },
+    [navigate],
+  );
 
-  const handleSubmitButtonClick = () => {
+  const handleSubmitButtonClick = useCallback(() => {
     if (!checks) {
       return;
     }
@@ -86,7 +95,7 @@ export function ChecksTable() {
         checks: selectedChecks,
       },
     });
-  };
+  }, [checks, checkboxes, navigate]);
 
   if (isPending) {
     return <LoadingState />;

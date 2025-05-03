@@ -7,7 +7,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { JSX, useEffect, useState } from "react";
+import { JSX, useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { runChecks } from "@/lib/api/checks";
@@ -101,16 +101,21 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
       ),
   });
 
-  const handleRefetch = () => refetch.mutate();
+  const handleRefetch = useCallback(() => {
+    refetch.mutate();
+  }, [check]);
 
-  const handleShowHistoryGraph = (checkName: string) => {
-    navigate({
-      to: "/checks/$checkName/history",
-      params: {
-        checkName,
-      },
-    });
-  };
+  const handleShowHistoryGraph = useCallback(
+    (checkName: string) => {
+      navigate({
+        to: "/checks/$checkName/history",
+        params: {
+          checkName,
+        },
+      });
+    },
+    [navigate],
+  );
 
   return (
     <TableRow className="*:text-center">
