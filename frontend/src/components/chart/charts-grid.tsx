@@ -5,6 +5,7 @@ import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { Subtitle } from "@/components/subtitle";
 import { getCheckHistories } from "@/lib/api/checks";
+import { ChartSection } from "./chart-section";
 import { ExecutionTimeChart } from "./execution-time-chart";
 import { ResultChart } from "./result-chart";
 
@@ -53,22 +54,25 @@ export function ChartsGrid({ checkName }: ChartsGridProps) {
 
   return (
     <div className="grid gap-6 md:gap-8 lg:gap-10">
-      <section className="flex flex-col gap-2 md:gap-4">
+      <ChartSection>
         <Subtitle className="text-center">Results</Subtitle>
 
-        <ResultChart className="max-h-120" checkHistories={checkHistories} />
-      </section>
+        <ResultChart
+          className="max-h-120 w-full"
+          checkHistories={checkHistories}
+        />
+      </ChartSection>
 
-      <section className="flex flex-col gap-2 md:gap-4">
+      <ChartSection>
         <Subtitle className="text-center">
           Execution Times <span className="lowercase">[ms]</span>
         </Subtitle>
 
         <ExecutionTimeChart
-          className="max-h-120"
+          className="max-h-120 w-full"
           checkHistories={checkHistories}
         />
-      </section>
+      </ChartSection>
     </div>
   );
 }
