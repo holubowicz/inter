@@ -51,7 +51,7 @@ export function ResultsTable({ checks }: ResultsTableProps) {
           <TableHead className="hidden md:table-cell">Trend</TableHead>
           <TableHead className="hidden lg:table-cell">Last Result</TableHead>
           <TableHead className="hidden xl:table-cell">Last Date</TableHead>
-          <TableHead className="hidden sm:table-cell">Actions</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
 

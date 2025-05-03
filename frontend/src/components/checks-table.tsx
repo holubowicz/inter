@@ -127,7 +127,7 @@ export function ChecksTable() {
               Last Execution
             </TableHead>
 
-            <TableHead className="hidden sm:table-cell">Actions</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -164,7 +164,7 @@ export function ChecksTable() {
                   : "-"}
               </TableCell>
 
-              <TableCell className="hidden sm:table-cell">
+              <TableCell>
                 <Button
                   className="cursor-pointer"
                   variant="ghost"

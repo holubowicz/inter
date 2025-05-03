@@ -29,23 +29,23 @@ export function ResultChart({ className, checkHistories }: ResultChartProps) {
       >
         <CartesianGrid vertical={true} />
 
+        <YAxis
+          dataKey="result"
+          tickLine={false}
+          axisLine={false}
+          tickMargin={6}
+          domain={[
+            (min: number) => Math.floor(min * 0.95),
+            (max: number) => Math.ceil(max * 1.05),
+          ]}
+        />
+
         <XAxis
           dataKey="timestamp"
           tickLine={false}
           axisLine={false}
           tickMargin={12}
           tickFormatter={(value: Date) => value.toLocaleDateString()}
-        />
-
-        <YAxis
-          dataKey="result"
-          tickLine={false}
-          axisLine={false}
-          tickMargin={12}
-          domain={[
-            (dataMin: number) => Math.floor(dataMin * 0.95),
-            (dataMax: number) => Math.ceil(dataMax * 1.05),
-          ]}
         />
 
         <ChartTooltip

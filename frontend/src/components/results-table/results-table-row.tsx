@@ -133,7 +133,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
 
       <TableCell className="hidden xl:table-cell">{state.lastDate}</TableCell>
 
-      <TableCell className="hidden sm:table-cell">
+      <TableCell>
         <Button
           className="cursor-pointer"
           variant="ghost"
