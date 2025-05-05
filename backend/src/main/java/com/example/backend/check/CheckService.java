@@ -1,5 +1,6 @@
 package com.example.backend.check;
 
+import com.example.backend.check.common.exception.CheckInputDtoListNullException;
 import com.example.backend.check.loader.CheckLoader;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckHistoryDto;
@@ -10,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static com.example.backend.check.common.ErrorMessages.CHECK_INPUT_DTO_LIST_NULL;
 
 @Service
 public class CheckService {
@@ -39,7 +38,7 @@ public class CheckService {
 
     public List<CheckResult> runCheckDtoList(List<CheckInputDto> checkInputDtoList) {
         if (checkInputDtoList == null) {
-            throw new IllegalArgumentException(CHECK_INPUT_DTO_LIST_NULL);
+            throw new CheckInputDtoListNullException();
         }
 
         return checkInputDtoList

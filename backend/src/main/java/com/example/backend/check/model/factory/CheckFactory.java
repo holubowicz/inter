@@ -1,58 +1,29 @@
 package com.example.backend.check.model.factory;
 
+import com.example.backend.check.common.validator.ErrorValidator;
+import com.example.backend.check.common.validator.NameValidator;
+import com.example.backend.check.common.validator.QueryValidator;
 import com.example.backend.check.model.Check;
 import lombok.experimental.UtilityClass;
-
-import static com.example.backend.check.common.ErrorMessages.*;
 
 @UtilityClass
 public final class CheckFactory {
 
-    public static Check createCheck(String checkName, String query) {
-        if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL);
-        }
-        if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
-        }
-
-        if (query == null) {
-            throw new IllegalArgumentException(QUERY_NULL);
-        }
-        if (query.isEmpty()) {
-            throw new IllegalArgumentException(QUERY_EMPTY);
-        }
-
-        return Check.builder().name(checkName).query(query).build();
+    public static Check createCheck(String name, String query) {
+        NameValidator.validate(name);
+        QueryValidator.validate(query);
+        return Check.builder().name(name).query(query).build();
     }
 
     public static Check createErrorCheck(String error) {
-        if (error == null) {
-            throw new IllegalArgumentException(ERROR_NULL);
-        }
-        if (error.isEmpty()) {
-            throw new IllegalArgumentException(ERROR_EMPTY);
-        }
-
+        ErrorValidator.validate(error);
         return Check.builder().error(error).build();
     }
 
-    public static Check createNameErrorCheck(String checkName, String error) {
-        if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL);
-        }
-        if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
-        }
-
-        if (error == null) {
-            throw new IllegalArgumentException(ERROR_NULL);
-        }
-        if (error.isEmpty()) {
-            throw new IllegalArgumentException(ERROR_EMPTY);
-        }
-
-        return Check.builder().name(checkName).error(error).build();
+    public static Check createNameErrorCheck(String name, String error) {
+        NameValidator.validate(name);
+        ErrorValidator.validate(error);
+        return Check.builder().name(name).error(error).build();
     }
 
 }

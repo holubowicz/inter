@@ -1,5 +1,9 @@
 package com.example.backend.check.loader;
 
+import com.example.backend.check.common.exception.CheckInputDtoNullException;
+import com.example.backend.check.common.exception.filepath.FilepathEmptyException;
+import com.example.backend.check.common.exception.filepath.FilepathNullException;
+import com.example.backend.check.common.exception.io.CheckDirectoryNotFoundException;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckInputDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static com.example.backend.check.common.ApiErrorMessages.CHECK_INPUT_DTO_INCORRECT;
-import static com.example.backend.check.common.ErrorMessages.*;
+import static com.example.backend.check.common.ErrorMessages.CHECK_INPUT_DTO_INCORRECT;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckLoaderTest {
@@ -30,16 +33,14 @@ class CheckLoaderTest {
 
 
     @Test
-    void getCheckNameList_whenIncorrectChecksPathSet_thenThrowRuntimeException() {
+    void getCheckNameList_whenIncorrectChecksPathSet_thenThrowCheckDirectoryNotFoundException() {
         checkLoaderConfiguration.setChecksPath("path/that/does/not/exist");
 
-        Exception exception = assertThrows(RuntimeException.class, underTest::getCheckNameList);
-
-        assertTrue(exception.getMessage().contains(CHECK_DIRECTORY_DONT_EXIST));
+        assertThrows(CheckDirectoryNotFoundException.class, underTest::getCheckNameList);
     }
 
     @Test
-    void getCheckNameList_whenCorrectChecksPathSet_thenReturnListOfCheckName() {
+    void getCheckNameList_whenCorrectChecksPathSet_thenReturnsListOfCheckName() {
         List<String> result = underTest.getCheckNameList();
 
         assertFalse(result.isEmpty());
@@ -51,16 +52,14 @@ class CheckLoaderTest {
 
 
     @Test
-    void convertCheckInputDtoToCheck_whenCheckInputDtoIsNull_thenThrowIllegalArgumentException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void convertCheckInputDtoToCheck_whenCheckInputDtoIsNull_thenThrowsCheckInputDtoNullException() {
+        assertThrows(CheckInputDtoNullException.class, () ->
                 underTest.convertCheckInputDtoToCheck(null)
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_INPUT_DTO_NULL));
     }
 
     @Test
-    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsValid_thenReturnCheck() {
+    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsValid_thenReturnsCheck() {
         CheckInputDto checkInputDto = new CheckInputDto("absolute-avg");
 
         Check check = underTest.convertCheckInputDtoToCheck(checkInputDto);
@@ -72,7 +71,7 @@ class CheckLoaderTest {
     }
 
     @Test
-    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsInvalid_thenReturnErrorCheck() {
+    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsInvalid_thenReturnsErrorCheck() {
         CheckInputDto checkInputDto = new CheckInputDto("not-exist");
 
         Check check = underTest.convertCheckInputDtoToCheck(checkInputDto);
@@ -85,7 +84,7 @@ class CheckLoaderTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsIncorrect_thenReturnErrorCheck(String checkName) {
+    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsIncorrect_thenReturnsErrorCheck(String checkName) {
         CheckInputDto checkInputDto = new CheckInputDto(checkName);
 
         Check check = underTest.convertCheckInputDtoToCheck(checkInputDto);
@@ -97,25 +96,21 @@ class CheckLoaderTest {
 
 
     @Test
-    void getCheck_whenFilepathIsNull_thenReturnCheck() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheck_whenFilepathIsNull_thenThrowsFilepathNullException() {
+        assertThrows(FilepathNullException.class, () ->
                 underTest.getCheck(null)
         );
-
-        assertTrue(exception.getMessage().contains(FILEPATH_NULL));
     }
 
     @Test
-    void getCheck_whenFilepathIsEmpty_thenReturnCheck() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheck_whenFilepathIsEmpty_thenThrowsFilepathEmptyException() {
+        assertThrows(FilepathEmptyException.class, () ->
                 underTest.getCheck(Paths.get(""))
         );
-
-        assertTrue(exception.getMessage().contains(FILEPATH_EMPTY));
     }
 
     @Test
-    void getCheck_whenFilepathIsValid_thenReturnCorrectCheck() {
+    void getCheck_whenFilepathIsValid_thenReturnsCorrectCheck() {
         Path filepath = Paths.get(checksPath + "/absolute-avg.sql");
 
         Check result = underTest.getCheck(filepath);
@@ -126,7 +121,7 @@ class CheckLoaderTest {
     }
 
     @Test
-    void getCheck_whenFilepathInvalid_thenReturnErrorCheck() {
+    void getCheck_whenFilepathInvalid_thenReturnsErrorCheck() {
         Path filepath = Paths.get("path/that/does/not/exist/check-not-exist");
 
         Check result = underTest.getCheck(filepath);

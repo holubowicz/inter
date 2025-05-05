@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.backend.check.common.ApiErrorMessages.CHECK_INPUT_DTO_LIST_INCORRECT;
-import static com.example.backend.check.common.ApiErrorMessages.CHECK_INPUT_DTO_LIST_ITEM_INCORRECT;
+import static com.example.backend.check.common.ErrorMessages.CHECK_INPUT_DTO_LIST_INCORRECT;
+import static com.example.backend.check.common.ErrorMessages.CHECK_INPUT_DTO_LIST_ITEM_INCORRECT;
 
 @RestController
 @RequestMapping("api/checks")

@@ -1,5 +1,9 @@
 package com.example.backend.check.loader;
 
+import com.example.backend.check.common.exception.CheckInputDtoNullException;
+import com.example.backend.check.common.exception.io.CheckDirectoryNotFoundException;
+import com.example.backend.check.common.exception.io.ChecksNotLoadedException;
+import com.example.backend.check.common.validator.FilepathValidator;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckInputDto;
 import com.example.backend.check.model.factory.CheckFactory;
@@ -7,14 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static com.example.backend.check.common.ApiErrorMessages.CHECK_INPUT_DTO_INCORRECT;
-import static com.example.backend.check.common.ApiErrorMessages.FAILED_TO_LOAD_CONTENT;
-import static com.example.backend.check.common.ErrorMessages.*;
+import static com.example.backend.check.common.ErrorMessages.CHECK_INPUT_DTO_INCORRECT;
+import static com.example.backend.check.common.ErrorMessages.FAILED_TO_LOAD_CONTENT;
 
 
 @Slf4j
@@ -33,7 +37,7 @@ public class CheckLoader {
                 .toAbsolutePath();
 
         if (!Files.exists(checksPath)) {
-            throw new RuntimeException(CHECK_DIRECTORY_DONT_EXIST);
+            throw new CheckDirectoryNotFoundException();
         }
 
         try {
@@ -42,14 +46,14 @@ public class CheckLoader {
                     .filter(path -> path.toString().toLowerCase().endsWith(CheckLoaderUtils.CHECK_FILE_EXTENSION))
                     .map(CheckLoaderUtils::getCheckNameFromPath)
                     .toList();
-        } catch (Exception e) {
-            throw new RuntimeException(FAILED_TO_LOAD_CHECKS);
+        } catch (SecurityException | IOException e) {
+            throw new ChecksNotLoadedException(e);
         }
     }
 
     public Check convertCheckInputDtoToCheck(CheckInputDto checkInputDto) {
         if (checkInputDto == null) {
-            throw new IllegalArgumentException(CHECK_INPUT_DTO_NULL);
+            throw new CheckInputDtoNullException();
         }
 
         if (checkInputDto.getName() == null || checkInputDto.getName().isEmpty()) {
@@ -63,9 +67,7 @@ public class CheckLoader {
     }
 
     public Check getCheck(Path filepath) {
-        if (filepath == null) {
-            throw new IllegalArgumentException(FILEPATH_NULL);
-        }
+        FilepathValidator.validate(filepath);
 
         String queryName = CheckLoaderUtils.getCheckNameFromPath(filepath);
 

@@ -1,57 +1,54 @@
 package com.example.backend.check.model.factory;
 
+import com.example.backend.check.common.exception.error.ErrorEmptyException;
+import com.example.backend.check.common.exception.error.ErrorNullException;
+import com.example.backend.check.common.exception.name.NameEmptyException;
+import com.example.backend.check.common.exception.name.NameNullException;
+import com.example.backend.check.common.exception.query.QueryEmptyException;
+import com.example.backend.check.common.exception.query.QueryNullException;
 import com.example.backend.check.model.Check;
 import org.junit.jupiter.api.Test;
 
-import static com.example.backend.check.common.ErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckFactoryTest {
 
     @Test
-    void createCheck_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
+    void createCheck_whenCheckNameIsNull_thenThrowsNameNullException() {
         String query = "SELECT * FROM check;";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NameNullException.class, () ->
                 CheckFactory.createCheck(null, query)
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
-    void createCheck_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
+    void createCheck_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
         String checkName = "";
         String query = "SELECT * FROM check;";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NameEmptyException.class, () ->
                 CheckFactory.createCheck(checkName, query)
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
-    void createCheck_whenQueryIsNull_thenThrowIllegalArgumentException() {
+    void createCheck_whenQueryIsNull_thenThrowsQueryNullException() {
         String checkName = "check-name";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(QueryNullException.class, () ->
                 CheckFactory.createCheck(checkName, null)
         );
-
-        assertTrue(exception.getMessage().contains(QUERY_NULL));
     }
 
     @Test
-    void createCheck_whenQueryIsEmpty_thenThrowIllegalArgumentException() {
+    void createCheck_whenQueryIsEmpty_thenThrowsQueryEmptyException() {
         String checkName = "check-name";
         String query = "";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(QueryEmptyException.class, () ->
                 CheckFactory.createCheck(checkName, query)
         );
-
-        assertTrue(exception.getMessage().contains(QUERY_EMPTY));
     }
 
     @Test
@@ -69,27 +66,23 @@ class CheckFactoryTest {
 
 
     @Test
-    void createErrorCheck_whenErrorIsNull_thenThrowIllegalArgumentException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void createErrorCheck_whenErrorIsNull_thenThrowsErrorNullException() {
+        assertThrows(ErrorNullException.class, () ->
                 CheckFactory.createErrorCheck(null)
         );
-
-        assertTrue(exception.getMessage().contains(ERROR_NULL));
     }
 
     @Test
-    void createErrorCheck_whenErrorIsEmpty_thenThrowIllegalArgumentException() {
+    void createErrorCheck_whenErrorIsEmpty_thenThrowsErrorEmptyException() {
         String error = "";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(ErrorEmptyException.class, () ->
                 CheckFactory.createErrorCheck(error)
         );
-
-        assertTrue(exception.getMessage().contains(ERROR_EMPTY));
     }
 
     @Test
-    void createErrorCheck_whenErrorProvided_thenReturnCheck() {
+    void createErrorCheck_whenErrorProvided_thenReturnsCheck() {
         String error = "some error";
 
         Check check = CheckFactory.createErrorCheck(error);
@@ -102,53 +95,45 @@ class CheckFactoryTest {
 
 
     @Test
-    void createNameErrorCheck_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
+    void createNameErrorCheck_whenCheckNameIsNull_thenThrowsNameNullException() {
         String error = "some error";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NameNullException.class, () ->
                 CheckFactory.createNameErrorCheck(null, error)
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
-    void createNameErrorCheck_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
+    void createNameErrorCheck_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
         String checkName = "";
         String error = "some error";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NameEmptyException.class, () ->
                 CheckFactory.createNameErrorCheck(checkName, error)
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
-    void createNameErrorCheck_whenErrorIsNull_thenThrowIllegalArgumentException() {
+    void createNameErrorCheck_whenErrorIsNull_thenThrowsErrorNullException() {
         String checkName = "check-name";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(ErrorNullException.class, () ->
                 CheckFactory.createNameErrorCheck(checkName, null)
         );
-
-        assertTrue(exception.getMessage().contains(ERROR_NULL));
     }
 
     @Test
-    void createNameErrorCheck_whenErrorIsEmpty_thenThrowIllegalArgumentException() {
+    void createNameErrorCheck_whenErrorIsEmpty_thenThrowsErrorEmptyException() {
         String checkName = "check-name";
         String error = "";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(ErrorEmptyException.class, () ->
                 CheckFactory.createNameErrorCheck(checkName, error)
         );
-
-        assertTrue(exception.getMessage().contains(ERROR_EMPTY));
     }
 
     @Test
-    void createNameErrorCheck_whenCheckNameAndErrorProvided_thenReturnCheck() {
+    void createNameErrorCheck_whenCheckNameAndErrorProvided_thenReturnsCheck() {
         String checkName = "check-name";
         String error = "some error";
 

@@ -1,5 +1,11 @@
 package com.example.backend.check.model.factory;
 
+import com.example.backend.check.common.exception.CheckHistoryNullException;
+import com.example.backend.check.common.exception.ExecutionTimeNullException;
+import com.example.backend.check.common.exception.ResultNullException;
+import com.example.backend.check.common.exception.TimestampNullException;
+import com.example.backend.check.common.exception.name.NameEmptyException;
+import com.example.backend.check.common.exception.name.NameNullException;
 import com.example.backend.check.model.CheckHistoryDto;
 import com.example.backend.database.schema.CheckHistory;
 import org.junit.jupiter.api.Test;
@@ -7,23 +13,20 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import static com.example.backend.check.common.ErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckHistoryDtoFactoryTest {
 
     @Test
-    void getCheckHistoryDto_whenCheckHistoryIsNull_thenThrowIllegalArgumentException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheckHistoryDto_whenCheckHistoryIsNull_thenThrowsCheckHistoryNullException() {
+        assertThrows(CheckHistoryNullException.class, () ->
                 CheckHistoryDtoFactory.getCheckHistoryDto(null)
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_HISTORY_NULL));
     }
 
     @Test
-    void getCheckHistoryDto_whenCheckNameIsNull_thenThrowIllegalArgumentException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheckHistoryDto_whenCheckNameIsNull_thenThrowsNameNullException() {
+        assertThrows(NameNullException.class, () ->
                 CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
                         .timestamp(Instant.now())
                         .result(BigDecimal.valueOf(10))
@@ -31,13 +34,11 @@ class CheckHistoryDtoFactoryTest {
                         .build()
                 )
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
-    void getCheckHistoryDto_whenCheckNameIsEmpty_thenThrowIllegalArgumentException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheckHistoryDto_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
+        assertThrows(NameEmptyException.class, () ->
                 CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
                         .checkName("")
                         .timestamp(Instant.now())
@@ -46,13 +47,11 @@ class CheckHistoryDtoFactoryTest {
                         .build()
                 )
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
-    void getCheckHistoryDto_whenTimestampIsNull_thenThrowIllegalArgumentException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheckHistoryDto_whenTimestampIsNull_thenThrowsTimestampNullException() {
+        assertThrows(TimestampNullException.class, () ->
                 CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
                         .checkName("check-name")
                         .result(BigDecimal.valueOf(10))
@@ -60,13 +59,11 @@ class CheckHistoryDtoFactoryTest {
                         .build()
                 )
         );
-
-        assertTrue(exception.getMessage().contains(TIMESTAMP_NULL));
     }
 
     @Test
-    void getCheckHistoryDto_whenResultIsNull_thenThrowIllegalArgumentException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheckHistoryDto_whenResultIsNull_thenThrowsResultNullException() {
+        assertThrows(ResultNullException.class, () ->
                 CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
                         .checkName("check-name")
                         .timestamp(Instant.now())
@@ -74,13 +71,11 @@ class CheckHistoryDtoFactoryTest {
                         .build()
                 )
         );
-
-        assertTrue(exception.getMessage().contains(RESULT_NULL));
     }
 
     @Test
-    void getCheckHistoryDto_whenExecutionTimeIsNull_thenThrowIllegalArgumentException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheckHistoryDto_whenExecutionTimeIsNull_thenThrowsExecutionTimeNullException() {
+        assertThrows(ExecutionTimeNullException.class, () ->
                 CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
                         .checkName("check-name")
                         .timestamp(Instant.now())
@@ -88,12 +83,10 @@ class CheckHistoryDtoFactoryTest {
                         .build()
                 )
         );
-
-        assertTrue(exception.getMessage().contains(EXECUTION_TIME_NULL));
     }
 
     @Test
-    void getCheckHistoryDto_whenAllProvided_thenReturnCheckHistoryDto() {
+    void getCheckHistoryDto_whenAllProvided_thenReturnsCheckHistoryDto() {
         String checkName = "check-name";
         Instant timestamp = Instant.now();
         BigDecimal result = BigDecimal.valueOf(10);

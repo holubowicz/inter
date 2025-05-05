@@ -1,5 +1,7 @@
 package com.example.backend.check.loader;
 
+import com.example.backend.check.common.exception.filepath.FilepathEmptyException;
+import com.example.backend.check.common.exception.filepath.FilepathNullException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -7,28 +9,23 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.example.backend.check.common.ErrorMessages.FILEPATH_EMPTY;
-import static com.example.backend.check.common.ErrorMessages.FILEPATH_NULL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CheckLoaderUtilsTest {
 
     @Test
-    void getCheckNameFromPath_whenFilepathIsNull_thenThrowsException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheckNameFromPath_whenFilepathIsNull_thenThrowsFilepathNullException() {
+        assertThrows(FilepathNullException.class, () ->
                 CheckLoaderUtils.getCheckNameFromPath(null)
         );
-
-        assertTrue(exception.getMessage().contains(FILEPATH_NULL));
     }
 
     @Test
-    void getCheckNameFromPath_whenFilepathIsEmpty_thenThrowsException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheckNameFromPath_whenFilepathIsEmpty_thenThrowsFilepathEmptyException() {
+        assertThrows(FilepathEmptyException.class, () ->
                 CheckLoaderUtils.getCheckNameFromPath(Paths.get(""))
         );
-
-        assertTrue(exception.getMessage().contains(FILEPATH_EMPTY));
     }
 
     @Test

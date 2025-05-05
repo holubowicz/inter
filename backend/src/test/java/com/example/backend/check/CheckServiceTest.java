@@ -1,5 +1,8 @@
 package com.example.backend.check;
 
+import com.example.backend.check.common.exception.CheckInputDtoListNullException;
+import com.example.backend.check.common.exception.name.NameEmptyException;
+import com.example.backend.check.common.exception.name.NameNullException;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckHistoryDto;
 import com.example.backend.check.model.CheckInputDto;
@@ -15,7 +18,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
-import static com.example.backend.check.common.ErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -45,7 +47,7 @@ class CheckServiceTest {
 
 
     @Test
-    void getCheckDtoList_whenApplicationContext_thenReturnCheckDtoList() {
+    void getCheckDtoList_whenApplicationContext_thenReturnsCheckDtoList() {
         List<CheckDto> checkInputDtoList = underTest.getCheckDtoList();
 
         assertNotNull(checkInputDtoList);
@@ -58,27 +60,23 @@ class CheckServiceTest {
 
 
     @Test
-    void getCheckHistoryDtoList_whenCheckNameIsNull_thenThrowIllegalArgumentExceptionDto() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void getCheckHistoryDtoList_whenCheckNameIsNull_thenThrowsNameNullException() {
+        assertThrows(NameNullException.class, () ->
                 underTest.getCheckHistoryDtoList(null)
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_NAME_NULL));
     }
 
     @Test
-    void getCheckHistoryDtoList_whenCheckNameIsEmpty_thenThrowIllegalArgumentExceptionDto() {
+    void getCheckHistoryDtoList_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
         String checkName = "";
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NameEmptyException.class, () ->
                 underTest.getCheckHistoryDtoList(checkName)
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_NAME_EMPTY));
     }
 
     @Test
-    void getCheckHistoryDtoList_whenCheckNameProvided_thenReturnCheckHistoryDtoList() {
+    void getCheckHistoryDtoList_whenCheckNameProvided_thenReturnsCheckHistoryDtoList() {
         String checkName = "check-name";
 
         List<CheckHistoryDto> checkHistoryList = underTest.getCheckHistoryDtoList(checkName);
@@ -88,16 +86,14 @@ class CheckServiceTest {
 
 
     @Test
-    void runCheckDtoList_whenCheckDtoListIsNull_thenReturnCheckResultList() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+    void runCheckDtoList_whenCheckDtoListIsNull_thenThrowsCheckInputDtoListNullException() {
+        assertThrows(CheckInputDtoListNullException.class, () ->
                 underTest.runCheckDtoList(null)
         );
-
-        assertTrue(exception.getMessage().contains(CHECK_INPUT_DTO_LIST_NULL));
     }
 
     @Test
-    void runCheckDtoList_whenCheckDtoListProvided_thenReturnCheckResultList() {
+    void runCheckDtoList_whenCheckDtoListProvided_thenReturnsCheckResultList() {
         List<CheckInputDto> checkInputDtoList = List.of(
                 new CheckInputDto("absolute-avg"),
                 new CheckInputDto("total-count")

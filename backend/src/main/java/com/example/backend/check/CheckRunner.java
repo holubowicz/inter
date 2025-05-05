@@ -1,5 +1,9 @@
 package com.example.backend.check;
 
+import com.example.backend.check.common.exception.CheckNullException;
+import com.example.backend.check.common.validator.ExecutionTimeValidator;
+import com.example.backend.check.common.validator.NameValidator;
+import com.example.backend.check.common.validator.ResultValidator;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckResult;
@@ -17,8 +21,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.backend.check.common.ApiErrorMessages.FAILED_QUERY_DB;
-import static com.example.backend.check.common.ErrorMessages.*;
+import static com.example.backend.check.common.ErrorMessages.FAILED_QUERY_DB;
 
 @Slf4j
 @Component
@@ -35,13 +38,7 @@ public class CheckRunner {
     }
 
     public CheckDto getCheckDto(String checkName) {
-        if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL);
-        }
-        if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
-        }
-
+        NameValidator.validate(checkName);
         return checkHistoryRepository
                 .findTopByCheckNameOrderByTimestampDesc(checkName)
                 .map(checkHistory -> new CheckDto(
@@ -54,28 +51,17 @@ public class CheckRunner {
     }
 
     public List<CheckHistory> getCheckHistoryList(String checkName) {
-        if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL);
-        }
-        if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
-        }
-
+        NameValidator.validate(checkName);
         return checkHistoryRepository.findByCheckNameOrderByTimestamp(checkName.toLowerCase());
     }
 
     // TODO: make it shorter
     public CheckResult runCheck(Check check) {
         if (check == null) {
-            throw new IllegalArgumentException(CHECK_NULL);
+            throw new CheckNullException();
         }
 
-        if (check.getName() == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL);
-        }
-        if (check.getName().isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
-        }
+        NameValidator.validate(check.getName());
 
         CheckResult.CheckResultBuilder builder = CheckResult.builder()
                 .name(check.getName());
@@ -110,16 +96,8 @@ public class CheckRunner {
     }
 
     public CheckTrend calculateTrend(String checkName, BigDecimal currentResult) {
-        if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL);
-        }
-        if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
-        }
-
-        if (currentResult == null) {
-            throw new IllegalArgumentException(RESULT_NULL);
-        }
+        NameValidator.validate(checkName);
+        ResultValidator.validate(currentResult);
 
         Optional<CheckHistory> lastResultOpt = checkHistoryRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
         if (lastResultOpt.isEmpty()) {
@@ -145,20 +123,9 @@ public class CheckRunner {
     }
 
     public void saveResultToHistory(String checkName, BigDecimal result, Long executionTime) {
-        if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL);
-        }
-        if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
-        }
-
-        if (result == null) {
-            throw new IllegalArgumentException(RESULT_NULL);
-        }
-
-        if (executionTime == null) {
-            throw new IllegalArgumentException(EXECUTION_TIME_NULL);
-        }
+        NameValidator.validate(checkName);
+        ResultValidator.validate(result);
+        ExecutionTimeValidator.validate(executionTime);
 
         CheckHistory checkHistory = CheckHistory.builder()
                 .checkName(checkName)
