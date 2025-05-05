@@ -9,11 +9,13 @@ import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
 import com.example.backend.check.model.factory.CheckDtoFactory;
+import com.example.backend.check.model.factory.CheckResultFactory;
 import com.example.backend.database.schema.CheckHistory;
 import com.example.backend.database.schema.CheckHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.example.backend.check.common.ErrorMessages.FAILED_QUERY_DB;
+import static com.example.backend.check.common.ErrorMessages.FAILED_SAVE_TO_INTERNAL_DB;
 
 @Slf4j
 @Component
@@ -55,7 +58,6 @@ public class CheckRunner {
         return checkHistoryRepository.findByCheckNameOrderByTimestamp(checkName.toLowerCase());
     }
 
-    // TODO: make it shorter
     public CheckResult runCheck(Check check) {
         if (check == null) {
             throw new CheckNullException();
@@ -63,35 +65,34 @@ public class CheckRunner {
 
         NameValidator.validate(check.getName());
 
-        CheckResult.CheckResultBuilder builder = CheckResult.builder()
-                .name(check.getName());
-
         if (check.getError() != null) {
-            return builder.error(check.getError()).build();
+            return CheckResultFactory.createNameErrorCheckResult(check.getName(), check.getError());
         }
 
         try {
             long startTime = System.currentTimeMillis();
-
+            // TODO: secure ran queries, allow only to run SELECT queries
             BigDecimal currentResult = jdbcTemplate.queryForObject(check.getQuery(), BigDecimal.class);
-
-            long endTime = System.currentTimeMillis();
-            long executionTime = endTime - startTime;
+            long executionTime = System.currentTimeMillis() - startTime;
 
             CheckTrend checkTrend = calculateTrend(check.getName(), currentResult);
-            builder.lastResult(checkTrend.getLastResult())
-                    .lastTimestamp(checkTrend.getLastTimestamp())
-                    .trendPercentage(checkTrend.getTrendPercentage());
-
             saveResultToHistory(check.getName(), currentResult, executionTime);
 
-            return builder
-                    .result(currentResult)
-                    .executionTime(executionTime)
-                    .build();
+            return new CheckResult(
+                    check.getName(),
+                    null,
+                    currentResult,
+                    executionTime,
+                    checkTrend.getLastResult(),
+                    checkTrend.getLastTimestamp(),
+                    checkTrend.getTrendPercentage()
+            );
+        } catch (DataAccessException | IllegalArgumentException e) {
+            log.error(FAILED_QUERY_DB, e);
+            return CheckResultFactory.createNameErrorCheckResult(check.getName(), FAILED_QUERY_DB);
         } catch (Exception e) {
-            log.error(FAILED_QUERY_DB);
-            return builder.error(FAILED_QUERY_DB).build();
+            log.error(FAILED_SAVE_TO_INTERNAL_DB, e);
+            return CheckResultFactory.createNameErrorCheckResult(check.getName(), FAILED_SAVE_TO_INTERNAL_DB);
         }
     }
 
@@ -104,10 +105,9 @@ public class CheckRunner {
             return CheckTrend.builder().build();
         }
 
-        CheckTrend.CheckTrendBuilder builder = CheckTrend.builder();
-
         BigDecimal lastResult = lastResultOpt.get().getResult();
-        builder.lastResult(lastResult)
+        CheckTrend.CheckTrendBuilder builder = CheckTrend.builder()
+                .lastResult(lastResult)
                 .lastTimestamp(lastResultOpt.get().getTimestamp());
 
         double previous = lastResult.doubleValue();
