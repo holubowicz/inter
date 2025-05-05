@@ -17,7 +17,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ApiErrorMessages.FAILED_QUERY_DB;
+import static com.example.backend.check.common.ErrorMessages.*;
 
 @Slf4j
 @Component
@@ -41,21 +42,15 @@ public class CheckRunner {
             throw new IllegalArgumentException(CHECK_NAME_EMPTY);
         }
 
-        Optional<CheckHistory> resultHistoryOpt = checkHistoryRepository
-                .findTopByCheckNameOrderByTimestampDesc(checkName);
-
-        if (resultHistoryOpt.isEmpty()) {
-            return CheckDtoFactory.createNameCheckDto(checkName);
-        }
-
-        CheckHistory checkHistory = resultHistoryOpt.get();
-
-        return CheckDtoFactory.createCheckDto(
-                checkName,
-                checkHistory.getResult(),
-                checkHistory.getTimestamp(),
-                checkHistory.getExecutionTime()
-        );
+        return checkHistoryRepository
+                .findTopByCheckNameOrderByTimestampDesc(checkName)
+                .map(checkHistory -> new CheckDto(
+                        checkName,
+                        checkHistory.getResult(),
+                        checkHistory.getTimestamp(),
+                        checkHistory.getExecutionTime()
+                ))
+                .orElseGet(() -> CheckDtoFactory.createNameCheckDto(checkName));
     }
 
     public List<CheckHistory> getCheckHistoryList(String checkName) {
@@ -66,10 +61,10 @@ public class CheckRunner {
             throw new IllegalArgumentException(CHECK_NAME_EMPTY);
         }
 
-        return checkHistoryRepository.findByCheckNameOrderByTimestamp(checkName);
+        return checkHistoryRepository.findByCheckNameOrderByTimestamp(checkName.toLowerCase());
     }
 
-    // TODO: only allow to run SELECT queries
+    // TODO: make it shorter
     public CheckResult runCheck(Check check) {
         if (check == null) {
             throw new IllegalArgumentException(CHECK_NULL);

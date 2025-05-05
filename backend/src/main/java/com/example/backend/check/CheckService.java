@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ErrorMessages.CHECK_INPUT_DTO_LIST_NULL;
 
 @Service
 public class CheckService {
@@ -32,14 +32,7 @@ public class CheckService {
     }
 
     public List<CheckHistoryDto> getCheckHistoryDtoList(String checkName) {
-        if (checkName == null) {
-            throw new IllegalArgumentException(CHECK_NAME_NULL);
-        }
-        if (checkName.isEmpty()) {
-            throw new IllegalArgumentException(CHECK_NAME_EMPTY);
-        }
-
-        return checkRunner.getCheckHistoryList(checkName.toLowerCase()).stream()
+        return checkRunner.getCheckHistoryList(checkName).stream()
                 .map(CheckHistoryDtoFactory::getCheckHistoryDto)
                 .toList();
     }

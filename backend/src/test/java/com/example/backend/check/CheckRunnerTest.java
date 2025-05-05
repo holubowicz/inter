@@ -20,7 +20,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ApiErrorMessages.FAILED_QUERY_DB;
+import static com.example.backend.check.common.ErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest

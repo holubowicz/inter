@@ -15,7 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest

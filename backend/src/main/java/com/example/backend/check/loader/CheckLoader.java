@@ -12,7 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ApiErrorMessages.CHECK_INPUT_DTO_INCORRECT;
+import static com.example.backend.check.common.ApiErrorMessages.FAILED_TO_LOAD_CONTENT;
+import static com.example.backend.check.common.ErrorMessages.*;
 
 
 @Slf4j
@@ -71,7 +73,7 @@ public class CheckLoader {
             String content = Files.readString(filepath);
             return CheckFactory.createCheck(queryName, content);
         } catch (Exception e) {
-            log.error(FAILED_TO_LOAD_CHECKS);
+            log.error(FAILED_TO_LOAD_CONTENT);
             return CheckFactory.createNameErrorCheck(queryName, FAILED_TO_LOAD_CONTENT);
         }
     }

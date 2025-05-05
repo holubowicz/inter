@@ -4,7 +4,7 @@ import com.example.backend.check.model.CheckHistoryDto;
 import com.example.backend.database.schema.CheckHistory;
 import lombok.experimental.UtilityClass;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ErrorMessages.*;
 
 @UtilityClass
 public final class CheckHistoryDtoFactory {

@@ -7,8 +7,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.example.backend.check.CheckErrorMessages.FILEPATH_EMPTY;
-import static com.example.backend.check.CheckErrorMessages.FILEPATH_NULL;
+import static com.example.backend.check.common.ErrorMessages.FILEPATH_EMPTY;
+import static com.example.backend.check.common.ErrorMessages.FILEPATH_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckLoaderUtilsTest {

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckHistoryDtoFactoryTest {

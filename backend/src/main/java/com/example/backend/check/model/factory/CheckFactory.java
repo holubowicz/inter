@@ -3,7 +3,7 @@ package com.example.backend.check.model.factory;
 import com.example.backend.check.model.Check;
 import lombok.experimental.UtilityClass;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ErrorMessages.*;
 
 @UtilityClass
 public final class CheckFactory {

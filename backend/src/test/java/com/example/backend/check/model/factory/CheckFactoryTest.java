@@ -3,7 +3,7 @@ package com.example.backend.check.model.factory;
 import com.example.backend.check.model.Check;
 import org.junit.jupiter.api.Test;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckFactoryTest {

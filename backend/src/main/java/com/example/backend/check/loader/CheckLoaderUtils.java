@@ -4,8 +4,8 @@ import lombok.experimental.UtilityClass;
 
 import java.nio.file.Path;
 
-import static com.example.backend.check.CheckErrorMessages.FILEPATH_EMPTY;
-import static com.example.backend.check.CheckErrorMessages.FILEPATH_NULL;
+import static com.example.backend.check.common.ErrorMessages.FILEPATH_EMPTY;
+import static com.example.backend.check.common.ErrorMessages.FILEPATH_NULL;
 
 @UtilityClass
 public final class CheckLoaderUtils {

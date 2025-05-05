@@ -11,7 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static com.example.backend.check.CheckErrorMessages.*;
+import static com.example.backend.check.common.ApiErrorMessages.CHECK_INPUT_DTO_INCORRECT;
+import static com.example.backend.check.common.ErrorMessages.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckLoaderTest {
