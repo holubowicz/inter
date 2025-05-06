@@ -23,8 +23,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.backend.check.common.ErrorMessages.FAILED_QUERY_DB;
-import static com.example.backend.check.common.ErrorMessages.FAILED_SAVE_TO_INTERNAL_DB;
+import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_DB;
+import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_SAVE_TO_INTERNAL_DB;
 
 @Slf4j
 @Component

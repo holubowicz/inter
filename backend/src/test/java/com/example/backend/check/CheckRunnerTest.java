@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.example.backend.check.common.ErrorMessages.FAILED_QUERY_DB;
+import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_DB;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest

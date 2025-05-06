@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.example.backend.check.common.ErrorMessages.CHECK_INPUT_DTO_LIST_INCORRECT;
-import static com.example.backend.check.common.ErrorMessages.CHECK_INPUT_DTO_LIST_ITEM_INCORRECT;
+import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_INPUT_DTO_LIST_INCORRECT;
+import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_INPUT_DTO_LIST_ITEM_INCORRECT;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
