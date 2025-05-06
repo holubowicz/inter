@@ -21,7 +21,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CheckHistory {
+public class CheckExecution {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

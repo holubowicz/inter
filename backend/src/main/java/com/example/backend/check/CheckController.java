@@ -1,9 +1,9 @@
 package com.example.backend.check;
 
-import com.example.backend.check.model.CheckDTO;
-import com.example.backend.check.model.CheckHistoryDTO;
-import com.example.backend.check.model.CheckInputDTO;
 import com.example.backend.check.model.CheckResult;
+import com.example.backend.check.model.dto.CheckDTO;
+import com.example.backend.check.model.dto.CheckExecutionDTO;
+import com.example.backend.check.model.dto.CheckInputDTO;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +31,8 @@ public class CheckController {
     }
 
     @GetMapping("{checkName}/history")
-    public List<CheckHistoryDTO> getCheckHistoryDTOs(@PathVariable String checkName) {
-        return checkService.getCheckHistoryDTOs(checkName);
+    public List<CheckExecutionDTO> getCheckExecutionDTOs(@PathVariable String checkName) {
+        return checkService.getCheckExecutionDTOs(checkName);
     }
 
     @PostMapping("run")

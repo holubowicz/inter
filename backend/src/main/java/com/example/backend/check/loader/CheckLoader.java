@@ -5,7 +5,7 @@ import com.example.backend.check.common.exception.io.CheckDirectoryNotFoundExcep
 import com.example.backend.check.common.exception.io.ChecksNotLoadedException;
 import com.example.backend.check.common.validator.FilepathValidator;
 import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckInputDTO;
+import com.example.backend.check.model.dto.CheckInputDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

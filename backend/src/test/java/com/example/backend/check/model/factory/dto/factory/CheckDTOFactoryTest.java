@@ -1,11 +1,11 @@
-package com.example.backend.check.model.factory;
+package com.example.backend.check.model.factory.dto.factory;
 
 import com.example.backend.check.common.exception.name.NameEmptyException;
 import com.example.backend.check.common.exception.name.NameNullException;
-import com.example.backend.check.model.CheckDTO;
+import com.example.backend.check.model.dto.CheckDTO;
 import org.junit.jupiter.api.Test;
 
-import static com.example.backend.check.model.factory.CheckDTOFactory.createNameCheckDTO;
+import static com.example.backend.check.model.dto.factory.CheckDTOFactory.createNameCheckDTO;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckDTOFactoryTest {

@@ -5,7 +5,7 @@ import com.example.backend.check.common.exception.filepath.FilepathEmptyExceptio
 import com.example.backend.check.common.exception.filepath.FilepathNullException;
 import com.example.backend.check.common.exception.io.CheckDirectoryNotFoundException;
 import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckInputDTO;
+import com.example.backend.check.model.dto.CheckInputDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

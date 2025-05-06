@@ -93,7 +93,7 @@ class CheckControllerTest {
 
 
     @Test
-    public void getCheckHistoryDTOs_whenRequestSent_thenVerifyResponseStructure() throws Exception {
+    public void getCheckExecutionDTOs_whenRequestSent_thenVerifyResponseStructure() throws Exception {
         this.mockMvc.perform(get("/api/checks/check-name/history"))
                 .andDo(print())
                 .andExpect(status().isOk())

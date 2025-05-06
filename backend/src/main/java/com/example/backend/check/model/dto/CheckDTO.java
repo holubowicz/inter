@@ -1,4 +1,4 @@
-package com.example.backend.check.model;
+package com.example.backend.check.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

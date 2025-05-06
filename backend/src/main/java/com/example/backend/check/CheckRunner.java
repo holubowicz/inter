@@ -5,11 +5,11 @@ import com.example.backend.check.common.validator.ExecutionTimeValidator;
 import com.example.backend.check.common.validator.NameValidator;
 import com.example.backend.check.common.validator.ResultValidator;
 import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckDTO;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
-import com.example.backend.database.schema.CheckHistory;
-import com.example.backend.database.schema.CheckHistoryRepository;
+import com.example.backend.check.model.dto.CheckDTO;
+import com.example.backend.database.schema.CheckExecution;
+import com.example.backend.database.schema.CheckExecutionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +23,7 @@ import java.util.Optional;
 
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_DB;
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_SAVE_TO_INTERNAL_DB;
-import static com.example.backend.check.model.factory.CheckDTOFactory.createNameCheckDTO;
+import static com.example.backend.check.model.dto.factory.CheckDTOFactory.createNameCheckDTO;
 import static com.example.backend.check.model.factory.CheckResultFactory.createNameErrorCheckResult;
 
 @Slf4j
@@ -31,31 +31,31 @@ import static com.example.backend.check.model.factory.CheckResultFactory.createN
 public class CheckRunner {
 
     private final JdbcTemplate jdbcTemplate;
-    private final CheckHistoryRepository checkHistoryRepository;
+    private final CheckExecutionRepository checkExecutionRepository;
 
     @Autowired
     public CheckRunner(@Qualifier("testedJdbcTemplate") JdbcTemplate jdbcTemplate,
-                       CheckHistoryRepository checkHistoryRepository) {
+                       CheckExecutionRepository checkExecutionRepository) {
         this.jdbcTemplate = jdbcTemplate;
-        this.checkHistoryRepository = checkHistoryRepository;
+        this.checkExecutionRepository = checkExecutionRepository;
     }
 
     public CheckDTO getCheckDTO(String checkName) {
         NameValidator.validate(checkName);
-        return checkHistoryRepository
+        return checkExecutionRepository
                 .findTopByCheckNameOrderByTimestampDesc(checkName)
-                .map(checkHistory -> new CheckDTO(
+                .map(checkExecution -> new CheckDTO(
                         checkName,
-                        checkHistory.getResult(),
-                        checkHistory.getTimestamp(),
-                        checkHistory.getExecutionTime()
+                        checkExecution.getResult(),
+                        checkExecution.getTimestamp(),
+                        checkExecution.getExecutionTime()
                 ))
                 .orElseGet(() -> createNameCheckDTO(checkName));
     }
 
-    public List<CheckHistory> getCheckHistories(String checkName) {
+    public List<CheckExecution> getCheckExecutions(String checkName) {
         NameValidator.validate(checkName);
-        return checkHistoryRepository.findByCheckNameOrderByTimestamp(checkName.toLowerCase());
+        return checkExecutionRepository.findByCheckNameOrderByTimestamp(checkName.toLowerCase());
     }
 
     public CheckResult runCheck(Check check) {
@@ -100,7 +100,7 @@ public class CheckRunner {
         NameValidator.validate(checkName);
         ResultValidator.validate(currentResult);
 
-        Optional<CheckHistory> lastResultOpt = checkHistoryRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
+        Optional<CheckExecution> lastResultOpt = checkExecutionRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
         if (lastResultOpt.isEmpty()) {
             return CheckTrend.builder().build();
         }
@@ -127,13 +127,13 @@ public class CheckRunner {
         ResultValidator.validate(result);
         ExecutionTimeValidator.validate(executionTime);
 
-        CheckHistory checkHistory = CheckHistory.builder()
+        CheckExecution checkExecution = CheckExecution.builder()
                 .checkName(checkName)
                 .result(result)
                 .executionTime(executionTime)
                 .build();
 
-        checkHistoryRepository.save(checkHistory);
+        checkExecutionRepository.save(checkExecution);
     }
 
 }

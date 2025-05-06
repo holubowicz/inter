@@ -2,11 +2,11 @@ package com.example.backend.check;
 
 import com.example.backend.check.common.exception.CheckInputDTOListNullException;
 import com.example.backend.check.loader.CheckLoader;
-import com.example.backend.check.model.CheckDTO;
-import com.example.backend.check.model.CheckHistoryDTO;
-import com.example.backend.check.model.CheckInputDTO;
 import com.example.backend.check.model.CheckResult;
-import com.example.backend.check.model.factory.CheckHistoryDTOFactory;
+import com.example.backend.check.model.dto.CheckDTO;
+import com.example.backend.check.model.dto.CheckExecutionDTO;
+import com.example.backend.check.model.dto.CheckInputDTO;
+import com.example.backend.check.model.dto.factory.CheckExecutionDTOFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +30,9 @@ public class CheckService {
                 .toList();
     }
 
-    public List<CheckHistoryDTO> getCheckHistoryDTOs(String checkName) {
-        return checkRunner.getCheckHistories(checkName).stream()
-                .map(CheckHistoryDTOFactory::getCheckHistoryDTO)
+    public List<CheckExecutionDTO> getCheckExecutionDTOs(String checkName) {
+        return checkRunner.getCheckExecutions(checkName).stream()
+                .map(CheckExecutionDTOFactory::createCheckExecutionDTO)
                 .toList();
     }
 

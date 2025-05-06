@@ -3,10 +3,10 @@ package com.example.backend.check;
 import com.example.backend.check.common.exception.CheckInputDTOListNullException;
 import com.example.backend.check.common.exception.name.NameEmptyException;
 import com.example.backend.check.common.exception.name.NameNullException;
-import com.example.backend.check.model.CheckDTO;
-import com.example.backend.check.model.CheckHistoryDTO;
-import com.example.backend.check.model.CheckInputDTO;
 import com.example.backend.check.model.CheckResult;
+import com.example.backend.check.model.dto.CheckDTO;
+import com.example.backend.check.model.dto.CheckExecutionDTO;
+import com.example.backend.check.model.dto.CheckInputDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,28 +60,28 @@ class CheckServiceTest {
 
 
     @Test
-    void getCheckHistoryDTOs_whenCheckNameIsNull_thenThrowsNameNullException() {
+    void getCheckExecutionDTOs_whenCheckNameIsNull_thenThrowsNameNullException() {
         assertThrows(NameNullException.class, () ->
-                underTest.getCheckHistoryDTOs(null)
+                underTest.getCheckExecutionDTOs(null)
         );
     }
 
     @Test
-    void getCheckHistoryDTOs_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
+    void getCheckExecutionDTOs_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
         String checkName = "";
 
         assertThrows(NameEmptyException.class, () ->
-                underTest.getCheckHistoryDTOs(checkName)
+                underTest.getCheckExecutionDTOs(checkName)
         );
     }
 
     @Test
-    void getCheckHistoryDTOs_whenCheckNameProvided_thenReturnsCheckHistoryDTOs() {
+    void getCheckExecutionDTOs_whenCheckNameProvided_thenReturnsCheckExecutionDTOs() {
         String checkName = "check-name";
 
-        List<CheckHistoryDTO> checkHistoryList = underTest.getCheckHistoryDTOs(checkName);
+        List<CheckExecutionDTO> checkExecutionDTOs = underTest.getCheckExecutionDTOs(checkName);
 
-        assertNotNull(checkHistoryList);
+        assertNotNull(checkExecutionDTOs);
     }
 
 

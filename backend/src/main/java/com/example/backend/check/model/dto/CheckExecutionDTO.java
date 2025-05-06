@@ -1,4 +1,4 @@
-package com.example.backend.check.model;
+package com.example.backend.check.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.time.Instant;
 
 @Getter
 @AllArgsConstructor
-public class CheckHistoryDTO {
+public class CheckExecutionDTO {
 
     private String checkName;
     private Instant timestamp;
