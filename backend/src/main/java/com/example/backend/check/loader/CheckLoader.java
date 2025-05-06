@@ -6,8 +6,8 @@ import com.example.backend.check.common.exception.io.ChecksNotLoadedException;
 import com.example.backend.check.common.validator.FilepathValidator;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.dto.CheckInputDTO;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -23,14 +23,10 @@ import static com.example.backend.check.model.factory.CheckFactory.*;
 
 @Slf4j
 @Component
+@AllArgsConstructor
 public class CheckLoader {
 
     private final CheckLoaderConfiguration checkLoaderConfiguration;
-
-    @Autowired
-    public CheckLoader(CheckLoaderConfiguration checkLoaderConfiguration) {
-        this.checkLoaderConfiguration = checkLoaderConfiguration;
-    }
 
     public List<String> getCheckNames() {
         Path checksPath = Paths.get(this.checkLoaderConfiguration.getChecksPath())

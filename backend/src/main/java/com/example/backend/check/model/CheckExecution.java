@@ -18,9 +18,9 @@ import java.time.Instant;
         }
 )
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class CheckExecution {
 
     @Id

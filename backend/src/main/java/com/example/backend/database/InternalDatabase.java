@@ -1,6 +1,6 @@
 package com.example.backend.database;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -20,14 +20,10 @@ import java.util.HashMap;
         entityManagerFactoryRef = "internalEntityManagerFactory",
         transactionManagerRef = "internalTransactionManager"
 )
+@AllArgsConstructor
 public class InternalDatabase {
 
     private final InternalDatabaseConfiguration internalDatabaseConfiguration;
-
-    @Autowired
-    public InternalDatabase(InternalDatabaseConfiguration internalDatabaseConfiguration) {
-        this.internalDatabaseConfiguration = internalDatabaseConfiguration;
-    }
 
     @Bean
     @ConfigurationProperties("spring.datasource.internal")

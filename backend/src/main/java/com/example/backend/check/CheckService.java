@@ -7,22 +7,17 @@ import com.example.backend.check.model.dto.CheckDTO;
 import com.example.backend.check.model.dto.CheckExecutionDTO;
 import com.example.backend.check.model.dto.CheckInputDTO;
 import com.example.backend.check.model.dto.factory.CheckExecutionDTOFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class CheckService {
 
     private final CheckLoader checkLoader;
     private final CheckRunner checkRunner;
-
-    @Autowired
-    public CheckService(CheckLoader checkLoader, CheckRunner checkRunner) {
-        this.checkLoader = checkLoader;
-        this.checkRunner = checkRunner;
-    }
 
     public List<CheckDTO> getCheckDTOs() {
         return checkLoader.getCheckNames().stream()

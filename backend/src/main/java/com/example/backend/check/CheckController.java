@@ -5,7 +5,7 @@ import com.example.backend.check.model.dto.CheckDTO;
 import com.example.backend.check.model.dto.CheckExecutionDTO;
 import com.example.backend.check.model.dto.CheckInputDTO;
 import jakarta.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +16,10 @@ import static com.example.backend.check.common.error.message.ApiErrorMessage.CHE
 
 @RestController
 @RequestMapping("api/checks")
+@AllArgsConstructor
 public class CheckController {
 
     private final CheckService checkService;
-
-    @Autowired
-    public CheckController(CheckService checkService) {
-        this.checkService = checkService;
-    }
 
     @GetMapping
     public List<CheckDTO> getCheckDTOs() {
