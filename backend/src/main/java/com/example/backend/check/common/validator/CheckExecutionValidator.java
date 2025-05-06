@@ -1,7 +1,7 @@
 package com.example.backend.check.common.validator;
 
 import com.example.backend.check.common.exception.CheckExecutionNullException;
-import com.example.backend.database.schema.CheckExecution;
+import com.example.backend.check.model.CheckExecution;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

@@ -1,4 +1,4 @@
-package com.example.backend.database.config;
+package com.example.backend.database;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;

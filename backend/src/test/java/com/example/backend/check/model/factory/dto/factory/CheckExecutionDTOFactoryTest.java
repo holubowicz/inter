@@ -6,8 +6,8 @@ import com.example.backend.check.common.exception.ResultNullException;
 import com.example.backend.check.common.exception.TimestampNullException;
 import com.example.backend.check.common.exception.name.NameEmptyException;
 import com.example.backend.check.common.exception.name.NameNullException;
+import com.example.backend.check.model.CheckExecution;
 import com.example.backend.check.model.dto.CheckExecutionDTO;
-import com.example.backend.database.schema.CheckExecution;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

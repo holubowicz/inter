@@ -1,5 +1,6 @@
-package com.example.backend.database.schema;
+package com.example.backend.check.model.repository;
 
+import com.example.backend.check.model.CheckExecution;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

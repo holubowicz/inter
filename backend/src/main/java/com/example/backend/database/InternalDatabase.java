@@ -1,4 +1,4 @@
-package com.example.backend.database.config;
+package com.example.backend.database;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.example.backend.database",
+        basePackages = "com.example.backend.check.model",
         entityManagerFactoryRef = "internalEntityManagerFactory",
         transactionManagerRef = "internalTransactionManager"
 )
@@ -47,7 +47,7 @@ public class InternalDatabase {
     public LocalContainerEntityManagerFactoryBean internalEntityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(internalDataSource());
-        em.setPackagesToScan("com.example.backend.database.schema");
+        em.setPackagesToScan("com.example.backend.check.model");
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);

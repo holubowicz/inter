@@ -1,4 +1,4 @@
-package com.example.backend.database.config;
+package com.example.backend.database;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

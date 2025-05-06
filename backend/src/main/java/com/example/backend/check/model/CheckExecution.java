@@ -1,4 +1,4 @@
-package com.example.backend.database.schema;
+package com.example.backend.check.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
