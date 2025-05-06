@@ -8,7 +8,6 @@ import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
-import com.example.backend.check.model.factory.CheckFactory;
 import com.example.backend.database.schema.CheckHistory;
 import com.example.backend.database.schema.CheckHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +24,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_DB;
+import static com.example.backend.check.model.factory.CheckFactory.createCheck;
+import static com.example.backend.check.model.factory.CheckFactory.createNameErrorCheck;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -201,7 +202,7 @@ class CheckRunnerTest {
 
     @Test
     void runCheck_whenCheckProvided_thenReturnsCheckResult() {
-        Check check = CheckFactory.createCheck("check-name", "SELECT COUNT(*) FROM calculations;");
+        Check check = createCheck("check-name", "SELECT COUNT(*) FROM calculations;");
         BigDecimal result = BigDecimal.valueOf(14);
 
         CheckResult checkResult = underTest.runCheck(check);
@@ -214,7 +215,7 @@ class CheckRunnerTest {
 
     @Test
     void runCheck_whenCheckErrorProvided_thenReturnsErrorCheckResult() {
-        Check check = CheckFactory.createNameErrorCheck("check-name", "some error");
+        Check check = createNameErrorCheck("check-name", "some error");
 
         CheckResult checkResult = underTest.runCheck(check);
 

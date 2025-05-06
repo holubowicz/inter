@@ -13,76 +13,70 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import static com.example.backend.check.model.factory.CheckHistoryDtoFactory.getCheckHistoryDto;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckHistoryDtoFactoryTest {
 
     @Test
     void getCheckHistoryDto_whenCheckHistoryIsNull_thenThrowsCheckHistoryNullException() {
-        assertThrows(CheckHistoryNullException.class, () ->
-                CheckHistoryDtoFactory.getCheckHistoryDto(null)
-        );
+        assertThrows(CheckHistoryNullException.class, () -> getCheckHistoryDto(null));
     }
 
     @Test
     void getCheckHistoryDto_whenCheckNameIsNull_thenThrowsNameNullException() {
-        assertThrows(NameNullException.class, () ->
-                CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
-                        .timestamp(Instant.now())
-                        .result(BigDecimal.valueOf(10))
-                        .executionTime(10L)
-                        .build()
-                )
-        );
+        CheckHistory checkHistory = CheckHistory.builder()
+                .timestamp(Instant.now())
+                .result(BigDecimal.valueOf(10))
+                .executionTime(10L)
+                .build();
+
+        assertThrows(NameNullException.class, () -> getCheckHistoryDto(checkHistory));
     }
 
     @Test
     void getCheckHistoryDto_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
-        assertThrows(NameEmptyException.class, () ->
-                CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
-                        .checkName("")
-                        .timestamp(Instant.now())
-                        .result(BigDecimal.valueOf(10))
-                        .executionTime(10L)
-                        .build()
-                )
-        );
+        CheckHistory checkHistory = CheckHistory.builder()
+                .checkName("")
+                .timestamp(Instant.now())
+                .result(BigDecimal.valueOf(10))
+                .executionTime(10L)
+                .build();
+
+        assertThrows(NameEmptyException.class, () -> getCheckHistoryDto(checkHistory));
     }
 
     @Test
     void getCheckHistoryDto_whenTimestampIsNull_thenThrowsTimestampNullException() {
-        assertThrows(TimestampNullException.class, () ->
-                CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
-                        .checkName("check-name")
-                        .result(BigDecimal.valueOf(10))
-                        .executionTime(10L)
-                        .build()
-                )
-        );
+        CheckHistory checkHistory = CheckHistory.builder()
+                .checkName("check-name")
+                .result(BigDecimal.valueOf(10))
+                .executionTime(10L)
+                .build();
+
+        assertThrows(TimestampNullException.class, () -> getCheckHistoryDto(checkHistory));
     }
 
     @Test
     void getCheckHistoryDto_whenResultIsNull_thenThrowsResultNullException() {
-        assertThrows(ResultNullException.class, () ->
-                CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
-                        .checkName("check-name")
-                        .timestamp(Instant.now())
-                        .executionTime(10L)
-                        .build()
-                )
-        );
+        CheckHistory checkHistory = CheckHistory.builder()
+                .checkName("check-name")
+                .timestamp(Instant.now())
+                .executionTime(10L)
+                .build();
+
+        assertThrows(ResultNullException.class, () -> getCheckHistoryDto(checkHistory));
     }
 
     @Test
     void getCheckHistoryDto_whenExecutionTimeIsNull_thenThrowsExecutionTimeNullException() {
-        assertThrows(ExecutionTimeNullException.class, () ->
-                CheckHistoryDtoFactory.getCheckHistoryDto(CheckHistory.builder()
-                        .checkName("check-name")
-                        .timestamp(Instant.now())
-                        .result(BigDecimal.valueOf(10))
-                        .build()
-                )
-        );
+        CheckHistory checkHistory = CheckHistory.builder()
+                .checkName("check-name")
+                .timestamp(Instant.now())
+                .result(BigDecimal.valueOf(10))
+                .build();
+
+        assertThrows(ExecutionTimeNullException.class, () -> getCheckHistoryDto(checkHistory));
     }
 
     @Test
@@ -98,7 +92,7 @@ class CheckHistoryDtoFactoryTest {
                 .executionTime(executionTime)
                 .build();
 
-        CheckHistoryDto checkHistoryDto = CheckHistoryDtoFactory.getCheckHistoryDto(checkHistory);
+        CheckHistoryDto checkHistoryDto = getCheckHistoryDto(checkHistory);
 
         assertNotNull(checkHistoryDto);
         assertEquals(checkName, checkHistoryDto.getCheckName());

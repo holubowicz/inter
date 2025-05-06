@@ -8,8 +8,6 @@ import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckDto;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
-import com.example.backend.check.model.factory.CheckDtoFactory;
-import com.example.backend.check.model.factory.CheckResultFactory;
 import com.example.backend.database.schema.CheckHistory;
 import com.example.backend.database.schema.CheckHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +23,8 @@ import java.util.Optional;
 
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_DB;
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_SAVE_TO_INTERNAL_DB;
+import static com.example.backend.check.model.factory.CheckDtoFactory.createNameCheckDto;
+import static com.example.backend.check.model.factory.CheckResultFactory.createNameErrorCheckResult;
 
 @Slf4j
 @Component
@@ -50,7 +50,7 @@ public class CheckRunner {
                         checkHistory.getTimestamp(),
                         checkHistory.getExecutionTime()
                 ))
-                .orElseGet(() -> CheckDtoFactory.createNameCheckDto(checkName));
+                .orElseGet(() -> createNameCheckDto(checkName));
     }
 
     public List<CheckHistory> getCheckHistoryList(String checkName) {
@@ -66,7 +66,7 @@ public class CheckRunner {
         NameValidator.validate(check.getName());
 
         if (check.getError() != null) {
-            return CheckResultFactory.createNameErrorCheckResult(check.getName(), check.getError());
+            return createNameErrorCheckResult(check.getName(), check.getError());
         }
 
         try {
@@ -89,10 +89,10 @@ public class CheckRunner {
             );
         } catch (DataAccessException | IllegalArgumentException e) {
             log.error(FAILED_QUERY_DB, e);
-            return CheckResultFactory.createNameErrorCheckResult(check.getName(), FAILED_QUERY_DB);
+            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_DB);
         } catch (Exception e) {
             log.error(FAILED_SAVE_TO_INTERNAL_DB, e);
-            return CheckResultFactory.createNameErrorCheckResult(check.getName(), FAILED_SAVE_TO_INTERNAL_DB);
+            return createNameErrorCheckResult(check.getName(), FAILED_SAVE_TO_INTERNAL_DB);
         }
     }
 

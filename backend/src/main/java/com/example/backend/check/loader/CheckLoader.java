@@ -6,7 +6,6 @@ import com.example.backend.check.common.exception.io.ChecksNotLoadedException;
 import com.example.backend.check.common.validator.FilepathValidator;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckInputDto;
-import com.example.backend.check.model.factory.CheckFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +18,7 @@ import java.util.List;
 
 import static com.example.backend.check.common.error.message.LoadingErrorMessage.CHECK_INPUT_DTO_INCORRECT;
 import static com.example.backend.check.common.error.message.LoadingErrorMessage.FAILED_TO_LOAD_CONTENT;
+import static com.example.backend.check.model.factory.CheckFactory.*;
 
 
 @Slf4j
@@ -57,7 +57,7 @@ public class CheckLoader {
         }
 
         if (checkInputDto.getName() == null || checkInputDto.getName().isEmpty()) {
-            return CheckFactory.createErrorCheck(CHECK_INPUT_DTO_INCORRECT);
+            return createErrorCheck(CHECK_INPUT_DTO_INCORRECT);
         }
 
         String filename = checkInputDto.getName() + CheckLoaderUtils.CHECK_FILE_EXTENSION;
@@ -73,10 +73,10 @@ public class CheckLoader {
 
         try {
             String content = Files.readString(filepath);
-            return CheckFactory.createCheck(queryName, content);
+            return createCheck(queryName, content);
         } catch (Exception e) {
             log.error(FAILED_TO_LOAD_CONTENT);
-            return CheckFactory.createNameErrorCheck(queryName, FAILED_TO_LOAD_CONTENT);
+            return createNameErrorCheck(queryName, FAILED_TO_LOAD_CONTENT);
         }
     }
 

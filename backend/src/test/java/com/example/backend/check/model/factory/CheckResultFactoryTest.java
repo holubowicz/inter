@@ -7,6 +7,7 @@ import com.example.backend.check.common.exception.name.NameNullException;
 import com.example.backend.check.model.CheckResult;
 import org.junit.jupiter.api.Test;
 
+import static com.example.backend.check.model.factory.CheckResultFactory.createNameErrorCheckResult;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -16,9 +17,7 @@ class CheckResultFactoryTest {
     void createNameErrorCheckResult_whenNameIsNull_thenThrowsNameNullException() {
         String error = "Some error";
 
-        assertThrows(NameNullException.class, () ->
-                CheckResultFactory.createNameErrorCheckResult(null, error)
-        );
+        assertThrows(NameNullException.class, () -> createNameErrorCheckResult(null, error));
     }
 
     @Test
@@ -26,9 +25,7 @@ class CheckResultFactoryTest {
         String name = "";
         String error = "Some error";
 
-        assertThrows(NameEmptyException.class, () ->
-                CheckResultFactory.createNameErrorCheckResult(name, error)
-        );
+        assertThrows(NameEmptyException.class, () -> createNameErrorCheckResult(name, error));
     }
 
     @Test
@@ -36,18 +33,14 @@ class CheckResultFactoryTest {
         String name = " ";
         String error = "Some error";
 
-        assertThrows(NameEmptyException.class, () ->
-                CheckResultFactory.createNameErrorCheckResult(name, error)
-        );
+        assertThrows(NameEmptyException.class, () -> createNameErrorCheckResult(name, error));
     }
 
     @Test
     void createNameErrorCheckResult_whenErrorIsNull_thenThrowsErrorNullException() {
         String name = "check-name";
 
-        assertThrows(ErrorNullException.class, () ->
-                CheckResultFactory.createNameErrorCheckResult(name, null)
-        );
+        assertThrows(ErrorNullException.class, () -> createNameErrorCheckResult(name, null));
     }
 
     @Test
@@ -55,9 +48,7 @@ class CheckResultFactoryTest {
         String name = "check-name";
         String error = "";
 
-        assertThrows(ErrorEmptyException.class, () ->
-                CheckResultFactory.createNameErrorCheckResult(name, error)
-        );
+        assertThrows(ErrorEmptyException.class, () -> createNameErrorCheckResult(name, error));
     }
 
     @Test
@@ -65,9 +56,7 @@ class CheckResultFactoryTest {
         String name = "check-name";
         String error = " ";
 
-        assertThrows(ErrorEmptyException.class, () ->
-                CheckResultFactory.createNameErrorCheckResult(name, error)
-        );
+        assertThrows(ErrorEmptyException.class, () -> createNameErrorCheckResult(name, error));
     }
 
     @Test
@@ -75,7 +64,7 @@ class CheckResultFactoryTest {
         String name = "check-name";
         String error = "Some error";
 
-        CheckResult checkResult = CheckResultFactory.createNameErrorCheckResult(name, error);
+        CheckResult checkResult = createNameErrorCheckResult(name, error);
 
         assertEquals(name, checkResult.getName());
         assertEquals(error, checkResult.getError());
