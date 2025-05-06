@@ -76,6 +76,15 @@ class CheckServiceTest {
     }
 
     @Test
+    void getCheckExecutionDTOs_whenCheckNameIsBlankSpace_thenThrowsNameEmptyException() {
+        String checkName = " ";
+
+        assertThrows(NameEmptyException.class, () ->
+                underTest.getCheckExecutionDTOs(checkName)
+        );
+    }
+
+    @Test
     void getCheckExecutionDTOs_whenCheckNameProvided_thenReturnsCheckExecutionDTOs() {
         String checkName = "check-name";
 
@@ -106,7 +115,10 @@ class CheckServiceTest {
             assertNotNull(checkResult);
             assertNotNull(checkResult.getName());
             assertFalse(checkResult.getName().isEmpty());
-            assertNotNull(checkResult.getExecutionTime());
+            assertNotNull(checkResult.getCheck());
+            assertNotNull(checkResult.getCheck().getResult());
+            assertNotNull(checkResult.getCheck().getTimestamp());
+            assertNotNull(checkResult.getCheck().getExecutionTime());
         });
     }
 

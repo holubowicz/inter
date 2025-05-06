@@ -6,6 +6,6 @@ import lombok.experimental.UtilityClass;
 public final class DatabaseErrorMessage {
 
     public static final String FAILED_QUERY_DB = "Failed to query database";
-    public static final String FAILED_SAVE_TO_INTERNAL_DB = "Failed to save to internal database";
+    public static final String FAILED_QUERY_INTERNAL_DB = "Failed to query internal database";
 
 }

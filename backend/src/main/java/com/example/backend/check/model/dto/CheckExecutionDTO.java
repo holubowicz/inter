@@ -10,9 +10,8 @@ import java.time.Instant;
 @AllArgsConstructor
 public class CheckExecutionDTO {
 
-    private String checkName;
-    private Instant timestamp;
     private BigDecimal result;
     private Long executionTime;
+    private Instant timestamp;
 
 }

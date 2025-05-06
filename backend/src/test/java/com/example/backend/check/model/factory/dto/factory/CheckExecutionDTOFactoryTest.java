@@ -95,7 +95,6 @@ class CheckExecutionDTOFactoryTest {
         CheckExecutionDTO checkExecutionDTO = createCheckExecutionDTO(checkExecution);
 
         assertNotNull(checkExecutionDTO);
-        assertEquals(checkName, checkExecutionDTO.getCheckName());
         assertEquals(timestamp, checkExecutionDTO.getTimestamp());
         assertEquals(0, result.compareTo(checkExecutionDTO.getResult()));
         assertEquals(executionTime, checkExecutionDTO.getExecutionTime());

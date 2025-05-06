@@ -27,10 +27,6 @@ public class CheckExecution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CreationTimestamp
-    @Column(nullable = false)
-    private Instant timestamp;
-
     @Column(name = "check_name", nullable = false)
     private String checkName;
 
@@ -39,5 +35,9 @@ public class CheckExecution {
 
     @Column(name = "execution_time", nullable = false)
     private Long executionTime;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    private Instant timestamp;
 
 }

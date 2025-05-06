@@ -11,10 +11,9 @@ public final class CheckExecutionDTOFactory {
     public static CheckExecutionDTO createCheckExecutionDTO(CheckExecution checkExecution) {
         CheckExecutionValidator.validate(checkExecution);
         return new CheckExecutionDTO(
-                checkExecution.getCheckName(),
-                checkExecution.getTimestamp(),
                 checkExecution.getResult(),
-                checkExecution.getExecutionTime()
+                checkExecution.getExecutionTime(),
+                checkExecution.getTimestamp()
         );
     }
 

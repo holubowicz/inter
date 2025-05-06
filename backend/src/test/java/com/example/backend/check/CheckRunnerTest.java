@@ -86,9 +86,7 @@ class CheckRunnerTest {
 
         assertNotNull(checkDTO);
         assertEquals(checkName, checkDTO.getName());
-        assertNull(checkDTO.getLastResult());
-        assertNull(checkDTO.getLastTimestamp());
-        assertNull(checkDTO.getLastExecutionTime());
+        assertNull(checkDTO.getLastCheck());
     }
 
     @Test
@@ -107,9 +105,10 @@ class CheckRunnerTest {
 
         assertNotNull(checkDTO);
         assertEquals(checkName, checkDTO.getName());
-        assertEquals(0, lastResult.compareTo(checkDTO.getLastResult()));
-        assertNotNull(checkDTO.getLastTimestamp());
-        assertEquals(lastExecutionTime, checkDTO.getLastExecutionTime());
+        assertNotNull(checkDTO.getLastCheck());
+        assertEquals(0, lastResult.compareTo(checkDTO.getLastCheck().getResult()));
+        assertNotNull(checkDTO.getLastCheck().getTimestamp());
+        assertEquals(lastExecutionTime, checkDTO.getLastCheck().getExecutionTime());
     }
 
 
@@ -209,8 +208,9 @@ class CheckRunnerTest {
 
         assertNotNull(checkResult);
         assertEquals(check.getName(), checkResult.getName());
-        assertEquals(0, result.compareTo(checkResult.getResult()));
-        assertNotNull(checkResult.getExecutionTime());
+        assertNotNull(checkResult.getCheck());
+        assertEquals(0, result.compareTo(checkResult.getCheck().getResult()));
+        assertNotNull(checkResult.getCheck().getExecutionTime());
     }
 
     @Test
@@ -292,8 +292,12 @@ class CheckRunnerTest {
 
         CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
 
-        assertEquals(0, lastResult.compareTo(checkTrend.getLastResult()));
+        assertEquals(0, lastResult.compareTo(checkTrend.getLastCheck().getResult()));
         assertEquals(100.0, checkTrend.getTrendPercentage());
+        assertNotNull(checkTrend.getLastCheck());
+        assertEquals(0, lastResult.compareTo(checkTrend.getLastCheck().getResult()));
+        assertEquals(executionTime, checkTrend.getLastCheck().getExecutionTime());
+        assertNotNull(checkTrend.getLastCheck().getTimestamp());
     }
 
     @Test
@@ -310,8 +314,12 @@ class CheckRunnerTest {
 
         CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
 
-        assertEquals(0, lastResult.compareTo(checkTrend.getLastResult()));
+        assertEquals(0, lastResult.compareTo(checkTrend.getLastCheck().getResult()));
         assertNull(checkTrend.getTrendPercentage());
+        assertNotNull(checkTrend.getLastCheck());
+        assertEquals(0, lastResult.compareTo(checkTrend.getLastCheck().getResult()));
+        assertEquals(executionTime, checkTrend.getLastCheck().getExecutionTime());
+        assertNotNull(checkTrend.getLastCheck().getTimestamp());
     }
 
     @Test
@@ -321,8 +329,7 @@ class CheckRunnerTest {
 
         CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
 
-        assertNull(checkTrend.getLastResult());
-        assertNull(checkTrend.getTrendPercentage());
+        assertNull(checkTrend.getLastCheck());
     }
 
 
@@ -373,9 +380,13 @@ class CheckRunnerTest {
         BigDecimal result = BigDecimal.valueOf(10);
         long executionTime = 1;
 
-        assertDoesNotThrow(() ->
-                underTest.saveResultToHistory(checkName, result, executionTime)
-        );
+        CheckExecution checkExecution = underTest.saveResultToHistory(checkName, result, executionTime);
+
+        assertNotNull(checkExecution);
+        assertEquals(checkName, checkExecution.getCheckName());
+        assertEquals(0, result.compareTo(checkExecution.getResult()));
+        assertEquals(executionTime, checkExecution.getExecutionTime());
+        assertNotNull(checkExecution.getTimestamp());
     }
 
 }

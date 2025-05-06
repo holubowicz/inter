@@ -9,11 +9,12 @@ import com.example.backend.check.model.CheckExecution;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
 import com.example.backend.check.model.dto.CheckDTO;
+import com.example.backend.check.model.dto.CheckExecutionDTO;
+import com.example.backend.check.model.dto.factory.CheckExecutionDTOFactory;
 import com.example.backend.check.model.repository.CheckExecutionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +23,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_DB;
-import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_SAVE_TO_INTERNAL_DB;
+import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_INTERNAL_DB;
 import static com.example.backend.check.model.dto.factory.CheckDTOFactory.createNameCheckDTO;
+import static com.example.backend.check.model.dto.factory.CheckExecutionDTOFactory.createCheckExecutionDTO;
 import static com.example.backend.check.model.factory.CheckResultFactory.createNameErrorCheckResult;
 
 @Slf4j
@@ -44,11 +46,10 @@ public class CheckRunner {
         NameValidator.validate(checkName);
         return checkExecutionRepository
                 .findTopByCheckNameOrderByTimestampDesc(checkName)
-                .map(checkExecution -> new CheckDTO(
+                .map(CheckExecutionDTOFactory::createCheckExecutionDTO)
+                .map(checkExecutionDTO -> new CheckDTO(
                         checkName,
-                        checkExecution.getResult(),
-                        checkExecution.getTimestamp(),
-                        checkExecution.getExecutionTime()
+                        checkExecutionDTO
                 ))
                 .orElseGet(() -> createNameCheckDTO(checkName));
     }
@@ -69,71 +70,76 @@ public class CheckRunner {
             return createNameErrorCheckResult(check.getName(), check.getError());
         }
 
+        BigDecimal currentResult;
+        long startTime = System.currentTimeMillis();
+        // TODO: separate to other method
         try {
-            long startTime = System.currentTimeMillis();
-            // TODO: secure ran queries, allow only to run SELECT queries
-            BigDecimal currentResult = jdbcTemplate.queryForObject(check.getQuery(), BigDecimal.class);
-            long executionTime = System.currentTimeMillis() - startTime;
-
-            CheckTrend checkTrend = calculateTrend(check.getName(), currentResult);
-            saveResultToHistory(check.getName(), currentResult, executionTime);
-
-            return new CheckResult(
-                    check.getName(),
-                    null,
-                    currentResult,
-                    executionTime,
-                    checkTrend.getLastResult(),
-                    checkTrend.getLastTimestamp(),
-                    checkTrend.getTrendPercentage()
-            );
-        } catch (DataAccessException | IllegalArgumentException e) {
-            log.error(FAILED_QUERY_DB, e);
-            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_DB);
+            currentResult = jdbcTemplate.queryForObject(check.getQuery(), BigDecimal.class);
         } catch (Exception e) {
-            log.error(FAILED_SAVE_TO_INTERNAL_DB, e);
-            return createNameErrorCheckResult(check.getName(), FAILED_SAVE_TO_INTERNAL_DB);
+            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_DB);
         }
+        long executionTime = System.currentTimeMillis() - startTime;
+
+        CheckTrend checkTrend;
+        CheckExecution currentCheckExecution;
+        try {
+            // TODO: separate to other method
+            checkTrend = calculateTrend(check.getName(), currentResult);
+            // TODO: separate to other method
+            currentCheckExecution = saveResultToHistory(check.getName(), currentResult, executionTime);
+        } catch (Exception e) {
+            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_INTERNAL_DB);
+        }
+
+        CheckExecutionDTO currentCheckExecutionDTO = createCheckExecutionDTO(currentCheckExecution);
+
+        // TODO: create method to create CheckResult using Factory
+        return CheckResult.builder()
+                .name(check.getName())
+                .trendPercentage(checkTrend.getTrendPercentage())
+                .check(currentCheckExecutionDTO)
+                .lastCheck(checkTrend.getLastCheck())
+                .build();
     }
 
     public CheckTrend calculateTrend(String checkName, BigDecimal currentResult) {
         NameValidator.validate(checkName);
         ResultValidator.validate(currentResult);
 
-        Optional<CheckExecution> lastResultOpt = checkExecutionRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
-        if (lastResultOpt.isEmpty()) {
-            return CheckTrend.builder().build();
+        Optional<CheckExecution> lastCheckExecutionOpt = checkExecutionRepository
+                .findTopByCheckNameOrderByTimestampDesc(checkName);
+
+        if (lastCheckExecutionOpt.isEmpty()) {
+            return new CheckTrend();
         }
 
-        BigDecimal lastResult = lastResultOpt.get().getResult();
-        CheckTrend.CheckTrendBuilder builder = CheckTrend.builder()
-                .lastResult(lastResult)
-                .lastTimestamp(lastResultOpt.get().getTimestamp());
+        CheckExecutionDTO lastCheckExecutionDTO = createCheckExecutionDTO(lastCheckExecutionOpt.get());
 
-        double previous = lastResult.doubleValue();
         double current = currentResult.doubleValue();
+        double previous = lastCheckExecutionDTO.getResult().doubleValue();
 
+        Double trendPercentage = null;
         if (previous != 0) {
             double trend = (current / previous - 1) * 100;
-            double roundedTrend = Math.round(trend * 100) / 100.0;
-            builder.trendPercentage(roundedTrend);
+            trendPercentage = Math.round(trend * 100) / 100.0;
         }
 
-        return builder.build();
+        return new CheckTrend(trendPercentage, lastCheckExecutionDTO);
     }
 
-    public void saveResultToHistory(String checkName, BigDecimal result, Long executionTime) {
+    public CheckExecution saveResultToHistory(String checkName, BigDecimal result, Long executionTime) {
         NameValidator.validate(checkName);
         ResultValidator.validate(result);
         ExecutionTimeValidator.validate(executionTime);
 
+        // TODO: create factory for CheckExecution (INSERT)
         CheckExecution checkExecution = CheckExecution.builder()
                 .checkName(checkName)
                 .result(result)
                 .executionTime(executionTime)
                 .build();
 
-        checkExecutionRepository.save(checkExecution);
+        return checkExecutionRepository.save(checkExecution);
     }
 
 }

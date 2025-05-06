@@ -1,17 +1,16 @@
 package com.example.backend.check.model;
 
-import lombok.Builder;
+import com.example.backend.check.model.dto.CheckExecutionDTO;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.math.BigDecimal;
-import java.time.Instant;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CheckTrend {
 
-    private final BigDecimal lastResult;
-    private final Instant lastTimestamp;
-    private final Double trendPercentage;
+    private Double trendPercentage;
+    private CheckExecutionDTO lastCheck;
 
 }
