@@ -5,7 +5,7 @@ import com.example.backend.check.common.exception.ResultNullException;
 import com.example.backend.check.common.exception.name.NameEmptyException;
 import com.example.backend.check.common.exception.name.NameNullException;
 import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.CheckDTO;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
 import com.example.backend.database.schema.CheckHistory;
@@ -63,36 +63,36 @@ class CheckRunnerTest {
 
 
     @Test
-    void getCheckDto_whenCheckNameIsNull_thenThrowsNameNullException() {
+    void getCheckDTO_whenCheckNameIsNull_thenThrowsNameNullException() {
         assertThrows(NameNullException.class, () ->
-                underTest.getCheckDto(null)
+                underTest.getCheckDTO(null)
         );
     }
 
     @Test
-    void getCheckDto_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
+    void getCheckDTO_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
         String checkName = "";
 
         assertThrows(NameEmptyException.class, () ->
-                underTest.getCheckDto(checkName)
+                underTest.getCheckDTO(checkName)
         );
     }
 
     @Test
-    void getCheckDto_whenNoResultHistorySaved_thenReturnsNotFullCheckDto() {
+    void getCheckDTO_whenNoResultHistorySaved_thenReturnsNotFullCheckDTO() {
         String checkName = "check-name";
 
-        CheckDto checkDto = underTest.getCheckDto(checkName);
+        CheckDTO checkDTO = underTest.getCheckDTO(checkName);
 
-        assertNotNull(checkDto);
-        assertEquals(checkName, checkDto.getName());
-        assertNull(checkDto.getLastResult());
-        assertNull(checkDto.getLastTimestamp());
-        assertNull(checkDto.getLastExecutionTime());
+        assertNotNull(checkDTO);
+        assertEquals(checkName, checkDTO.getName());
+        assertNull(checkDTO.getLastResult());
+        assertNull(checkDTO.getLastTimestamp());
+        assertNull(checkDTO.getLastExecutionTime());
     }
 
     @Test
-    void getCheckDto_whenResultHistorySaved_thenReturnsNotFullCheckDto() {
+    void getCheckDTO_whenResultHistorySaved_thenReturnsNotFullCheckDTO() {
         String checkName = "check-name";
         BigDecimal lastResult = BigDecimal.valueOf(10);
         Long lastExecutionTime = 10L;
@@ -103,44 +103,44 @@ class CheckRunnerTest {
                 .build()
         );
 
-        CheckDto checkDto = underTest.getCheckDto(checkName);
+        CheckDTO checkDTO = underTest.getCheckDTO(checkName);
 
-        assertNotNull(checkDto);
-        assertEquals(checkName, checkDto.getName());
-        assertEquals(0, lastResult.compareTo(checkDto.getLastResult()));
-        assertNotNull(checkDto.getLastTimestamp());
-        assertEquals(lastExecutionTime, checkDto.getLastExecutionTime());
+        assertNotNull(checkDTO);
+        assertEquals(checkName, checkDTO.getName());
+        assertEquals(0, lastResult.compareTo(checkDTO.getLastResult()));
+        assertNotNull(checkDTO.getLastTimestamp());
+        assertEquals(lastExecutionTime, checkDTO.getLastExecutionTime());
     }
 
 
     @Test
-    void getCheckHistoryList_whenCheckNameIsNull_thenThrowsNameNullException() {
+    void getCheckHistories_whenCheckNameIsNull_thenThrowsNameNullException() {
         assertThrows(NameNullException.class, () ->
-                underTest.getCheckHistoryList(null)
+                underTest.getCheckHistories(null)
         );
     }
 
     @Test
-    void getCheckHistoryList_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
+    void getCheckHistories_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
         String checkName = "";
 
         assertThrows(NameEmptyException.class, () ->
-                underTest.getCheckHistoryList(checkName)
+                underTest.getCheckHistories(checkName)
         );
     }
 
     @Test
-    void getCheckHistoryList_whenCheckNameProvidedNoHistorySaved_thenReturnsEmptyCheckHistoryList() {
+    void getCheckHistories_whenCheckNameProvidedNoHistorySaved_thenReturnsEmptyCheckHistories() {
         String checkName = "check-name";
 
-        List<CheckHistory> checkHistoryList = underTest.getCheckHistoryList(checkName);
+        List<CheckHistory> checkHistoryList = underTest.getCheckHistories(checkName);
 
         assertNotNull(checkHistoryList);
         assertEquals(0, checkHistoryList.size());
     }
 
     @Test
-    void getCheckHistoryList_whenCheckNameProvidedOneHistorySaved_thenReturnsCheckHistoryList() {
+    void getCheckHistories_whenCheckNameProvidedOneHistorySaved_thenReturnsCheckHistories() {
         String checkName = "check-name";
         int expectedSize = 1;
         BigDecimal lastResult = BigDecimal.valueOf(10);
@@ -151,7 +151,7 @@ class CheckRunnerTest {
                 .executionTime(lastExecutionTime)
                 .build());
 
-        List<CheckHistory> checkHistoryList = underTest.getCheckHistoryList(checkName);
+        List<CheckHistory> checkHistoryList = underTest.getCheckHistories(checkName);
 
         assertNotNull(checkHistoryList);
         assertEquals(expectedSize, checkHistoryList.size());
@@ -161,7 +161,7 @@ class CheckRunnerTest {
     }
 
     @Test
-    void getCheckHistoryList_whenCheckNameProvidedMultipleHistoriesSaved_thenReturnsCheckHistoryList() {
+    void getCheckHistories_whenCheckNameProvidedMultipleHistoriesSaved_thenReturnsCheckHistories() {
         String checkName = "check-name";
         int expectedSize = 3;
         checkHistoryRepository.saveAll(List.of(
@@ -170,7 +170,7 @@ class CheckRunnerTest {
                 CheckHistory.builder().checkName(checkName).result(BigDecimal.valueOf(12)).executionTime(10L).build()
         ));
 
-        List<CheckHistory> checkHistoryList = underTest.getCheckHistoryList(checkName);
+        List<CheckHistory> checkHistoryList = underTest.getCheckHistories(checkName);
 
         assertNotNull(checkHistoryList);
         assertEquals(expectedSize, checkHistoryList.size());

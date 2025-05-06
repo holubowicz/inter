@@ -8,7 +8,7 @@ import java.time.Instant;
 
 @Getter
 @AllArgsConstructor
-public class CheckHistoryDto {
+public class CheckHistoryDTO {
 
     private String checkName;
     private Instant timestamp;

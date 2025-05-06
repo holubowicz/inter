@@ -5,7 +5,7 @@ import com.example.backend.check.common.validator.ExecutionTimeValidator;
 import com.example.backend.check.common.validator.NameValidator;
 import com.example.backend.check.common.validator.ResultValidator;
 import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckDto;
+import com.example.backend.check.model.CheckDTO;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
 import com.example.backend.database.schema.CheckHistory;
@@ -23,7 +23,7 @@ import java.util.Optional;
 
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_DB;
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_SAVE_TO_INTERNAL_DB;
-import static com.example.backend.check.model.factory.CheckDtoFactory.createNameCheckDto;
+import static com.example.backend.check.model.factory.CheckDTOFactory.createNameCheckDTO;
 import static com.example.backend.check.model.factory.CheckResultFactory.createNameErrorCheckResult;
 
 @Slf4j
@@ -40,20 +40,20 @@ public class CheckRunner {
         this.checkHistoryRepository = checkHistoryRepository;
     }
 
-    public CheckDto getCheckDto(String checkName) {
+    public CheckDTO getCheckDTO(String checkName) {
         NameValidator.validate(checkName);
         return checkHistoryRepository
                 .findTopByCheckNameOrderByTimestampDesc(checkName)
-                .map(checkHistory -> new CheckDto(
+                .map(checkHistory -> new CheckDTO(
                         checkName,
                         checkHistory.getResult(),
                         checkHistory.getTimestamp(),
                         checkHistory.getExecutionTime()
                 ))
-                .orElseGet(() -> createNameCheckDto(checkName));
+                .orElseGet(() -> createNameCheckDTO(checkName));
     }
 
-    public List<CheckHistory> getCheckHistoryList(String checkName) {
+    public List<CheckHistory> getCheckHistories(String checkName) {
         NameValidator.validate(checkName);
         return checkHistoryRepository.findByCheckNameOrderByTimestamp(checkName.toLowerCase());
     }

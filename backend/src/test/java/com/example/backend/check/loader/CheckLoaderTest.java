@@ -1,11 +1,11 @@
 package com.example.backend.check.loader;
 
-import com.example.backend.check.common.exception.CheckInputDtoNullException;
+import com.example.backend.check.common.exception.CheckInputDTONullException;
 import com.example.backend.check.common.exception.filepath.FilepathEmptyException;
 import com.example.backend.check.common.exception.filepath.FilepathNullException;
 import com.example.backend.check.common.exception.io.CheckDirectoryNotFoundException;
 import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckInputDto;
+import com.example.backend.check.model.CheckInputDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,12 +36,12 @@ class CheckLoaderTest {
     void getCheckNameList_whenIncorrectChecksPathSet_thenThrowCheckDirectoryNotFoundException() {
         checkLoaderConfiguration.setChecksPath("path/that/does/not/exist");
 
-        assertThrows(CheckDirectoryNotFoundException.class, underTest::getCheckNameList);
+        assertThrows(CheckDirectoryNotFoundException.class, underTest::getCheckNames);
     }
 
     @Test
     void getCheckNameList_whenCorrectChecksPathSet_thenReturnsListOfCheckName() {
-        List<String> result = underTest.getCheckNameList();
+        List<String> result = underTest.getCheckNames();
 
         assertFalse(result.isEmpty());
         result.forEach(checkName -> {
@@ -52,17 +52,17 @@ class CheckLoaderTest {
 
 
     @Test
-    void convertCheckInputDtoToCheck_whenCheckInputDtoIsNull_thenThrowsCheckInputDtoNullException() {
-        assertThrows(CheckInputDtoNullException.class, () ->
-                underTest.convertCheckInputDtoToCheck(null)
+    void convertIntoCheck_whenCheckInputDTOIsNull_thenThrowsCheckInputDTONullException() {
+        assertThrows(CheckInputDTONullException.class, () ->
+                underTest.convertIntoCheck(null)
         );
     }
 
     @Test
-    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsValid_thenReturnsCheck() {
-        CheckInputDto checkInputDto = new CheckInputDto("absolute-avg");
+    void convertIntoCheck_whenCheckInputDTONameIsValid_thenReturnsCheck() {
+        CheckInputDTO checkInputDTO = new CheckInputDTO("absolute-avg");
 
-        Check check = underTest.convertCheckInputDtoToCheck(checkInputDto);
+        Check check = underTest.convertIntoCheck(checkInputDTO);
 
         assertNotNull(check);
         assertEquals("absolute-avg", check.getName());
@@ -71,10 +71,10 @@ class CheckLoaderTest {
     }
 
     @Test
-    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsInvalid_thenReturnsErrorCheck() {
-        CheckInputDto checkInputDto = new CheckInputDto("not-exist");
+    void convertIntoCheck_whenCheckInputDTONameIsInvalid_thenReturnsErrorCheck() {
+        CheckInputDTO checkInputDTO = new CheckInputDTO("not-exist");
 
-        Check check = underTest.convertCheckInputDtoToCheck(checkInputDto);
+        Check check = underTest.convertIntoCheck(checkInputDTO);
 
         assertNotNull(check);
         assertEquals("not-exist", check.getName());
@@ -84,10 +84,10 @@ class CheckLoaderTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void convertCheckInputDtoToCheck_whenCheckInputDtoNameIsIncorrect_thenReturnsErrorCheck(String checkName) {
-        CheckInputDto checkInputDto = new CheckInputDto(checkName);
+    void convertIntoCheck_whenCheckInputDTONameIsIncorrect_thenReturnsErrorCheck(String checkName) {
+        CheckInputDTO checkInputDTO = new CheckInputDTO(checkName);
 
-        Check check = underTest.convertCheckInputDtoToCheck(checkInputDto);
+        Check check = underTest.convertIntoCheck(checkInputDTO);
 
         assertNotNull(check);
         assertNull(check.getQuery());

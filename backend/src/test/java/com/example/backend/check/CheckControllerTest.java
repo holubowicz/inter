@@ -60,7 +60,7 @@ class CheckControllerTest {
 
 
     @Test
-    public void getCheckDtoList_whenRequestSent_thenVerifyResponseStructure() throws Exception {
+    public void getCheckDTOs_whenRequestSent_thenVerifyResponseStructure() throws Exception {
         this.mockMvc.perform(get("/api/checks"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -72,7 +72,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void getCheckDtoList_whenRequestSent_thenVerifyResultValues() throws Exception {
+    public void getCheckDTOs_whenRequestSent_thenVerifyResultValues() throws Exception {
         List<String> EXPECTED_NAMES = Arrays.asList(
                 "absolute-avg",
                 "avg-all",
@@ -93,7 +93,7 @@ class CheckControllerTest {
 
 
     @Test
-    public void getCheckHistoryDtoList_whenRequestSent_thenVerifyResponseStructure() throws Exception {
+    public void getCheckHistoryDTOs_whenRequestSent_thenVerifyResponseStructure() throws Exception {
         this.mockMvc.perform(get("/api/checks/check-name/history"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -102,7 +102,7 @@ class CheckControllerTest {
 
 
     @Test
-    public void runCheckDtoList_whenCheckDtoListIsNotProvided_thenIsBadRequest() throws Exception {
+    public void runCheckDTOs_whenCheckDTOsIsNotProvided_thenIsBadRequest() throws Exception {
         this.mockMvc.perform(post("/api/checks/run"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -110,7 +110,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenCheckDtoListIsEmpty_thenIsBadRequest() throws Exception {
+    public void runCheckDTOs_whenCheckDTOsIsEmpty_thenIsBadRequest() throws Exception {
         this.mockMvc.perform(post("/api/checks/run")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ArrayList<>().toString()))
@@ -120,7 +120,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenCheckDtoListIsNotCheckDtoType_thenIsBadRequest() throws Exception {
+    public void runCheckDTOs_whenCheckDTOsIsNotCheckDTOType_thenIsBadRequest() throws Exception {
         this.mockMvc.perform(post("/api/checks/run")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("[{\"msg\":  \"bad request\"}]"))
@@ -132,7 +132,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenSingleCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDTOs_whenSingleCheckDTOProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"absolute-avg\"}]";
         final int EXPECTED_SIZE = 1;
 
@@ -151,7 +151,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenSingleNotExistingCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDTOs_whenSingleNotExistingCheckDTOProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"not-existing\"}]";
         final int EXPECTED_SIZE = 1;
 
@@ -173,7 +173,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenSingleWrongQueryFormatCheckDtoProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDTOs_whenSingleWrongQueryFormatCheckDTOProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"wrong-sql-format\"}]";
         final int EXPECTED_SIZE = 1;
 
@@ -195,7 +195,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenSingleCheckDtoProvided_thenVerifyResultValue() throws Exception {
+    public void runCheckDTOs_whenSingleCheckDTOProvided_thenVerifyResultValue() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"positive-count\"}]";
 
         final String EXPECTED_NAME = "positive-count";
@@ -214,7 +214,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenMultipleCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDTOs_whenMultipleCheckDTOsProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"absolute-avg\"},{\"name\": \"avg-all\"},{\"name\": \"negative-count\"}]";
         final int EXPECTED_SIZE = 3;
 
@@ -234,7 +234,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenMultipleNotExistingCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDTOs_whenMultipleNotExistingCheckDTOsProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"not-existing-1\"},{\"name\": \"not-existing-1\"},{\"name\": \"not-existing-1\"}]";
         final int EXPECTED_SIZE = 3;
 
@@ -254,7 +254,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenMultipleWrongQueryFormatCheckDtosProvided_thenVerifyResponseStructure() throws Exception {
+    public void runCheckDTOs_whenMultipleWrongQueryFormatCheckDTOsProvided_thenVerifyResponseStructure() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"wrong-sql-format\"},{\"name\": \"wrong-sql-format\"}]";
         final int EXPECTED_SIZE = 2;
 
@@ -274,7 +274,7 @@ class CheckControllerTest {
     }
 
     @Test
-    public void runCheckDtoList_whenMultipleCheckDtosProvided_thenVerifyResultValues() throws Exception {
+    public void runCheckDTOs_whenMultipleCheckDTOsProvided_thenVerifyResultValues() throws Exception {
         final String REQUEST_BODY = "[{\"name\": \"negative-count\"},{\"name\": \"positive-count\"},{\"name\": \"total-count\"}]";
 
         final String EXPECTED_NAME_1 = "negative-count";

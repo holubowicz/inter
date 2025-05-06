@@ -1,8 +1,8 @@
 package com.example.backend.check;
 
-import com.example.backend.check.model.CheckDto;
-import com.example.backend.check.model.CheckHistoryDto;
-import com.example.backend.check.model.CheckInputDto;
+import com.example.backend.check.model.CheckDTO;
+import com.example.backend.check.model.CheckHistoryDTO;
+import com.example.backend.check.model.CheckInputDTO;
 import com.example.backend.check.model.CheckResult;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,29 +26,29 @@ public class CheckController {
     }
 
     @GetMapping
-    public List<CheckDto> getCheckDtoList() {
-        return checkService.getCheckDtoList();
+    public List<CheckDTO> getCheckDTOs() {
+        return checkService.getCheckDTOs();
     }
 
     @GetMapping("{checkName}/history")
-    public List<CheckHistoryDto> getCheckHistoryDtoList(@PathVariable String checkName) {
-        return checkService.getCheckHistoryDtoList(checkName);
+    public List<CheckHistoryDTO> getCheckHistoryDTOs(@PathVariable String checkName) {
+        return checkService.getCheckHistoryDTOs(checkName);
     }
 
     @PostMapping("run")
-    public ResponseEntity<?> runCheckDtoList(@Nullable @RequestBody List<CheckInputDto> checkInputDtoList) {
-        if (checkInputDtoList == null || checkInputDtoList.isEmpty()) {
+    public ResponseEntity<?> runCheckDTOs(@Nullable @RequestBody List<CheckInputDTO> checkInputDTOs) {
+        if (checkInputDTOs == null || checkInputDTOs.isEmpty()) {
             return ResponseEntity.badRequest().body(CHECK_INPUT_DTO_LIST_INCORRECT);
         }
 
-        boolean allMatchCheckDto = checkInputDtoList.stream()
+        boolean allMatchCheckDTO = checkInputDTOs.stream()
                 .allMatch(item -> item != null && item.getName() != null && !item.getName().isEmpty());
 
-        if (!allMatchCheckDto) {
+        if (!allMatchCheckDTO) {
             return ResponseEntity.badRequest().body(CHECK_INPUT_DTO_LIST_ITEM_INCORRECT);
         }
 
-        List<CheckResult> results = checkService.runCheckDtoList(checkInputDtoList);
+        List<CheckResult> results = checkService.runCheckDTOs(checkInputDTOs);
 
         return ResponseEntity.ok(results);
     }

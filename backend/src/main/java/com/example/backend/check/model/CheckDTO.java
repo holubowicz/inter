@@ -10,7 +10,7 @@ import java.time.Instant;
 @Getter
 @Builder
 @AllArgsConstructor
-public class CheckDto {
+public class CheckDTO {
 
     private final String name;
     private final BigDecimal lastResult;

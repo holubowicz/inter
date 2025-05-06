@@ -1,11 +1,11 @@
 package com.example.backend.check.loader;
 
-import com.example.backend.check.common.exception.CheckInputDtoNullException;
+import com.example.backend.check.common.exception.CheckInputDTONullException;
 import com.example.backend.check.common.exception.io.CheckDirectoryNotFoundException;
 import com.example.backend.check.common.exception.io.ChecksNotLoadedException;
 import com.example.backend.check.common.validator.FilepathValidator;
 import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckInputDto;
+import com.example.backend.check.model.CheckInputDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class CheckLoader {
         this.checkLoaderConfiguration = checkLoaderConfiguration;
     }
 
-    public List<String> getCheckNameList() {
+    public List<String> getCheckNames() {
         Path checksPath = Paths.get(this.checkLoaderConfiguration.getChecksPath())
                 .toAbsolutePath();
 
@@ -51,16 +51,16 @@ public class CheckLoader {
         }
     }
 
-    public Check convertCheckInputDtoToCheck(CheckInputDto checkInputDto) {
-        if (checkInputDto == null) {
-            throw new CheckInputDtoNullException();
+    public Check convertIntoCheck(CheckInputDTO checkInputDTO) {
+        if (checkInputDTO == null) {
+            throw new CheckInputDTONullException();
         }
 
-        if (checkInputDto.getName() == null || checkInputDto.getName().isEmpty()) {
+        if (checkInputDTO.getName() == null || checkInputDTO.getName().isEmpty()) {
             return createErrorCheck(CHECK_INPUT_DTO_INCORRECT);
         }
 
-        String filename = checkInputDto.getName() + CheckLoaderUtils.CHECK_FILE_EXTENSION;
+        String filename = checkInputDTO.getName() + CheckLoaderUtils.CHECK_FILE_EXTENSION;
         Path filepath = Paths.get(this.checkLoaderConfiguration.getChecksPath(), filename);
 
         return getCheck(filepath);

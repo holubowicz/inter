@@ -1,12 +1,12 @@
 package com.example.backend.check;
 
-import com.example.backend.check.common.exception.CheckInputDtoListNullException;
+import com.example.backend.check.common.exception.CheckInputDTOListNullException;
 import com.example.backend.check.loader.CheckLoader;
-import com.example.backend.check.model.CheckDto;
-import com.example.backend.check.model.CheckHistoryDto;
-import com.example.backend.check.model.CheckInputDto;
+import com.example.backend.check.model.CheckDTO;
+import com.example.backend.check.model.CheckHistoryDTO;
+import com.example.backend.check.model.CheckInputDTO;
 import com.example.backend.check.model.CheckResult;
-import com.example.backend.check.model.factory.CheckHistoryDtoFactory;
+import com.example.backend.check.model.factory.CheckHistoryDTOFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,26 +24,26 @@ public class CheckService {
         this.checkRunner = checkRunner;
     }
 
-    public List<CheckDto> getCheckDtoList() {
-        return checkLoader.getCheckNameList().stream()
-                .map(checkRunner::getCheckDto)
+    public List<CheckDTO> getCheckDTOs() {
+        return checkLoader.getCheckNames().stream()
+                .map(checkRunner::getCheckDTO)
                 .toList();
     }
 
-    public List<CheckHistoryDto> getCheckHistoryDtoList(String checkName) {
-        return checkRunner.getCheckHistoryList(checkName).stream()
-                .map(CheckHistoryDtoFactory::getCheckHistoryDto)
+    public List<CheckHistoryDTO> getCheckHistoryDTOs(String checkName) {
+        return checkRunner.getCheckHistories(checkName).stream()
+                .map(CheckHistoryDTOFactory::getCheckHistoryDTO)
                 .toList();
     }
 
-    public List<CheckResult> runCheckDtoList(List<CheckInputDto> checkInputDtoList) {
-        if (checkInputDtoList == null) {
-            throw new CheckInputDtoListNullException();
+    public List<CheckResult> runCheckDTOs(List<CheckInputDTO> checkInputDTOs) {
+        if (checkInputDTOs == null) {
+            throw new CheckInputDTOListNullException();
         }
 
-        return checkInputDtoList
+        return checkInputDTOs
                 .stream()
-                .map(checkLoader::convertCheckInputDtoToCheck)
+                .map(checkLoader::convertIntoCheck)
                 .map(checkRunner::runCheck)
                 .toList();
     }

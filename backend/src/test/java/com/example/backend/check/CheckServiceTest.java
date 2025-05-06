@@ -1,11 +1,11 @@
 package com.example.backend.check;
 
-import com.example.backend.check.common.exception.CheckInputDtoListNullException;
+import com.example.backend.check.common.exception.CheckInputDTOListNullException;
 import com.example.backend.check.common.exception.name.NameEmptyException;
 import com.example.backend.check.common.exception.name.NameNullException;
-import com.example.backend.check.model.CheckDto;
-import com.example.backend.check.model.CheckHistoryDto;
-import com.example.backend.check.model.CheckInputDto;
+import com.example.backend.check.model.CheckDTO;
+import com.example.backend.check.model.CheckHistoryDTO;
+import com.example.backend.check.model.CheckInputDTO;
 import com.example.backend.check.model.CheckResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,62 +47,62 @@ class CheckServiceTest {
 
 
     @Test
-    void getCheckDtoList_whenApplicationContext_thenReturnsCheckDtoList() {
-        List<CheckDto> checkInputDtoList = underTest.getCheckDtoList();
+    void getCheckDTOs_whenApplicationContext_thenReturnsCheckDTOs() {
+        List<CheckDTO> checkDTOs = underTest.getCheckDTOs();
 
-        assertNotNull(checkInputDtoList);
-        checkInputDtoList.forEach(checkDto -> {
-            assertNotNull(checkDto);
-            assertNotNull(checkDto.getName());
-            assertFalse(checkDto.getName().isEmpty());
+        assertNotNull(checkDTOs);
+        checkDTOs.forEach(checkDTO -> {
+            assertNotNull(checkDTO);
+            assertNotNull(checkDTO.getName());
+            assertFalse(checkDTO.getName().isEmpty());
         });
     }
 
 
     @Test
-    void getCheckHistoryDtoList_whenCheckNameIsNull_thenThrowsNameNullException() {
+    void getCheckHistoryDTOs_whenCheckNameIsNull_thenThrowsNameNullException() {
         assertThrows(NameNullException.class, () ->
-                underTest.getCheckHistoryDtoList(null)
+                underTest.getCheckHistoryDTOs(null)
         );
     }
 
     @Test
-    void getCheckHistoryDtoList_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
+    void getCheckHistoryDTOs_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
         String checkName = "";
 
         assertThrows(NameEmptyException.class, () ->
-                underTest.getCheckHistoryDtoList(checkName)
+                underTest.getCheckHistoryDTOs(checkName)
         );
     }
 
     @Test
-    void getCheckHistoryDtoList_whenCheckNameProvided_thenReturnsCheckHistoryDtoList() {
+    void getCheckHistoryDTOs_whenCheckNameProvided_thenReturnsCheckHistoryDTOs() {
         String checkName = "check-name";
 
-        List<CheckHistoryDto> checkHistoryList = underTest.getCheckHistoryDtoList(checkName);
+        List<CheckHistoryDTO> checkHistoryList = underTest.getCheckHistoryDTOs(checkName);
 
         assertNotNull(checkHistoryList);
     }
 
 
     @Test
-    void runCheckDtoList_whenCheckDtoListIsNull_thenThrowsCheckInputDtoListNullException() {
-        assertThrows(CheckInputDtoListNullException.class, () ->
-                underTest.runCheckDtoList(null)
+    void runCheckDTOs_whenCheckDTOListIsNull_thenThrowsCheckInputDTOListNullException() {
+        assertThrows(CheckInputDTOListNullException.class, () ->
+                underTest.runCheckDTOs(null)
         );
     }
 
     @Test
-    void runCheckDtoList_whenCheckDtoListProvided_thenReturnsCheckResultList() {
-        List<CheckInputDto> checkInputDtoList = List.of(
-                new CheckInputDto("absolute-avg"),
-                new CheckInputDto("total-count")
+    void runCheckDTOs_whenCheckDTOListProvided_thenReturnsCheckResultList() {
+        List<CheckInputDTO> checkInputDTOList = List.of(
+                new CheckInputDTO("absolute-avg"),
+                new CheckInputDTO("total-count")
         );
 
-        List<CheckResult> results = underTest.runCheckDtoList(checkInputDtoList);
+        List<CheckResult> checkResults = underTest.runCheckDTOs(checkInputDTOList);
 
-        assertNotNull(results);
-        results.forEach(checkResult -> {
+        assertNotNull(checkResults);
+        checkResults.forEach(checkResult -> {
             assertNotNull(checkResult);
             assertNotNull(checkResult.getName());
             assertFalse(checkResult.getName().isEmpty());

@@ -1,10 +1,10 @@
 package com.example.backend.check.common.exception;
 
-public class CheckInputDtoListNullException extends RuntimeException {
+public class CheckInputDTOListNullException extends RuntimeException {
 
     private static final String DEFAULT_MESSAGE = "Check input DTO list is null";
 
-    public CheckInputDtoListNullException() {
+    public CheckInputDTOListNullException() {
         super(DEFAULT_MESSAGE);
     }
 

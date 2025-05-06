@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CheckInputDto {
+public class CheckInputDTO {
 
     private final String name;
 
