@@ -94,11 +94,17 @@ class CheckLoaderTest {
     }
 
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    void getCheck_whenFilepathIsNull_thenThrowsFilepathNullException(String filepathString) {
+    @Test
+    void getCheck_whenFilepathIsNull_thenThrowsFilepathNullException() {
         assertThrows(FilepathNullOrEmptyException.class, () ->
-                underTest.getCheck(Paths.get(filepathString))
+                underTest.getCheck(null)
+        );
+    }
+
+    @Test
+    void getCheck_whenFilepathIsEmpty_thenThrowsFilepathNullException() {
+        assertThrows(FilepathNullOrEmptyException.class, () ->
+                underTest.getCheck(Paths.get(""))
         );
     }
 

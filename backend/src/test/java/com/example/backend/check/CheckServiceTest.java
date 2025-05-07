@@ -62,7 +62,7 @@ class CheckServiceTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void getCheckExecutionDTOs_whenCheckNameIsNull_thenThrowsNameNullOrEmptyException(String checkName) {
+    void getCheckExecutionDTOs_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {
         assertThrows(NameNullOrEmptyException.class, () ->
                 underTest.getCheckExecutionDTOs(checkName)
         );

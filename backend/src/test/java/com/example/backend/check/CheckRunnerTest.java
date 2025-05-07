@@ -65,7 +65,7 @@ class CheckRunnerTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void getCheckDTO_whenCheckNameIsNull_thenThrowsNameNullOrEmptyException(String checkName) {
+    void getCheckDTO_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {
         assertThrows(NameNullOrEmptyException.class, () ->
                 underTest.getCheckDTO(checkName)
         );
@@ -102,7 +102,7 @@ class CheckRunnerTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void getCheckExecutions_whenCheckNameIsNull_thenThrowsNameNullOrEmptyException(String checkName) {
+    void getCheckExecutions_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {
         assertThrows(NameNullOrEmptyException.class, () ->
                 underTest.getCheckExecutions(checkName)
         );
