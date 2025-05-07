@@ -1,8 +1,7 @@
 package com.example.backend.check.loader;
 
 import com.example.backend.check.common.exception.CheckInputDTONullException;
-import com.example.backend.check.common.exception.filepath.FilepathEmptyException;
-import com.example.backend.check.common.exception.filepath.FilepathNullException;
+import com.example.backend.check.common.exception.FilepathNullOrEmptyException;
 import com.example.backend.check.common.exception.io.CheckDirectoryNotFoundException;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.dto.CheckInputDTO;
@@ -95,17 +94,11 @@ class CheckLoaderTest {
     }
 
 
-    @Test
-    void getCheck_whenFilepathIsNull_thenThrowsFilepathNullException() {
-        assertThrows(FilepathNullException.class, () ->
-                underTest.getCheck(null)
-        );
-    }
-
-    @Test
-    void getCheck_whenFilepathIsEmpty_thenThrowsFilepathEmptyException() {
-        assertThrows(FilepathEmptyException.class, () ->
-                underTest.getCheck(Paths.get(""))
+    @ParameterizedTest
+    @NullAndEmptySource
+    void getCheck_whenFilepathIsNull_thenThrowsFilepathNullException(String filepathString) {
+        assertThrows(FilepathNullOrEmptyException.class, () ->
+                underTest.getCheck(Paths.get(filepathString))
         );
     }
 

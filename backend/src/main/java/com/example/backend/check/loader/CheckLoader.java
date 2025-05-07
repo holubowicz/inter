@@ -1,9 +1,10 @@
 package com.example.backend.check.loader;
 
 import com.example.backend.check.common.exception.CheckInputDTONullException;
+import com.example.backend.check.common.exception.FilepathNullOrEmptyException;
+import com.example.backend.check.common.exception.QueryNullOrEmptyException;
 import com.example.backend.check.common.exception.io.CheckDirectoryNotFoundException;
 import com.example.backend.check.common.exception.io.ChecksNotLoadedException;
-import com.example.backend.check.common.validator.FilepathValidator;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.dto.CheckInputDTO;
 import lombok.AllArgsConstructor;
@@ -63,16 +64,22 @@ public class CheckLoader {
     }
 
     public Check getCheck(Path filepath) {
-        FilepathValidator.validate(filepath);
+        if (filepath == null || filepath.toString().trim().isEmpty()) {
+            throw new FilepathNullOrEmptyException();
+        }
 
-        String queryName = CheckLoaderUtils.getCheckNameFromPath(filepath);
+        String checkName = CheckLoaderUtils.getCheckNameFromPath(filepath);
 
         try {
-            String content = Files.readString(filepath);
-            return createCheck(queryName, content);
+            String query = Files.readString(filepath);
+            if (query.trim().isEmpty()) {
+                throw new QueryNullOrEmptyException();
+            }
+
+            return createCheck(checkName, query);
         } catch (Exception e) {
             log.warn(FAILED_TO_LOAD_CONTENT);
-            return createNameErrorCheck(queryName, FAILED_TO_LOAD_CONTENT);
+            return createNameErrorCheck(checkName, FAILED_TO_LOAD_CONTENT);
         }
     }
 

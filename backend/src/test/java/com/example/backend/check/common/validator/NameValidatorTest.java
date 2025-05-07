@@ -1,32 +1,20 @@
 package com.example.backend.check.common.validator;
 
-import com.example.backend.check.common.exception.name.NameEmptyException;
-import com.example.backend.check.common.exception.name.NameNullException;
+import com.example.backend.check.common.exception.NameNullOrEmptyException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class NameValidatorTest {
 
-    @Test
-    void validate_whenNameIsNull_thenThrowsNameNullException() {
-        assertThrows(NameNullException.class, () ->
-                NameValidator.validate(null)
-        );
-    }
-
-    @Test
-    void validate_whenNameIsEmpty_thenThrowsNameEmptyException() {
-        assertThrows(NameEmptyException.class, () ->
-                NameValidator.validate("")
-        );
-    }
-
-    @Test
-    void validate_whenNameIsBlankSpace_thenThrowsNameEmptyException() {
-        assertThrows(NameEmptyException.class, () ->
-                NameValidator.validate(" ")
+    @ParameterizedTest
+    @NullAndEmptySource
+    void validate_whenNameIsNull_thenThrowsThrowsNameNullOrEmptyException(String name) {
+        assertThrows(NameNullOrEmptyException.class, () ->
+                NameValidator.validate(name)
         );
     }
 

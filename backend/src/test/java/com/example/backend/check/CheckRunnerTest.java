@@ -1,8 +1,6 @@
 package com.example.backend.check;
 
-import com.example.backend.check.common.exception.ResultNullException;
-import com.example.backend.check.common.exception.name.NameEmptyException;
-import com.example.backend.check.common.exception.name.NameNullException;
+import com.example.backend.check.common.exception.NameNullOrEmptyException;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckExecution;
 import com.example.backend.check.model.CheckResult;
@@ -12,6 +10,8 @@ import com.example.backend.check.model.dto.CheckExecutionDTO;
 import com.example.backend.check.model.repository.CheckExecutionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -63,18 +63,10 @@ class CheckRunnerTest {
     }
 
 
-    @Test
-    void getCheckDTO_whenCheckNameIsNull_thenThrowsNameNullException() {
-        assertThrows(NameNullException.class, () ->
-                underTest.getCheckDTO(null)
-        );
-    }
-
-    @Test
-    void getCheckDTO_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
-        String checkName = "";
-
-        assertThrows(NameEmptyException.class, () ->
+    @ParameterizedTest
+    @NullAndEmptySource
+    void getCheckDTO_whenCheckNameIsNull_thenThrowsNameNullOrEmptyException(String checkName) {
+        assertThrows(NameNullOrEmptyException.class, () ->
                 underTest.getCheckDTO(checkName)
         );
     }
@@ -108,18 +100,10 @@ class CheckRunnerTest {
     }
 
 
-    @Test
-    void getCheckExecutions_whenCheckNameIsNull_thenThrowsNameNullException() {
-        assertThrows(NameNullException.class, () ->
-                underTest.getCheckExecutions(null)
-        );
-    }
-
-    @Test
-    void getCheckExecutions_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
-        String checkName = "";
-
-        assertThrows(NameEmptyException.class, () ->
+    @ParameterizedTest
+    @NullAndEmptySource
+    void getCheckExecutions_whenCheckNameIsNull_thenThrowsNameNullOrEmptyException(String checkName) {
+        assertThrows(NameNullOrEmptyException.class, () ->
                 underTest.getCheckExecutions(checkName)
         );
     }
@@ -167,29 +151,6 @@ class CheckRunnerTest {
         assertEquals(expectedSize, checkExecutionList.size());
     }
 
-
-    @Test
-    void runCheck_whenCheckNameIsNull_thenThrowsNameNullException() {
-        Check check = Check.builder()
-                .query("SELECT COUNT(*) FROM calculations;")
-                .build();
-
-        assertThrows(NameNullException.class, () ->
-                underTest.runCheck(check)
-        );
-    }
-
-    @Test
-    void runCheck_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
-        Check check = Check.builder()
-                .name("")
-                .query("SELECT COUNT(*) FROM calculations;")
-                .build();
-
-        assertThrows(NameEmptyException.class, () ->
-                underTest.runCheck(check)
-        );
-    }
 
     @Test
     void runCheck_whenCheckProvided_thenReturnsCheckResult() {
@@ -306,34 +267,6 @@ class CheckRunnerTest {
         assertNotNull(checkExecutionDTO.getTimestamp());
     }
 
-
-    @Test
-    void calculateTrend_whenCheckNameIsNull_thenThrowsNameNullException() {
-        BigDecimal currentResult = BigDecimal.valueOf(10.0);
-
-        assertThrows(NameNullException.class, () ->
-                underTest.calculateTrend(null, currentResult)
-        );
-    }
-
-    @Test
-    void calculateTrend_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
-        String checkName = "";
-        BigDecimal currentResult = BigDecimal.valueOf(10.0);
-
-        assertThrows(NameEmptyException.class, () ->
-                underTest.calculateTrend(checkName, currentResult)
-        );
-    }
-
-    @Test
-    void calculateTrend_whenCurrentResultIsNull_thenThrowsResultNullException() {
-        String checkName = "check-name";
-
-        assertThrows(ResultNullException.class, () ->
-                underTest.calculateTrend(checkName, null)
-        );
-    }
 
     @Test
     void calculateTrend_whenSavedCheckExecution_thenReturnsCheckTrend() {

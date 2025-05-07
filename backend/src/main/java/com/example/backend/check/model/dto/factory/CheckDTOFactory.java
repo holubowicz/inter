@@ -1,6 +1,5 @@
 package com.example.backend.check.model.dto.factory;
 
-import com.example.backend.check.common.validator.NameValidator;
 import com.example.backend.check.model.dto.CheckDTO;
 import lombok.experimental.UtilityClass;
 
@@ -8,7 +7,6 @@ import lombok.experimental.UtilityClass;
 public final class CheckDTOFactory {
 
     public static CheckDTO createNameCheckDTO(String checkName) {
-        NameValidator.validate(checkName);
         return CheckDTO.builder().name(checkName).build();
     }
 

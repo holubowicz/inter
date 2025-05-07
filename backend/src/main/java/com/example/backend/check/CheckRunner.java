@@ -1,8 +1,6 @@
 package com.example.backend.check;
 
-import com.example.backend.check.common.exception.CheckNullException;
 import com.example.backend.check.common.validator.NameValidator;
-import com.example.backend.check.common.validator.ResultValidator;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckExecution;
 import com.example.backend.check.model.CheckResult;
@@ -60,12 +58,6 @@ public class CheckRunner {
     }
 
     public CheckResult runCheck(Check check) {
-        if (check == null) {
-            throw new CheckNullException();
-        }
-
-        NameValidator.validate(check.getName());
-
         if (check.getError() != null) {
             return createNameErrorCheckResult(check.getName(), check.getError());
         }
@@ -122,9 +114,6 @@ public class CheckRunner {
     }
 
     public CheckTrend calculateTrend(String checkName, BigDecimal currentResult) {
-        NameValidator.validate(checkName);
-        ResultValidator.validate(currentResult);
-
         Optional<CheckExecution> lastCheckExecutionOpt = checkExecutionRepository
                 .findTopByCheckNameOrderByTimestampDesc(checkName);
 

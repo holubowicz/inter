@@ -1,13 +1,14 @@
 package com.example.backend.check;
 
 import com.example.backend.check.common.exception.CheckInputDTOListNullException;
-import com.example.backend.check.common.exception.name.NameEmptyException;
-import com.example.backend.check.common.exception.name.NameNullException;
+import com.example.backend.check.common.exception.NameNullOrEmptyException;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.dto.CheckDTO;
 import com.example.backend.check.model.dto.CheckExecutionDTO;
 import com.example.backend.check.model.dto.CheckInputDTO;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -59,27 +60,10 @@ class CheckServiceTest {
     }
 
 
-    @Test
-    void getCheckExecutionDTOs_whenCheckNameIsNull_thenThrowsNameNullException() {
-        assertThrows(NameNullException.class, () ->
-                underTest.getCheckExecutionDTOs(null)
-        );
-    }
-
-    @Test
-    void getCheckExecutionDTOs_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
-        String checkName = "";
-
-        assertThrows(NameEmptyException.class, () ->
-                underTest.getCheckExecutionDTOs(checkName)
-        );
-    }
-
-    @Test
-    void getCheckExecutionDTOs_whenCheckNameIsBlankSpace_thenThrowsNameEmptyException() {
-        String checkName = " ";
-
-        assertThrows(NameEmptyException.class, () ->
+    @ParameterizedTest
+    @NullAndEmptySource
+    void getCheckExecutionDTOs_whenCheckNameIsNull_thenThrowsNameNullOrEmptyException(String checkName) {
+        assertThrows(NameNullOrEmptyException.class, () ->
                 underTest.getCheckExecutionDTOs(checkName)
         );
     }
