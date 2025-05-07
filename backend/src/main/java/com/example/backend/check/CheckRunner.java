@@ -1,5 +1,7 @@
 package com.example.backend.check;
 
+import com.example.backend.check.common.exception.InternalDatabaseException;
+import com.example.backend.check.common.exception.TestedDatabaseException;
 import com.example.backend.check.common.validator.NameValidator;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckExecution;
@@ -19,11 +21,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_DB;
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_INTERNAL_DB;
+import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_TESTED_DB;
 import static com.example.backend.check.model.dto.factory.CheckDTOFactory.createNameCheckDTO;
 import static com.example.backend.check.model.dto.factory.CheckExecutionDTOFactory.createCheckExecutionDTO;
-import static com.example.backend.check.model.factory.CheckExecutionFactory.createInsertCheckExecution;
 import static com.example.backend.check.model.factory.CheckResultFactory.createNameErrorCheckResult;
 
 @Slf4j
@@ -58,6 +59,16 @@ public class CheckRunner {
     }
 
     public CheckResult runCheck(Check check) {
+        try {
+            return runCheckInternal(check);
+        } catch (TestedDatabaseException e) {
+            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_TESTED_DB);
+        } catch (InternalDatabaseException e) {
+            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_INTERNAL_DB);
+        }
+    }
+
+    public CheckResult runCheckInternal(Check check) {
         if (check.getError() != null) {
             return createNameErrorCheckResult(check.getName(), check.getError());
         }
@@ -66,19 +77,13 @@ public class CheckRunner {
         BigDecimal currentResult = getQueryResult(check.getQuery());
         long executionTime = System.currentTimeMillis() - startTime;
 
-        if (currentResult == null) {
-            log.warn(FAILED_QUERY_DB);
-            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_DB);
-        }
-
-        CheckTrend checkTrend = getCheckTrend(check.getName(), currentResult);
-        CheckExecution insertCheckExecution = createInsertCheckExecution(check.getName(), currentResult, executionTime);
+        CheckTrend checkTrend = calculateTrend(check.getName(), currentResult);
+        CheckExecution insertCheckExecution = CheckExecution.builder()
+                .checkName(check.getName())
+                .result(currentResult)
+                .executionTime(executionTime)
+                .build();
         CheckExecutionDTO currentCheckExecutionDTO = saveCheckToHistory(insertCheckExecution);
-
-        if (checkTrend == null || currentCheckExecutionDTO == null) {
-            log.warn(FAILED_QUERY_INTERNAL_DB);
-            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_INTERNAL_DB);
-        }
 
         return CheckResult.builder()
                 .name(check.getName())
@@ -92,15 +97,8 @@ public class CheckRunner {
         try {
             return jdbcTemplate.queryForObject(query, BigDecimal.class);
         } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public CheckTrend getCheckTrend(String checkName, BigDecimal currentResult) {
-        try {
-            return calculateTrend(checkName, currentResult);
-        } catch (Exception e) {
-            return null;
+            log.error(e.getMessage());
+            throw new TestedDatabaseException(e);
         }
     }
 
@@ -109,13 +107,19 @@ public class CheckRunner {
             CheckExecution checkExecution = checkExecutionRepository.save(insertCheckExecution);
             return createCheckExecutionDTO(checkExecution);
         } catch (Exception e) {
-            return null;
+            log.error(e.getMessage());
+            throw new InternalDatabaseException(e);
         }
     }
 
     public CheckTrend calculateTrend(String checkName, BigDecimal currentResult) {
-        Optional<CheckExecution> lastCheckExecutionOpt = checkExecutionRepository
-                .findTopByCheckNameOrderByTimestampDesc(checkName);
+        Optional<CheckExecution> lastCheckExecutionOpt;
+        try {
+            lastCheckExecutionOpt = checkExecutionRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new InternalDatabaseException(e);
+        }
 
         if (lastCheckExecutionOpt.isEmpty()) {
             return new CheckTrend();
