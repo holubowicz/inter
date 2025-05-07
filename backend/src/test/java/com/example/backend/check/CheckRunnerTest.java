@@ -1,6 +1,5 @@
 package com.example.backend.check;
 
-import com.example.backend.check.common.exception.ExecutionTimeNullException;
 import com.example.backend.check.common.exception.ResultNullException;
 import com.example.backend.check.common.exception.name.NameEmptyException;
 import com.example.backend.check.common.exception.name.NameNullException;
@@ -9,6 +8,7 @@ import com.example.backend.check.model.CheckExecution;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.CheckTrend;
 import com.example.backend.check.model.dto.CheckDTO;
+import com.example.backend.check.model.dto.CheckExecutionDTO;
 import com.example.backend.check.model.repository.CheckExecutionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_DB;
+import static com.example.backend.check.model.factory.CheckExecutionFactory.createInsertCheckExecution;
 import static com.example.backend.check.model.factory.CheckFactory.createCheck;
 import static com.example.backend.check.model.factory.CheckFactory.createNameErrorCheck;
 import static org.junit.jupiter.api.Assertions.*;
@@ -94,12 +95,7 @@ class CheckRunnerTest {
         String checkName = "check-name";
         BigDecimal lastResult = BigDecimal.valueOf(10);
         Long lastExecutionTime = 10L;
-        checkExecutionRepository.save(CheckExecution.builder()
-                .checkName(checkName)
-                .result(lastResult)
-                .executionTime(lastExecutionTime)
-                .build()
-        );
+        checkExecutionRepository.save(createInsertCheckExecution(checkName, lastResult, lastExecutionTime));
 
         CheckDTO checkDTO = underTest.getCheckDTO(checkName);
 
@@ -144,11 +140,7 @@ class CheckRunnerTest {
         int expectedSize = 1;
         BigDecimal lastResult = BigDecimal.valueOf(10);
         long lastExecutionTime = 10;
-        checkExecutionRepository.save(CheckExecution.builder()
-                .checkName(checkName)
-                .result(lastResult)
-                .executionTime(lastExecutionTime)
-                .build());
+        checkExecutionRepository.save(createInsertCheckExecution(checkName, lastResult, lastExecutionTime));
 
         List<CheckExecution> checkExecutionList = underTest.getCheckExecutions(checkName);
 
@@ -164,9 +156,9 @@ class CheckRunnerTest {
         String checkName = "check-name";
         int expectedSize = 3;
         checkExecutionRepository.saveAll(List.of(
-                CheckExecution.builder().checkName(checkName).result(BigDecimal.valueOf(10)).executionTime(5L).build(),
-                CheckExecution.builder().checkName(checkName).result(BigDecimal.valueOf(11)).executionTime(7L).build(),
-                CheckExecution.builder().checkName(checkName).result(BigDecimal.valueOf(12)).executionTime(10L).build()
+                createInsertCheckExecution(checkName, BigDecimal.valueOf(10), 5L),
+                createInsertCheckExecution(checkName, BigDecimal.valueOf(11), 7L),
+                createInsertCheckExecution(checkName, BigDecimal.valueOf(12), 10L)
         ));
 
         List<CheckExecution> checkExecutionList = underTest.getCheckExecutions(checkName);
@@ -251,6 +243,71 @@ class CheckRunnerTest {
 
 
     @Test
+    void getQueryResult_whenQueryIsIncorrect_thenReturnsNull() {
+        String query = "not a query";
+
+        BigDecimal queryResult = underTest.getQueryResult(query);
+
+        assertNull(queryResult);
+    }
+
+    @Test
+    void getQueryResult_whenQueryProvided_thenReturnsQueryResult() {
+        String query = "SELECT COUNT(*) FROM calculations";
+        BigDecimal expectedResult = BigDecimal.valueOf(14);
+
+        BigDecimal queryResult = underTest.getQueryResult(query);
+
+        assertNotNull(queryResult);
+        assertEquals(0, expectedResult.compareTo(queryResult));
+    }
+
+
+    @Test
+    void getCheckTrend_whenNoCheckExecutionSaved_thenReturnsEmptyCheckTrend() {
+        CheckTrend checkTrend = underTest.getCheckTrend("check-name", BigDecimal.valueOf(10));
+
+        assertNotNull(checkTrend);
+        assertNull(checkTrend.getTrendPercentage());
+        assertNull(checkTrend.getLastCheck());
+    }
+
+    @Test
+    void getCheckTrend_whenCheckExecutionSaved_thenReturnsEmptyCheckTrend() {
+        String checkName = "check-name";
+        BigDecimal currentResult = BigDecimal.valueOf(10);
+        BigDecimal lastResult = BigDecimal.valueOf(5);
+        long lastExecutionTime = 10;
+        checkExecutionRepository.save(createInsertCheckExecution(checkName, lastResult, lastExecutionTime));
+
+        CheckTrend checkTrend = underTest.getCheckTrend("check-name", currentResult);
+
+        assertNotNull(checkTrend);
+        assertEquals(100.0, checkTrend.getTrendPercentage());
+        assertNotNull(checkTrend.getLastCheck());
+        assertEquals(0, lastResult.compareTo(checkTrend.getLastCheck().getResult()));
+        assertEquals(lastExecutionTime, checkTrend.getLastCheck().getExecutionTime());
+        assertNotNull(checkTrend.getLastCheck().getTimestamp());
+    }
+
+
+    @Test
+    void saveCheckToHistory_whenInsertCheckExecutionProvided_thenReturnsCheckExecutionDTO() {
+        String checkName = "check-name";
+        BigDecimal lastResult = BigDecimal.valueOf(10);
+        long lastExecutionTime = 10;
+        CheckExecution insertCheckExecution = createInsertCheckExecution(checkName, lastResult, lastExecutionTime);
+
+        CheckExecutionDTO checkExecutionDTO = underTest.saveCheckToHistory(insertCheckExecution);
+
+        assertNotNull(checkExecutionDTO);
+        assertEquals(0, lastResult.compareTo(checkExecutionDTO.getResult()));
+        assertEquals(lastExecutionTime, checkExecutionDTO.getExecutionTime());
+        assertNotNull(checkExecutionDTO.getTimestamp());
+    }
+
+
+    @Test
     void calculateTrend_whenCheckNameIsNull_thenThrowsNameNullException() {
         BigDecimal currentResult = BigDecimal.valueOf(10.0);
 
@@ -284,11 +341,7 @@ class CheckRunnerTest {
         BigDecimal currentResult = BigDecimal.valueOf(10);
         BigDecimal lastResult = BigDecimal.valueOf(5);
         long executionTime = 1;
-        checkExecutionRepository.save(CheckExecution.builder()
-                .checkName(checkName)
-                .result(lastResult)
-                .executionTime(executionTime)
-                .build());
+        checkExecutionRepository.save(createInsertCheckExecution(checkName, lastResult, executionTime));
 
         CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
 
@@ -306,11 +359,7 @@ class CheckRunnerTest {
         BigDecimal currentResult = BigDecimal.valueOf(10);
         BigDecimal lastResult = BigDecimal.valueOf(0);
         long executionTime = 1;
-        checkExecutionRepository.save(CheckExecution.builder()
-                .checkName(checkName)
-                .result(lastResult)
-                .executionTime(executionTime)
-                .build());
+        checkExecutionRepository.save(createInsertCheckExecution(checkName, lastResult, executionTime));
 
         CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
 
@@ -330,63 +379,6 @@ class CheckRunnerTest {
         CheckTrend checkTrend = underTest.calculateTrend(checkName, currentResult);
 
         assertNull(checkTrend.getLastCheck());
-    }
-
-
-    @Test
-    void saveResultToHistory_whenCheckNameIsNull_thenThrowsNameNullException() {
-        BigDecimal result = BigDecimal.valueOf(10);
-        long executionTime = 1;
-
-        assertThrows(NameNullException.class, () ->
-                underTest.saveResultToHistory(null, result, executionTime)
-        );
-    }
-
-    @Test
-    void saveResultToHistory_whenCheckNameIsEmpty_thenThrowsNameEmptyException() {
-        String checkName = "";
-        BigDecimal result = BigDecimal.valueOf(10);
-        long executionTime = 1;
-
-        assertThrows(NameEmptyException.class, () ->
-                underTest.saveResultToHistory(checkName, result, executionTime)
-        );
-    }
-
-    @Test
-    void saveResultToHistory_whenResultIsNull_thenThrowsResultNullException() {
-        String checkName = "check-name";
-        long executionTime = 1;
-
-        assertThrows(ResultNullException.class, () ->
-                underTest.saveResultToHistory(checkName, null, executionTime)
-        );
-    }
-
-    @Test
-    void saveResultToHistory_whenExecutionTimeIsNull_thenThrowsExecutionTimeNullException() {
-        String checkName = "check-name";
-        BigDecimal result = BigDecimal.valueOf(10);
-
-        assertThrows(ExecutionTimeNullException.class, () ->
-                underTest.saveResultToHistory(checkName, result, null)
-        );
-    }
-
-    @Test
-    void saveResultToHistory_whenCheckNameAndResultProvided_thenSaveResult() {
-        String checkName = "check-name";
-        BigDecimal result = BigDecimal.valueOf(10);
-        long executionTime = 1;
-
-        CheckExecution checkExecution = underTest.saveResultToHistory(checkName, result, executionTime);
-
-        assertNotNull(checkExecution);
-        assertEquals(checkName, checkExecution.getCheckName());
-        assertEquals(0, result.compareTo(checkExecution.getResult()));
-        assertEquals(executionTime, checkExecution.getExecutionTime());
-        assertNotNull(checkExecution.getTimestamp());
     }
 
 }

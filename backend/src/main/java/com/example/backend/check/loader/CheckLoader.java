@@ -71,7 +71,7 @@ public class CheckLoader {
             String content = Files.readString(filepath);
             return createCheck(queryName, content);
         } catch (Exception e) {
-            log.error(FAILED_TO_LOAD_CONTENT);
+            log.warn(FAILED_TO_LOAD_CONTENT);
             return createNameErrorCheck(queryName, FAILED_TO_LOAD_CONTENT);
         }
     }

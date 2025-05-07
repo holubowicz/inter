@@ -45,7 +45,6 @@ public class CheckController {
         }
 
         List<CheckResult> results = checkService.runCheckDTOs(checkInputDTOs);
-
         return ResponseEntity.ok(results);
     }
 
