@@ -21,8 +21,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_INTERNAL_DB;
-import static com.example.backend.check.common.error.message.DatabaseErrorMessage.FAILED_QUERY_TESTED_DB;
 import static com.example.backend.check.model.dto.factory.CheckDTOFactory.createNameCheckDTO;
 import static com.example.backend.check.model.dto.factory.CheckExecutionDTOFactory.createCheckExecutionDTO;
 import static com.example.backend.check.model.factory.CheckResultFactory.createNameErrorCheckResult;
@@ -61,14 +59,13 @@ public class CheckRunner {
     public CheckResult runCheck(Check check) {
         try {
             return runCheckInternal(check);
-        } catch (TestedDatabaseException e) {
-            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_TESTED_DB);
-        } catch (InternalDatabaseException e) {
-            return createNameErrorCheckResult(check.getName(), FAILED_QUERY_INTERNAL_DB);
+        } catch (InternalDatabaseException | TestedDatabaseException e) {
+            log.warn(e.getMessage(), e.getCause());
+            return createNameErrorCheckResult(check.getName(), e.getMessage());
         }
     }
 
-    public CheckResult runCheckInternal(Check check) {
+    private CheckResult runCheckInternal(Check check) {
         if (check.getError() != null) {
             return createNameErrorCheckResult(check.getName(), check.getError());
         }
@@ -97,7 +94,6 @@ public class CheckRunner {
         try {
             return jdbcTemplate.queryForObject(query, BigDecimal.class);
         } catch (Exception e) {
-            log.error(e.getMessage());
             throw new TestedDatabaseException(e);
         }
     }
@@ -107,7 +103,6 @@ public class CheckRunner {
             CheckExecution checkExecution = checkExecutionRepository.save(insertCheckExecution);
             return createCheckExecutionDTO(checkExecution);
         } catch (Exception e) {
-            log.error(e.getMessage());
             throw new InternalDatabaseException(e);
         }
     }
@@ -117,7 +112,6 @@ public class CheckRunner {
         try {
             lastCheckExecutionOpt = checkExecutionRepository.findTopByCheckNameOrderByTimestampDesc(checkName);
         } catch (Exception e) {
-            log.error(e.getMessage());
             throw new InternalDatabaseException(e);
         }
 
