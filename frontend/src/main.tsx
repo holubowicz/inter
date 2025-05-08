@@ -7,7 +7,13 @@ import "./main.css";
 import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({ routeTree });
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 declare module "@tanstack/react-router" {
   interface Register {

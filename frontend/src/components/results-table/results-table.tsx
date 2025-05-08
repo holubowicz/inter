@@ -17,9 +17,9 @@ interface ResultsTableProps {
 }
 
 const CHECK_RESULTS_KEY = "checkResults";
+const CHECK_RESULTS_QUERY_STALE_TIME = 30 * 1000;
 
 export function ResultsTable({ checks }: ResultsTableProps) {
-  // TODO: stop rerendering when went to charts page and go back
   const {
     isPending,
     error,
@@ -27,6 +27,7 @@ export function ResultsTable({ checks }: ResultsTableProps) {
   } = useQuery({
     queryKey: [CHECK_RESULTS_KEY, checks],
     queryFn: () => runChecks(checks),
+    staleTime: CHECK_RESULTS_QUERY_STALE_TIME,
   });
 
   if (isPending) {
