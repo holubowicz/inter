@@ -1,4 +1,5 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Link, createFileRoute, redirect } from "@tanstack/react-router";
+import { ChevronLeft } from "lucide-react";
 import { useMemo } from "react";
 import { PageLayout } from "@/components/layout/page-layout";
 import { ResultsTable } from "@/components/results-table/results-table";
@@ -67,7 +68,12 @@ function CheckResultsPage() {
 
   return (
     <PageLayout>
-      <Title>Check Results</Title>
+      <Title>
+        <Link className="p-1 md:p-2" to="/">
+          <ChevronLeft className="size-4 md:size-5 lg:size-6" />
+        </Link>
+        Check Results
+      </Title>
 
       <ResultsTable checks={selectedChecks} />
     </PageLayout>

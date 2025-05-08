@@ -19,6 +19,7 @@ interface ResultsTableProps {
 const CHECK_RESULTS_KEY = "checkResults";
 
 export function ResultsTable({ checks }: ResultsTableProps) {
+  // TODO: stop rerendering when went to charts page and go back
   const {
     isPending,
     error,

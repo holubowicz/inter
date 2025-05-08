@@ -1,4 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import {
+  Link,
+  createFileRoute,
+  useCanGoBack,
+  useRouter,
+} from "@tanstack/react-router";
+import { ChevronLeft } from "lucide-react";
 import { ChartsGrid } from "@/components/chart/charts-grid";
 import { PageLayout } from "@/components/layout/page-layout";
 import { Title } from "@/components/title";
@@ -21,11 +27,27 @@ export const Route = createFileRoute("/checks/$checkName/history")({
 });
 
 function CheckHistoryPage() {
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
   const { checkName } = Route.useParams();
+
+  const handleGoBack = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    router.history.back();
+    return false;
+  };
 
   return (
     <PageLayout>
-      <Title className="normal-case">{checkName}</Title>
+      <Title className="normal-case">
+        {canGoBack && (
+          <Link to="/" onClick={handleGoBack}>
+            <ChevronLeft className="size-4 md:size-5 lg:size-6" />
+          </Link>
+        )}
+
+        {checkName}
+      </Title>
 
       <ChartsGrid checkName={checkName} />
     </PageLayout>

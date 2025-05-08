@@ -9,7 +9,7 @@ export function Title({ children, className }: TitleProps) {
   return (
     <h1
       className={cn(
-        "text-lg font-bold capitalize md:text-xl lg:text-2xl lg:font-extrabold",
+        "flex items-center text-lg font-bold capitalize md:gap-1 md:text-xl lg:gap-1.5 lg:text-2xl lg:font-extrabold",
         className,
       )}
     >
