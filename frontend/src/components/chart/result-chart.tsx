@@ -19,6 +19,9 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+// TODO: fix the XAxis DateTime to be more readable, potentially migrate to Chart.js
+// TODO: add to the ChartTooltip also corresponding timestamp
+
 export function ResultChart({ className, checks }: ResultChartProps) {
   return (
     <ChartContainer className={className} config={chartConfig}>
@@ -45,6 +48,7 @@ export function ResultChart({ className, checks }: ResultChartProps) {
           tickLine={false}
           axisLine={false}
           tickMargin={12}
+          minTickGap={12}
           tickFormatter={(value: Date) => value.toLocaleString()}
         />
 
