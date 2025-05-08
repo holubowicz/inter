@@ -49,7 +49,7 @@ export function ExecutionTimeChart({
           tickLine={false}
           axisLine={false}
           tickMargin={12}
-          tickFormatter={(value: Date) => value.toLocaleDateString()}
+          tickFormatter={(value: Date) => value.toLocaleString()}
         />
 
         <ChartTooltip

@@ -47,7 +47,7 @@ function buildResultState(result: CheckResult): ResultTableRowState {
     : "-";
 
   const lastDate = result.lastCheck
-    ? result.lastCheck.timestamp.toLocaleDateString()
+    ? result.lastCheck.timestamp.toLocaleString()
     : "-";
 
   let trendPercentage = "-";

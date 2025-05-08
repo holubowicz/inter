@@ -163,7 +163,7 @@ export function ChecksTable() {
 
               <TableCell className="hidden md:table-cell">
                 {check.lastCheck != null
-                  ? check.lastCheck.timestamp.toLocaleDateString()
+                  ? check.lastCheck.timestamp.toLocaleString()
                   : "-"}
               </TableCell>
 
