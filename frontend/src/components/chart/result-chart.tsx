@@ -5,11 +5,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { CheckHistory } from "@/types/checks";
+import { Check } from "@/types/checks";
 
 interface ResultChartProps {
   className?: string;
-  checkHistories: CheckHistory[];
+  checks: Check[];
 }
 
 const chartConfig = {
@@ -19,12 +19,12 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ResultChart({ className, checkHistories }: ResultChartProps) {
+export function ResultChart({ className, checks }: ResultChartProps) {
   return (
     <ChartContainer className={className} config={chartConfig}>
       <LineChart
         accessibilityLayer
-        data={checkHistories}
+        data={checks}
         margin={{ left: 12, right: 12 }}
       >
         <CartesianGrid vertical={true} />

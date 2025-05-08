@@ -3,25 +3,20 @@ export interface CheckDTO {
 }
 
 export interface Check {
-  name: string;
-  lastResult: Nullable<number>;
-  lastTimestamp: Nullable<Date>;
-  lastExecutionTime: Nullable<number>;
-}
-
-export interface CheckHistory {
-  checkName: string;
-  timestamp: Date;
   result: number;
   executionTime: number;
+  timestamp: Date;
+}
+
+export interface AvailableCheck {
+  name: string;
+  lastCheck: Nullable<Check>;
 }
 
 export interface CheckResult {
-  name: string;
+  name: Nullable<string>;
   error: Nullable<string>;
-  result: Nullable<number>;
-  executionTime: Nullable<number>;
-  lastResult: Nullable<number>;
-  lastTimestamp: Nullable<Date>;
   trendPercentage: Nullable<number>;
+  check: Nullable<Check>;
+  lastCheck: Nullable<Check>;
 }

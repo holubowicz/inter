@@ -30,7 +30,7 @@ interface ResultTableRowState {
 }
 
 function buildResultState(result: CheckResult): ResultTableRowState {
-  if (result.error || result.result == null) {
+  if (result.error || result.check == null) {
     return {
       result: "-",
       executionTime: "-",
@@ -42,19 +42,13 @@ function buildResultState(result: CheckResult): ResultTableRowState {
     };
   }
 
-  const executionTime = result.executionTime
-    ? formatElapsedTime(result.executionTime)
+  const lastResult = result.lastCheck
+    ? formatNumber(result.lastCheck.result).toString()
     : "-";
 
-  const lastResult =
-    result.lastResult != null
-      ? formatNumber(result.lastResult).toString()
-      : "-";
-
-  const lastDate =
-    result.lastTimestamp != null
-      ? result.lastTimestamp.toLocaleDateString()
-      : "-";
+  const lastDate = result.lastCheck
+    ? result.lastCheck.timestamp.toLocaleDateString()
+    : "-";
 
   let trendPercentage = "-";
   let trendIcon = <MoveRight className="text-muted-foreground w-4" />;
@@ -70,8 +64,8 @@ function buildResultState(result: CheckResult): ResultTableRowState {
   }
 
   return {
-    result: formatNumber(result.result).toString(),
-    executionTime,
+    result: formatNumber(result.check.result).toString(),
+    executionTime: formatElapsedTime(result.check.executionTime),
     lastResult,
     lastDate,
     trendPercentage,

@@ -21,23 +21,23 @@ export function ChartsGrid({ checkName }: ChartsGridProps) {
   const {
     isPending,
     error,
-    data: checkHistories,
+    data: checks,
   } = useQuery({
     queryKey: [CHECK_HISTORIES_KEY, checkName],
     queryFn: () => getCheckHistories(checkName),
   });
 
   useEffect(() => {
-    if (checkHistories === undefined) {
+    if (checks === undefined) {
       return;
     }
 
-    if (checkHistories.length !== 0) {
+    if (checks.length !== 0) {
       return;
     }
 
     navigate({ to: "/" });
-  }, [navigate, checkHistories]);
+  }, [navigate, checks]);
 
   if (isPending) {
     return <LoadingState />;
@@ -57,10 +57,7 @@ export function ChartsGrid({ checkName }: ChartsGridProps) {
       <ChartSection>
         <Subtitle className="text-center">Results</Subtitle>
 
-        <ResultChart
-          className="max-h-120 w-full"
-          checkHistories={checkHistories}
-        />
+        <ResultChart className="max-h-120 w-full" checks={checks} />
       </ChartSection>
 
       <ChartSection>
@@ -68,10 +65,7 @@ export function ChartsGrid({ checkName }: ChartsGridProps) {
           Execution Times <span className="lowercase">[ms]</span>
         </Subtitle>
 
-        <ExecutionTimeChart
-          className="max-h-120 w-full"
-          checkHistories={checkHistories}
-        />
+        <ExecutionTimeChart className="max-h-120 w-full" checks={checks} />
       </ChartSection>
     </div>
   );

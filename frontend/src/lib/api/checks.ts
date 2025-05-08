@@ -1,4 +1,4 @@
-import { Check, CheckDTO, CheckHistory, CheckResult } from "@/types/checks";
+import { AvailableCheck, Check, CheckDTO, CheckResult } from "@/types/checks";
 
 function getApiBase(): string {
   const { host, protocol } = window.location;
@@ -10,7 +10,7 @@ function getApiUrl(path: string): string {
   return `${base.replace(/\/$/, "")}/${path.replace(/^\/+/, "")}`;
 }
 
-export async function getChecks(): Promise<Check[]> {
+export async function getChecks(): Promise<AvailableCheck[]> {
   const res = await fetch(getApiUrl("checks"));
 
   if (!res.ok) {
@@ -24,13 +24,13 @@ export async function getChecks(): Promise<Check[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return data.map((item: any) => ({
     ...item,
-    lastTimestamp: item.lastTimestamp ? new Date(item.lastTimestamp) : null,
+    lastCheck: item.lastCheck
+      ? { ...item.lastCheck, timestamp: new Date(item.lastCheck.timestamp) }
+      : null,
   }));
 }
 
-export async function getCheckHistories(
-  checkName: string,
-): Promise<CheckHistory[]> {
+export async function getCheckHistories(checkName: string): Promise<Check[]> {
   const res = await fetch(getApiUrl(`checks/${checkName}/history`));
 
   if (!res.ok) {
@@ -68,6 +68,11 @@ export async function runChecks(checks: CheckDTO[]): Promise<CheckResult[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return data.map((item: any) => ({
     ...item,
-    lastTimestamp: item.lastTimestamp ? new Date(item.lastTimestamp) : null,
+    check: item.check
+      ? { ...item.check, timestamp: new Date(item.check.timestamp) }
+      : null,
+    lastCheck: item.lastCheck
+      ? { ...item.lastCheck, timestamp: new Date(item.lastCheck.timestamp) }
+      : null,
   }));
 }

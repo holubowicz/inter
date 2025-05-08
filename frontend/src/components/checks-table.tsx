@@ -156,20 +156,20 @@ export function ChecksTable() {
               <TableCell>{check.name}</TableCell>
 
               <TableCell className="hidden md:table-cell">
-                {check.lastResult != null
-                  ? formatNumber(check.lastResult)
+                {check.lastCheck != null
+                  ? formatNumber(check.lastCheck.result)
                   : "-"}
               </TableCell>
 
               <TableCell className="hidden md:table-cell">
-                {check.lastTimestamp != null
-                  ? check.lastTimestamp.toLocaleDateString()
+                {check.lastCheck != null
+                  ? check.lastCheck.timestamp.toLocaleDateString()
                   : "-"}
               </TableCell>
 
               <TableCell className="hidden xl:table-cell">
-                {check.lastExecutionTime != null
-                  ? formatElapsedTime(check.lastExecutionTime)
+                {check.lastCheck != null
+                  ? formatElapsedTime(check.lastCheck.executionTime)
                   : "-"}
               </TableCell>
 
@@ -177,7 +177,7 @@ export function ChecksTable() {
                 <Button
                   className="cursor-pointer"
                   variant="ghost"
-                  disabled={check.lastResult == null}
+                  disabled={check.lastCheck == null}
                   onClick={() => handleShowHistoryGraph(check.name)}
                 >
                   <ChartLine />
