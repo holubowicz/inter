@@ -11,7 +11,7 @@ class CheckFactoryTest {
     @Test
     void createCheck_whenCheckNameAndQueryProvided_thenReturnCheck() {
         String checkName = "check-name";
-        String query = "SELECT * FROM check;";
+        String query = "SELECT * FROM check";
 
         Check check = createCheck(checkName, query);
 

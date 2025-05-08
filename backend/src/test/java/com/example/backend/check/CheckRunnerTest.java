@@ -162,7 +162,7 @@ class CheckRunnerTest {
 
     @Test
     void runCheck_whenCheckProvided_thenReturnsCheckResult() {
-        Check check = createCheck("check-name", "SELECT COUNT(*) FROM calculations;");
+        Check check = createCheck("check-name", "SELECT COUNT(*) FROM calculations");
         BigDecimal result = BigDecimal.valueOf(14);
 
         CheckResult checkResult = underTest.runCheck(check);
