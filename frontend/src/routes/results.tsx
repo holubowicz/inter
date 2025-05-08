@@ -1,9 +1,8 @@
-import { Link, createFileRoute, redirect } from "@tanstack/react-router";
-import { ChevronLeft } from "lucide-react";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMemo } from "react";
+import { GoBackTitle } from "@/components/go-back-title";
 import { PageLayout } from "@/components/layout/page-layout";
 import { ResultsTable } from "@/components/results-table/results-table";
-import { Title } from "@/components/title";
 
 type ChecksArray = string[];
 
@@ -68,12 +67,7 @@ function CheckResultsPage() {
 
   return (
     <PageLayout>
-      <Title>
-        <Link className="p-1 md:p-2" to="/">
-          <ChevronLeft className="size-4 md:size-5 lg:size-6" />
-        </Link>
-        Check Results
-      </Title>
+      <GoBackTitle>Check Results</GoBackTitle>
 
       <ResultsTable checks={selectedChecks} />
     </PageLayout>
