@@ -1,4 +1,4 @@
-package com.example.backend.check.common.exception;
+package com.example.backend.check.common.exception.db;
 
 public class InternalDatabaseException extends RuntimeException {
 

@@ -1,7 +1,7 @@
 package com.example.backend.check;
 
-import com.example.backend.check.common.exception.InternalDatabaseException;
-import com.example.backend.check.common.exception.TestedDatabaseException;
+import com.example.backend.check.common.exception.db.InternalDatabaseException;
+import com.example.backend.check.common.exception.db.TestedDatabaseException;
 import com.example.backend.check.common.validator.NameValidator;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckExecution;
