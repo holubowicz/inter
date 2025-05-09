@@ -11,7 +11,8 @@ import { JSX, useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { runChecks } from "@/lib/api/checks";
-import { formatElapsedTime, formatNumber } from "@/lib/number";
+import { formatDateTime } from "@/lib/utils/date";
+import { formatElapsedTime, formatNumber } from "@/lib/utils/number";
 import { CheckDTO, CheckResult } from "@/types/checks";
 
 interface ResultsTableRowProps {
@@ -47,7 +48,7 @@ function buildResultState(result: CheckResult): ResultTableRowState {
     : "-";
 
   const lastDate = result.lastCheck
-    ? result.lastCheck.timestamp.toLocaleString()
+    ? formatDateTime(result.lastCheck.timestamp)
     : "-";
 
   let trendPercentage = "-";

@@ -6,6 +6,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { formatDateTime } from "@/lib/utils/date";
 import { Check } from "@/types/checks";
 
 interface ResultChartProps {
@@ -24,7 +25,7 @@ export function ResultChart({ className, checks }: ResultChartProps) {
   const chartData = useMemo(
     () =>
       checks.map((check) => ({
-        dateTime: check.timestamp.toLocaleString(),
+        dateTime: formatDateTime(check.timestamp),
         result: check.result,
       })),
     [checks],

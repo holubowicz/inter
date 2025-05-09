@@ -49,10 +49,10 @@ export function ResultsTable({ checks }: ResultsTableProps) {
         <TableRow className="*:text-center *:font-bold *:capitalize">
           <TableHead>Name</TableHead>
           <TableHead>Result</TableHead>
-          <TableHead className="hidden xl:table-cell">Execution</TableHead>
+          <TableHead className="hidden xl:table-cell">Execution Time</TableHead>
           <TableHead className="hidden md:table-cell">Trend</TableHead>
           <TableHead className="hidden lg:table-cell">Last Result</TableHead>
-          <TableHead className="hidden xl:table-cell">Last Date</TableHead>
+          <TableHead className="hidden xl:table-cell">Last Execution</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>

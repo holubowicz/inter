@@ -16,7 +16,8 @@ import {
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { getChecks } from "@/lib/api/checks";
-import { formatElapsedTime, formatNumber } from "@/lib/number";
+import { formatDateTime } from "@/lib/utils/date";
+import { formatElapsedTime, formatNumber } from "@/lib/utils/number";
 
 const AVAILABLE_CHECKS_KEY = "availableChecks";
 
@@ -130,10 +131,12 @@ export function ChecksTable() {
 
             <TableHead className="hidden md:table-cell">Last Result</TableHead>
 
-            <TableHead className="hidden md:table-cell">Last Date</TableHead>
+            <TableHead className="hidden md:table-cell">
+              Last Execution
+            </TableHead>
 
             <TableHead className="hidden xl:table-cell">
-              Last Execution
+              Last Execution Time
             </TableHead>
 
             <TableHead>Actions</TableHead>
@@ -163,7 +166,7 @@ export function ChecksTable() {
 
               <TableCell className="hidden md:table-cell">
                 {check.lastCheck != null
-                  ? check.lastCheck.timestamp.toLocaleString()
+                  ? formatDateTime(check.lastCheck.timestamp)
                   : "-"}
               </TableCell>
 
