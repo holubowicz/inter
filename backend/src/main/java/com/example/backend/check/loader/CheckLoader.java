@@ -42,6 +42,7 @@ public class CheckLoader {
                     .filter(Files::isRegularFile)
                     .filter(path -> path.toString().toLowerCase().endsWith(CheckLoaderUtils.CHECK_FILE_EXTENSION))
                     .map(CheckLoaderUtils::getCheckNameFromPath)
+                    .sorted()
                     .toList();
         } catch (SecurityException | IOException e) {
             throw new ChecksNotLoadedException(e);
