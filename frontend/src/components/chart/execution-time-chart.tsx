@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   ChartConfig,
@@ -14,26 +15,32 @@ interface ExecutionTimeChartProps {
 
 const chartConfig = {
   executionTime: {
-    label: "Execution Time",
+    label: "Execution [ms]",
     color: "var(--color-emerald-500)",
   },
 } satisfies ChartConfig;
-
-// TODO: fix the XAxis DateTime to be more readable, potentially migrate to Chart.js
-// TODO: add to the ChartTooltip also corresponding timestamp
 
 export function ExecutionTimeChart({
   className,
   checks,
 }: ExecutionTimeChartProps) {
+  const chartData = useMemo(
+    () =>
+      checks.map((check) => ({
+        dateTime: check.timestamp.toLocaleString(),
+        executionTime: check.executionTime,
+      })),
+    [checks],
+  );
+
   return (
     <ChartContainer className={className} config={chartConfig}>
       <LineChart
         accessibilityLayer
-        data={checks}
+        data={chartData}
         margin={{ left: 12, right: 12 }}
       >
-        <CartesianGrid vertical={true} />
+        <CartesianGrid vertical={false} />
 
         <YAxis
           dataKey="executionTime"
@@ -48,18 +55,14 @@ export function ExecutionTimeChart({
         />
 
         <XAxis
-          dataKey="timestamp"
+          dataKey="dateTime"
           tickLine={false}
           axisLine={false}
           tickMargin={12}
           minTickGap={12}
-          tickFormatter={(value: Date) => value.toLocaleString()}
         />
 
-        <ChartTooltip
-          cursor={false}
-          content={<ChartTooltipContent hideLabel />}
-        />
+        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
 
         <Line
           dataKey="executionTime"

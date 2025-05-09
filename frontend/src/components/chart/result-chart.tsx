@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   ChartConfig,
@@ -19,18 +20,32 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-// TODO: fix the XAxis DateTime to be more readable, potentially migrate to Chart.js
-// TODO: add to the ChartTooltip also corresponding timestamp
-
 export function ResultChart({ className, checks }: ResultChartProps) {
+  const chartData = useMemo(
+    () =>
+      checks.map((check) => ({
+        dateTime: check.timestamp.toLocaleString(),
+        result: check.result,
+      })),
+    [checks],
+  );
+
   return (
     <ChartContainer className={className} config={chartConfig}>
       <LineChart
         accessibilityLayer
-        data={checks}
+        data={chartData}
         margin={{ left: 12, right: 12 }}
       >
-        <CartesianGrid vertical={true} />
+        <CartesianGrid vertical={false} />
+
+        <XAxis
+          dataKey="dateTime"
+          tickLine={false}
+          axisLine={false}
+          tickMargin={12}
+          minTickGap={12}
+        />
 
         <YAxis
           dataKey="result"
@@ -43,19 +58,7 @@ export function ResultChart({ className, checks }: ResultChartProps) {
           ]}
         />
 
-        <XAxis
-          dataKey="timestamp"
-          tickLine={false}
-          axisLine={false}
-          tickMargin={12}
-          minTickGap={12}
-          tickFormatter={(value: Date) => value.toLocaleString()}
-        />
-
-        <ChartTooltip
-          cursor={false}
-          content={<ChartTooltipContent hideLabel />}
-        />
+        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
 
         <Line
           dataKey="result"
