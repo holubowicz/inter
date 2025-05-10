@@ -82,8 +82,8 @@ export function ChecksTable() {
       .map((check) => check.name);
 
     if (selectedChecks.length === 0) {
-      toast.info("No Checks Selected", {
-        description: "Please select at least 1 check, then click execute",
+      toast("No Checks Selected", {
+        description: "Please select at least 1 check, then click execute.",
       });
       return;
     }

@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
   ChartLine,
+  CircleX,
   MoveRight,
   RotateCcw,
   TrendingDown,
@@ -10,6 +11,11 @@ import {
 import { JSX, useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { runChecks } from "@/lib/api/checks";
 import { formatDateTime } from "@/lib/utils/date";
 import { formatElapsedTime, formatNumber } from "@/lib/utils/number";
@@ -20,58 +26,92 @@ interface ResultsTableRowProps {
   checkResult: CheckResult;
 }
 
-interface ResultTableRowState {
-  result: string;
-  executionTime: string;
-  lastResult: string;
-  lastDate: string;
+interface RowState {
+  name: string;
+  error: string;
   trendPercentage: string;
   isDisabled: boolean;
   trendIcon: JSX.Element;
+  check: RowStateCheck;
+  lastCheck: RowStateCheck;
 }
 
-function buildResultState(result: CheckResult): ResultTableRowState {
-  if (result.error || result.check == null) {
+interface RowStateCheck {
+  result: string;
+  executionTime: string;
+  timestamp: string;
+}
+
+function buildResultState(checkResult: CheckResult): RowState {
+  if (checkResult.error) {
     return {
-      result: "-",
-      executionTime: "-",
-      lastResult: "-",
-      lastDate: "-",
+      name: checkResult.name !== null ? checkResult.name : "-",
+      error: checkResult.error,
       trendPercentage: "-",
       isDisabled: true,
       trendIcon: <MoveRight className="text-muted-foreground w-4" />,
+      check: {
+        result: "-",
+        executionTime: "-",
+        timestamp: "-",
+      },
+      lastCheck: {
+        result: "-",
+        executionTime: "-",
+        timestamp: "-",
+      },
     };
   }
 
-  const lastResult = result.lastCheck
-    ? formatNumber(result.lastCheck.result).toString()
-    : "-";
+  let result = "-";
+  let executionTime = "-";
+  let timestamp = "-";
 
-  const lastDate = result.lastCheck
-    ? formatDateTime(result.lastCheck.timestamp)
-    : "-";
+  if (checkResult.check) {
+    result = formatNumber(checkResult.check.result).toString();
+    executionTime = formatElapsedTime(checkResult.check.executionTime);
+    timestamp = formatDateTime(checkResult.check.timestamp);
+  }
+
+  let lastResult = "-";
+  let lastExecutionTime = "-";
+  let lastTimestamp = "-";
+
+  if (checkResult.lastCheck) {
+    lastResult = formatNumber(checkResult.lastCheck.result).toString();
+    lastExecutionTime = formatElapsedTime(checkResult.lastCheck.executionTime);
+    lastTimestamp = formatDateTime(checkResult.lastCheck.timestamp);
+  }
 
   let trendPercentage = "-";
   let trendIcon = <MoveRight className="text-muted-foreground w-4" />;
 
-  if (result.trendPercentage != null) {
-    trendPercentage = `${formatNumber(result.trendPercentage)}%`;
+  if (checkResult.trendPercentage !== null) {
+    trendPercentage = `${formatNumber(checkResult.trendPercentage)}%`;
 
-    if (result.trendPercentage > 0) {
+    if (checkResult.trendPercentage > 0) {
       trendIcon = <TrendingUp className="w-4 text-green-600" />;
-    } else if (result.trendPercentage < 0) {
+    } else if (checkResult.trendPercentage < 0) {
       trendIcon = <TrendingDown className="w-4 text-red-600" />;
     }
   }
 
   return {
-    result: formatNumber(result.check.result).toString(),
-    executionTime: formatElapsedTime(result.check.executionTime),
-    lastResult,
-    lastDate,
+    name: checkResult.name !== null ? checkResult.name : "-",
+    error: "-",
     trendPercentage,
     isDisabled: false,
     trendIcon,
+    check: {
+      result,
+      executionTime,
+      timestamp,
+    },
+    lastCheck: {
+      result: lastResult,
+      executionTime: lastExecutionTime,
+      timestamp: lastTimestamp,
+    },
   };
 }
 
@@ -114,12 +154,26 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
 
   return (
     <TableRow className="*:text-center">
-      <TableCell>{checkResult.name}</TableCell>
+      <TableCell>
+        <div className="flex items-center justify-center gap-2">
+          <span>{state.name}</span>
+          {state.error !== "-" && (
+            <Tooltip>
+              <TooltipTrigger>
+                <CircleX className="text-primary size-4" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{state.error}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+      </TableCell>
 
-      <TableCell>{state.result}</TableCell>
+      <TableCell>{state.check.result}</TableCell>
 
       <TableCell className="hidden xl:table-cell">
-        {state.executionTime}
+        {state.check.executionTime}
       </TableCell>
 
       <TableCell className="hidden md:table-cell">
@@ -129,9 +183,13 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         </div>
       </TableCell>
 
-      <TableCell className="hidden lg:table-cell">{state.lastResult}</TableCell>
+      <TableCell className="hidden lg:table-cell">
+        {state.lastCheck.result}
+      </TableCell>
 
-      <TableCell className="hidden xl:table-cell">{state.lastDate}</TableCell>
+      <TableCell className="hidden xl:table-cell">
+        {state.lastCheck.timestamp}
+      </TableCell>
 
       <TableCell>
         <Button
