@@ -16,6 +16,7 @@ import static com.example.backend.check.common.error.message.ApiErrorMessage.CHE
 
 @RestController
 @RequestMapping("api/checks")
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 public class CheckController {
 
