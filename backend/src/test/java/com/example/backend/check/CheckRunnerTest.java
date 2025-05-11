@@ -1,6 +1,7 @@
 package com.example.backend.check;
 
 import com.example.backend.check.common.exception.NameNullOrEmptyException;
+import com.example.backend.check.common.exception.db.DatabaseBadSqlException;
 import com.example.backend.check.common.exception.db.TestedDatabaseException;
 import com.example.backend.check.model.Check;
 import com.example.backend.check.model.CheckExecution;
@@ -24,7 +25,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.example.backend.check.common.exception.db.TestedDatabaseException.FAILED_QUERY_TESTED_DB;
 import static com.example.backend.check.model.factory.CheckFactory.createCheck;
 import static com.example.backend.check.model.factory.CheckFactory.createNameErrorCheck;
 import static org.junit.jupiter.api.Assertions.*;
@@ -193,7 +193,7 @@ class CheckRunnerTest {
 
         assertNotNull(checkResult);
         assertEquals(check.getName(), checkResult.getName());
-        assertEquals(FAILED_QUERY_TESTED_DB, checkResult.getError());
+        assertEquals(TestedDatabaseException.MESSAGE, checkResult.getError());
     }
 
     @Test
@@ -207,15 +207,15 @@ class CheckRunnerTest {
 
         assertNotNull(checkResult);
         assertEquals(check.getName(), checkResult.getName());
-        assertEquals(FAILED_QUERY_TESTED_DB, checkResult.getError());
+        assertEquals(TestedDatabaseException.MESSAGE, checkResult.getError());
     }
 
 
     @Test
-    void getQueryResult_whenQueryIsIncorrect_thenThrowsTestedDatabaseException() {
+    void getQueryResult_whenQueryIsIncorrect_thenThrowsDatabaseBadSqlException() {
         String query = "not a query";
 
-        assertThrows(TestedDatabaseException.class, () -> underTest.getQueryResult(query));
+        assertThrows(DatabaseBadSqlException.class, () -> underTest.getQueryResult(query));
     }
 
     @Test

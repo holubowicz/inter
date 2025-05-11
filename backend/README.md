@@ -2,6 +2,8 @@
 
 ## Environmental Variables
 
+- `QUERY_TIMEOUT_SECONDS` - optional variable that sets up query timeout in seconds, by default it's `60`
+
 ### Tested Database
 
 - `TESTED_DB_URL` - JDBC connection link, needs to be the name of the database container

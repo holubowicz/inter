@@ -1,5 +1,7 @@
 package com.example.backend.check;
 
+import com.example.backend.check.common.exception.db.DatabaseBadSqlException;
+import com.example.backend.check.common.exception.db.DatabaseQueryTimeoutException;
 import com.example.backend.check.common.exception.db.InternalDatabaseException;
 import com.example.backend.check.common.exception.db.TestedDatabaseException;
 import com.example.backend.check.common.validator.NameValidator;
@@ -14,10 +16,14 @@ import com.example.backend.check.model.repository.CheckExecutionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +34,9 @@ import static com.example.backend.check.model.factory.CheckResultFactory.createN
 @Slf4j
 @Component
 public class CheckRunner {
+
+    @Value("${app.db.query-timeout-seconds:60}")
+    private int QUERY_TIMEOUT_SECONDS;
 
     private final JdbcTemplate jdbcTemplate;
     private final CheckExecutionRepository checkExecutionRepository;
@@ -59,7 +68,7 @@ public class CheckRunner {
     public CheckResult runCheck(Check check) {
         try {
             return runCheckInternal(check);
-        } catch (InternalDatabaseException | TestedDatabaseException e) {
+        } catch (RuntimeException e) {
             log.warn(e.getMessage(), e.getCause());
             return createNameErrorCheckResult(check.getName(), e.getMessage());
         }
@@ -92,7 +101,23 @@ public class CheckRunner {
 
     public BigDecimal getQueryResult(String query) {
         try {
-            return jdbcTemplate.queryForObject(query, BigDecimal.class);
+            return jdbcTemplate.query(
+                    con -> {
+                        PreparedStatement ps = con.prepareStatement(query);
+                        ps.setQueryTimeout(QUERY_TIMEOUT_SECONDS);
+                        return ps;
+                    },
+                    rs -> {
+                        if (rs.next()) {
+                            return rs.getBigDecimal(1);
+                        }
+                        return null;
+                    }
+            );
+        } catch (DataAccessResourceFailureException e) {
+            throw new DatabaseQueryTimeoutException(e);
+        } catch (BadSqlGrammarException e) {
+            throw new DatabaseBadSqlException(e);
         } catch (Exception e) {
             throw new TestedDatabaseException(e);
         }

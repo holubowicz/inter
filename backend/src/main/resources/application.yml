@@ -17,5 +17,6 @@ app:
   loader:
     checks-path: checks
   db:
+    query-timeout-seconds: ${QUERY_TIMEOUT_SECONDS}
     internal:
       init-script-path: classpath:schema/internal.sql
