@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CheckResultFactoryTest {
 
     @Test
-    void createNameErrorCheckResult_whenAllProvided_thenReturnsCheckResult() {
+    public void createNameErrorCheckResult_whenAllProvided_thenReturnsCheckResult() {
         CheckMetadata metadata = new CheckMetadata("check-name", "category");
         String error = "Some error";
 

@@ -24,20 +24,20 @@ class CheckLoaderTest {
     private static final CheckLoader underTest = new CheckLoader(checkLoaderConfiguration);
 
     @BeforeEach
-    void setupBeforeEach() {
+    public void setupBeforeEach() {
         checkLoaderConfiguration.setChecksPath(checksPath);
     }
 
 
     @Test
-    void getCheckMetadataList_whenIncorrectChecksPathSet_thenThrowCheckDirectoryNotFoundException() {
+    public void getCheckMetadataList_whenIncorrectChecksPathSet_thenThrowCheckDirectoryNotFoundException() {
         checkLoaderConfiguration.setChecksPath("path/that/does/not/exist");
 
         assertThrows(CheckDirectoryNotFoundException.class, underTest::getCheckMetadataList);
     }
 
     @Test
-    void getCheckMetadataList_whenCorrectChecksPathSet_thenReturnsListOfCheckName() {
+    public void getCheckMetadataList_whenCorrectChecksPathSet_thenReturnsListOfCheckName() {
         List<CheckMetadata> result = underTest.getCheckMetadataList();
 
         assertFalse(result.isEmpty());
@@ -50,14 +50,14 @@ class CheckLoaderTest {
 
 
     @Test
-    void convertIntoCheck_whenCheckMetadataIsNull_thenThrowsCheckMetadataNullException() {
+    public void convertIntoCheck_whenCheckMetadataIsNull_thenThrowsCheckMetadataNullException() {
         assertThrows(CheckMetadataNullException.class, () ->
                 underTest.convertIntoCheck(null)
         );
     }
 
     @Test
-    void convertIntoCheck_whenCheckMetadataNameIsValid_thenReturnsCheck() {
+    public void convertIntoCheck_whenCheckMetadataNameIsValid_thenReturnsCheck() {
         CheckMetadata checkInputDTO = new CheckMetadata("absolute-avg", "good");
 
         Check check = underTest.convertIntoCheck(checkInputDTO);
@@ -70,7 +70,7 @@ class CheckLoaderTest {
     }
 
     @Test
-    void convertIntoCheck_whenCheckMetadataNameIsInvalid_thenReturnsErrorCheck() {
+    public void convertIntoCheck_whenCheckMetadataNameIsInvalid_thenReturnsErrorCheck() {
         CheckMetadata checkInputDTO = new CheckMetadata("not-exist", "bad");
 
         Check check = underTest.convertIntoCheck(checkInputDTO);
@@ -84,7 +84,7 @@ class CheckLoaderTest {
 
 
     @Test
-    void getCheck_whenFilepathIsNull_thenThrowsFilepathNullOrEmptyException() {
+    public void getCheck_whenFilepathIsNull_thenThrowsFilepathNullOrEmptyException() {
         CheckMetadata metadata = new CheckMetadata("absolute-avg", "good");
 
         assertThrows(FilepathNullOrEmptyException.class, () ->
@@ -93,7 +93,7 @@ class CheckLoaderTest {
     }
 
     @Test
-    void getCheck_whenFilepathIsEmpty_thenThrowsFilepathNullOrEmptyException() {
+    public void getCheck_whenFilepathIsEmpty_thenThrowsFilepathNullOrEmptyException() {
         CheckMetadata metadata = new CheckMetadata("absolute-avg", "good");
 
         assertThrows(FilepathNullOrEmptyException.class, () ->
@@ -102,7 +102,7 @@ class CheckLoaderTest {
     }
 
     @Test
-    void getCheck_whenFilepathInvalid_thenReturnsErrorCheck() {
+    public void getCheck_whenFilepathInvalid_thenReturnsErrorCheck() {
         CheckMetadata metadata = new CheckMetadata("check-not-exist", "bad");
         Path filepath = Paths.get(
                 "path/that/does/not/exist/" +
@@ -121,7 +121,7 @@ class CheckLoaderTest {
     }
 
     @Test
-    void getCheck_whenFilepathIsValidButDifferentCase_thenReturnsCorrectCheck() {
+    public void getCheck_whenFilepathIsValidButDifferentCase_thenReturnsCorrectCheck() {
         CheckMetadata metadata = new CheckMetadata("Absolute-Avg", "gOOd");
         Path filepath = Paths.get(
                 checksPath +
@@ -141,7 +141,7 @@ class CheckLoaderTest {
     }
 
     @Test
-    void getCheck_whenFilepathIsValid_thenReturnsCorrectCheck() {
+    public void getCheck_whenFilepathIsValid_thenReturnsCorrectCheck() {
         CheckMetadata metadata = new CheckMetadata("absolute-avg", "good");
         Path filepath = Paths.get(
                 checksPath +

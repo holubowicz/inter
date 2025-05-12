@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class CheckExecutionDTOFactoryTest {
 
     @Test
-    void createCheckExecutionDTO_whenAllProvided_thenReturnsCheckExecutionDTO() {
+    public void createCheckExecutionDTO_whenAllProvided_thenReturnsCheckExecutionDTO() {
         String checkName = "check-name";
         Instant timestamp = Instant.now();
         BigDecimal result = BigDecimal.valueOf(10);

@@ -12,14 +12,14 @@ class NameValidatorTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void validate_whenNameIsNullOrEmpty_thenThrowsThrowsNameNullOrEmptyException(String name) {
+    public void validate_whenNameIsNullOrEmpty_thenThrowsThrowsNameNullOrEmptyException(String name) {
         assertThrows(NameNullOrEmptyException.class, () ->
                 NameValidator.validate(name)
         );
     }
 
     @Test
-    void validate_whenNameProvided_thenDoesNotThrowException() {
+    public void validate_whenNameProvided_thenDoesNotThrowException() {
         assertDoesNotThrow(() ->
                 NameValidator.validate("check-name")
         );

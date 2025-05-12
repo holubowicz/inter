@@ -55,13 +55,13 @@ class CheckRunnerTest {
     }
 
     @BeforeEach
-    void setupBeforeEach() {
+    public void setupBeforeEach() {
         checkExecutionRepository.deleteAll();
     }
 
 
     @Test
-    void getCheckDTO_whenNoCheckExecutionSaved_thenReturnsNotFullCheckDTO() {
+    public void getCheckDTO_whenNoCheckExecutionSaved_thenReturnsNotFullCheckDTO() {
         CheckMetadata metadata = new CheckMetadata("check-name", "category");
 
         CheckDTO checkDTO = underTest.getCheckDTO(metadata);
@@ -73,7 +73,7 @@ class CheckRunnerTest {
     }
 
     @Test
-    void getCheckDTO_whenCheckExecutionSaved_thenReturnsNotFullCheckDTO() {
+    public void getCheckDTO_whenCheckExecutionSaved_thenReturnsNotFullCheckDTO() {
         CheckMetadata metadata = new CheckMetadata("check-name", "category");
         BigDecimal lastResult = BigDecimal.valueOf(10);
         Long lastExecutionTime = 10L;
@@ -97,14 +97,14 @@ class CheckRunnerTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void getCheckExecutions_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {
+    public void getCheckExecutions_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {
         assertThrows(NameNullOrEmptyException.class, () ->
                 underTest.getCheckExecutions(checkName)
         );
     }
 
     @Test
-    void getCheckExecutions_whenCheckNameProvidedNoHistorySaved_thenReturnsEmptyCheckExecutions() {
+    public void getCheckExecutions_whenCheckNameProvidedNoHistorySaved_thenReturnsEmptyCheckExecutions() {
         String checkName = "check-name";
 
         List<CheckExecution> checkExecutionList = underTest.getCheckExecutions(checkName);
@@ -114,7 +114,7 @@ class CheckRunnerTest {
     }
 
     @Test
-    void getCheckExecutions_whenCheckNameProvidedOneHistorySaved_thenReturnsCheckExecutions() {
+    public void getCheckExecutions_whenCheckNameProvidedOneHistorySaved_thenReturnsCheckExecutions() {
         String checkName = "check-name";
         int expectedSize = 1;
         BigDecimal lastResult = BigDecimal.valueOf(10);
@@ -135,7 +135,7 @@ class CheckRunnerTest {
     }
 
     @Test
-    void getCheckExecutions_whenCheckNameProvidedMultipleHistoriesSaved_thenReturnsCheckExecutions() {
+    public void getCheckExecutions_whenCheckNameProvidedMultipleHistoriesSaved_thenReturnsCheckExecutions() {
         String checkName = "check-name";
         int expectedSize = 3;
         checkExecutionRepository.saveAll(List.of(
@@ -152,7 +152,7 @@ class CheckRunnerTest {
 
 
     @Test
-    void runCheck_whenCheckProvided_thenReturnsCheckResult() {
+    public void runCheck_whenCheckProvided_thenReturnsCheckResult() {
         Check check = createCheck(
                 new CheckMetadata("check-name", "category"),
                 "SELECT COUNT(*) FROM calculations"
@@ -170,7 +170,7 @@ class CheckRunnerTest {
     }
 
     @Test
-    void runCheck_whenCheckErrorProvided_thenReturnsErrorCheckResult() {
+    public void runCheck_whenCheckErrorProvided_thenReturnsErrorCheckResult() {
         Check check = createNameErrorCheck(
                 new CheckMetadata("check-name", "category"),
                 "some error"
@@ -185,7 +185,7 @@ class CheckRunnerTest {
     }
 
     @Test
-    void runCheck_whenCheckQueryIsNull_thenReturnsErrorCheckResult() {
+    public void runCheck_whenCheckQueryIsNull_thenReturnsErrorCheckResult() {
         Check check = Check.builder()
                 .metadata(new CheckMetadata("check-name", "category"))
                 .build();
@@ -199,7 +199,7 @@ class CheckRunnerTest {
     }
 
     @Test
-    void runCheck_whenCheckQueryIsEmpty_thenReturnsErrorCheckResult() {
+    public void runCheck_whenCheckQueryIsEmpty_thenReturnsErrorCheckResult() {
         Check check = Check.builder()
                 .metadata(new CheckMetadata("check-name", "category"))
                 .query("")
@@ -215,14 +215,14 @@ class CheckRunnerTest {
 
 
     @Test
-    void getQueryResult_whenQueryIsIncorrect_thenThrowsDatabaseBadSqlException() {
+    public void getQueryResult_whenQueryIsIncorrect_thenThrowsDatabaseBadSqlException() {
         String query = "not a query";
 
         assertThrows(DatabaseBadSqlException.class, () -> underTest.getQueryResult(query));
     }
 
     @Test
-    void getQueryResult_whenQueryProvided_thenReturnsQueryResult() {
+    public void getQueryResult_whenQueryProvided_thenReturnsQueryResult() {
         String query = "SELECT COUNT(*) FROM calculations";
         BigDecimal expectedResult = BigDecimal.valueOf(14);
 
@@ -234,7 +234,7 @@ class CheckRunnerTest {
 
 
     @Test
-    void saveCheckToHistory_whenInsertCheckExecutionProvided_thenReturnsCheckExecutionDTO() {
+    public void saveCheckToHistory_whenInsertCheckExecutionProvided_thenReturnsCheckExecutionDTO() {
         String checkName = "check-name";
         BigDecimal lastResult = BigDecimal.valueOf(10);
         long lastExecutionTime = 10;
@@ -254,7 +254,7 @@ class CheckRunnerTest {
 
 
     @Test
-    void calculateTrend_whenSavedCheckExecution_thenReturnsCheckTrend() {
+    public void calculateTrend_whenSavedCheckExecution_thenReturnsCheckTrend() {
         String checkName = "check-name";
         BigDecimal currentResult = BigDecimal.valueOf(10);
         BigDecimal lastResult = BigDecimal.valueOf(5);
@@ -276,7 +276,7 @@ class CheckRunnerTest {
     }
 
     @Test
-    void calculateTrend_whenSavedCheckExecutionIsZero_thenReturnsCheckTrend() {
+    public void calculateTrend_whenSavedCheckExecutionIsZero_thenReturnsCheckTrend() {
         String checkName = "check-name";
         BigDecimal currentResult = BigDecimal.valueOf(10);
         BigDecimal lastResult = BigDecimal.valueOf(0);
@@ -298,7 +298,7 @@ class CheckRunnerTest {
     }
 
     @Test
-    void calculateTrend_whenNoSavedCheckExecution_thenReturnsEmptyCheckTrend() {
+    public void calculateTrend_whenNoSavedCheckExecution_thenReturnsEmptyCheckTrend() {
         String checkName = "check-name";
         BigDecimal currentResult = BigDecimal.valueOf(10.0);
 

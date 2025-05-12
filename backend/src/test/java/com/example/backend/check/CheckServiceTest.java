@@ -48,7 +48,7 @@ class CheckServiceTest {
 
 
     @Test
-    void getCheckDTOs_whenApplicationContext_thenReturnsCheckDTOs() {
+    public void getCheckDTOs_whenApplicationContext_thenReturnsCheckDTOs() {
         List<CheckDTO> checkDTOs = underTest.getCheckDTOs();
 
         assertNotNull(checkDTOs);
@@ -61,7 +61,7 @@ class CheckServiceTest {
 
 
     @Test
-    void getCheckCategories_whenApplicationContext_thenReturnsCheckCategories() {
+    public void getCheckCategories_whenApplicationContext_thenReturnsCheckCategories() {
         List<String> categories = underTest.getCheckCategories();
 
         assertNotNull(categories);
@@ -75,14 +75,14 @@ class CheckServiceTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void getCheckExecutionDTOs_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {
+    public void getCheckExecutionDTOs_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {
         assertThrows(NameNullOrEmptyException.class, () ->
                 underTest.getCheckExecutionDTOs(checkName)
         );
     }
 
     @Test
-    void getCheckExecutionDTOs_whenCheckNameProvided_thenReturnsCheckExecutionDTOs() {
+    public void getCheckExecutionDTOs_whenCheckNameProvided_thenReturnsCheckExecutionDTOs() {
         String checkName = "check-name";
 
         List<CheckExecutionDTO> checkExecutionDTOs = underTest.getCheckExecutionDTOs(checkName);
@@ -92,14 +92,14 @@ class CheckServiceTest {
 
 
     @Test
-    void runCheckMetadataList_whenCheckMetadataListIsNull_thenThrowsCheckMetadataListNullException() {
+    public void runCheckMetadataList_whenCheckMetadataListIsNull_thenThrowsCheckMetadataListNullException() {
         assertThrows(CheckMetadataListNullException.class, () ->
                 underTest.runCheckMetadataList(null)
         );
     }
 
     @Test
-    void runCheckMetadataList_whenCheckDTOListProvided_thenReturnsCheckResultList() {
+    public void runCheckMetadataList_whenCheckDTOListProvided_thenReturnsCheckResultList() {
         List<CheckMetadata> metadataList = List.of(
                 new CheckMetadata("absolute-avg", "good"),
                 new CheckMetadata("total-count", "good")
