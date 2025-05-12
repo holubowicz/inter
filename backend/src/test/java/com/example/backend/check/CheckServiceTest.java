@@ -60,6 +60,19 @@ class CheckServiceTest {
     }
 
 
+    @Test
+    void getCheckCategories_whenApplicationContext_thenReturnsCheckCategories() {
+        List<String> categories = underTest.getCheckCategories();
+
+        assertNotNull(categories);
+        assertFalse(categories.isEmpty());
+        categories.forEach(category -> {
+            assertNotNull(category);
+            assertFalse(category.isEmpty());
+        });
+    }
+
+
     @ParameterizedTest
     @NullAndEmptySource
     void getCheckExecutionDTOs_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {

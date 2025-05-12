@@ -27,6 +27,11 @@ public class CheckController {
         return checkService.getCheckDTOs();
     }
 
+    @GetMapping("categories")
+    public List<String> getCheckCategories() {
+        return checkService.getCheckCategories();
+    }
+
     @GetMapping("{checkName}/history")
     public List<CheckExecutionDTO> getCheckExecutionDTOs(@PathVariable String checkName) {
         return checkService.getCheckExecutionDTOs(checkName);

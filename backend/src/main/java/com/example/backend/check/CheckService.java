@@ -10,6 +10,7 @@ import com.example.backend.check.model.dto.factory.CheckExecutionDTOFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -22,6 +23,15 @@ public class CheckService {
     public List<CheckDTO> getCheckDTOs() {
         return checkLoader.getCheckMetadataList().stream()
                 .map(checkRunner::getCheckDTO)
+                .sorted(Comparator.comparing(dto -> dto.getMetadata().getName()))
+                .toList();
+    }
+
+    public List<String> getCheckCategories() {
+        return checkLoader.getCheckMetadataList().stream()
+                .map(CheckMetadata::getCategory)
+                .distinct()
+                .sorted()
                 .toList();
     }
 

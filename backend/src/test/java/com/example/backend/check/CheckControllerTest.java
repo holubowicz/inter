@@ -72,7 +72,7 @@ class CheckControllerTest {
 
     @Test
     public void getCheckDTOs_whenRequestSent_thenVerifyResultValues() throws Exception {
-        List<String> EXPECTED_NAMES = Arrays.asList(
+        final List<String> EXPECTED_NAMES = Arrays.asList(
                 "absolute-avg",
                 "avg-all",
                 "negative-count",
@@ -88,6 +88,33 @@ class CheckControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(EXPECTED_SIZE)))
                 .andExpect(jsonPath("$[*].metadata.name", containsInAnyOrder(EXPECTED_NAMES.toArray())));
+    }
+
+
+    @Test
+    public void getCheckCategories_whenRequestSent_thenVerifyResponseStructure() throws Exception {
+        this.mockMvc.perform(get("/api/checks/categories"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[*]", everyItem(notNullValue())));
+    }
+
+    @Test
+    public void getCheckCategories_whenRequestSent_thenVerifyResultValues() throws Exception {
+        final List<String> EXPECTED_CATEGORIES = Arrays.asList(
+                "good",
+                "bad"
+        );
+
+        this.mockMvc.perform(get("/api/checks/categories"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[*]", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*]", containsInAnyOrder(EXPECTED_CATEGORIES.toArray())));
     }
 
 
