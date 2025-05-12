@@ -79,14 +79,14 @@ class CheckServiceTest {
 
 
     @Test
-    void runCheckDTOs_whenCheckDTOListIsNull_thenThrowsCheckInputDTOListNullException() {
+    void runCheckMetadataList_whenCheckMetadataListIsNull_thenThrowsCheckMetadataListNullException() {
         assertThrows(CheckMetadataListNullException.class, () ->
                 underTest.runCheckMetadataList(null)
         );
     }
 
     @Test
-    void runCheckDTOs_whenCheckDTOListProvided_thenReturnsCheckResultList() {
+    void runCheckMetadataList_whenCheckDTOListProvided_thenReturnsCheckResultList() {
         List<CheckMetadata> metadataList = List.of(
                 new CheckMetadata("absolute-avg", "good"),
                 new CheckMetadata("total-count", "good")

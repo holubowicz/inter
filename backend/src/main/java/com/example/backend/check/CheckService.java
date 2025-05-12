@@ -20,7 +20,7 @@ public class CheckService {
     private final CheckRunner checkRunner;
 
     public List<CheckDTO> getCheckDTOs() {
-        return checkLoader.getCheckMetadata().stream()
+        return checkLoader.getCheckMetadataList().stream()
                 .map(checkRunner::getCheckDTO)
                 .toList();
     }

@@ -28,10 +28,7 @@ public final class CheckLoaderUtils {
             return CheckMetadata.builder().name(filenameParts[0]).build();
         }
 
-        return CheckMetadata.builder()
-                .name(filenameParts[0])
-                .category(filenameParts[1])
-                .build();
+        return new CheckMetadata(filenameParts[0], filenameParts[1]);
     }
 
 }

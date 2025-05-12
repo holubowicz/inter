@@ -29,7 +29,7 @@ public class CheckLoader {
 
     private final CheckLoaderConfiguration checkLoaderConfiguration;
 
-    public List<CheckMetadata> getCheckMetadata() {
+    public List<CheckMetadata> getCheckMetadataList() {
         Path checksPath = Paths.get(this.checkLoaderConfiguration.getChecksPath())
                 .toAbsolutePath();
 

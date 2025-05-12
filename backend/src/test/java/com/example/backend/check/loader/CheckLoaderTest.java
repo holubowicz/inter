@@ -29,15 +29,15 @@ class CheckLoaderTest {
 
 
     @Test
-    void getCheckNameList_whenIncorrectChecksPathSet_thenThrowCheckDirectoryNotFoundException() {
+    void getCheckMetadataList_whenIncorrectChecksPathSet_thenThrowCheckDirectoryNotFoundException() {
         checkLoaderConfiguration.setChecksPath("path/that/does/not/exist");
 
-        assertThrows(CheckDirectoryNotFoundException.class, underTest::getCheckMetadata);
+        assertThrows(CheckDirectoryNotFoundException.class, underTest::getCheckMetadataList);
     }
 
     @Test
-    void getCheckNameList_whenCorrectChecksPathSet_thenReturnsListOfCheckName() {
-        List<CheckMetadata> result = underTest.getCheckMetadata();
+    void getCheckMetadataList_whenCorrectChecksPathSet_thenReturnsListOfCheckName() {
+        List<CheckMetadata> result = underTest.getCheckMetadataList();
 
         assertFalse(result.isEmpty());
         result.forEach(metadata -> {

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CheckFactoryTest {
 
     @Test
-    void createCheck_whenCheckNameAndQueryProvided_thenReturnCheck() {
+    void createCheck_whenCheckMetadataAndQueryProvided_thenReturnCheck() {
         CheckMetadata metadata = new CheckMetadata("check-name", "category");
         String query = "SELECT * FROM check";
 
@@ -38,7 +38,7 @@ class CheckFactoryTest {
 
 
     @Test
-    void createNameErrorCheck_whenCheckNameAndErrorProvided_thenReturnsCheck() {
+    void createNameErrorCheck_whenAllProvided_thenReturnsCheck() {
         CheckMetadata metadata = new CheckMetadata("check-name", "category");
         String error = "some error";
 

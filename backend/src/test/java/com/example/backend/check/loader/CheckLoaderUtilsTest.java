@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CheckLoaderUtilsTest {
 
     @Test
-    void getCheckNameFromPath_whenFilepathIsValid_thenReturnsCheckMetadata() {
+    void getCheckMetadataFromPath_whenFilepathIsValid_thenReturnsCheckMetadata() {
         CheckMetadata expectedMetadata = new CheckMetadata("check-name", "category");
         Path path = Paths.get(
                 "/path/to/folder/" +
@@ -30,7 +30,7 @@ class CheckLoaderUtilsTest {
     }
 
     @Test
-    void getCheckNameFromPath_whenNoExtension_thenReturnsCheckMetadata() {
+    void getCheckMetadataFromPath_whenNoExtension_thenReturnsCheckMetadata() {
         CheckMetadata expectedMetadata = new CheckMetadata("check-name", "category");
         Path path = Paths.get(
                 "/path/to/folder/" +
@@ -46,7 +46,7 @@ class CheckLoaderUtilsTest {
     }
 
     @Test
-    void getCheckNameFromPath_whenExtensionLowercase_thenReturnsCheckMetadata() {
+    void getCheckMetadataFromPath_whenExtensionLowercase_thenReturnsCheckMetadata() {
         CheckMetadata expectedMetadata = new CheckMetadata("check-name", "category");
         Path path = Paths.get(
                 "/path/to/folder/" +
@@ -63,7 +63,7 @@ class CheckLoaderUtilsTest {
     }
 
     @Test
-    void getCheckNameFromPath_whenExtensionUppercase_thenReturnsCheckMetadata() {
+    void getCheckMetadataFromPath_whenExtensionUppercase_thenReturnsCheckMetadata() {
         CheckMetadata expectedMetadata = new CheckMetadata("check-name", "category");
         Path path = Paths.get(
                 "/path/to/folder/" +
@@ -80,7 +80,7 @@ class CheckLoaderUtilsTest {
     }
 
     @Test
-    void getCheckNameFromPath_whenContainsSpaceInFilename_thenReturnsCheckMetadata() {
+    void getCheckMetadataFromPath_whenContainsSpaceInFilename_thenReturnsCheckMetadata() {
         CheckMetadata expectedMetadata = new CheckMetadata("check name", "category");
         Path path = Paths.get(
                 "/path/to/folder/" +
@@ -97,7 +97,7 @@ class CheckLoaderUtilsTest {
     }
 
     @Test
-    void getCheckNameFromPath_whenFilenameCapitalized_thenReturnsCheckMetadata() {
+    void getCheckMetadataFromPath_whenFilenameCapitalized_thenReturnsCheckMetadata() {
         CheckMetadata expectedMetadata = new CheckMetadata("Check-Name", "category");
         Path path = Paths.get(
                 "/path/to/folder/" +
