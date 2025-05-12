@@ -1,3 +1,3 @@
 SELECT COUNT(*) AS result
 FROM calculations
-WHERE number > 0;
+WHERE number > 0

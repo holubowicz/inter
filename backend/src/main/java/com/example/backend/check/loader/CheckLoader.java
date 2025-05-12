@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.example.backend.check.common.error.message.LoadingErrorMessage.CHECK_METADATA_INCORRECT;
 import static com.example.backend.check.common.error.message.LoadingErrorMessage.FAILED_TO_LOAD_CONTENT;
@@ -63,16 +65,17 @@ public class CheckLoader {
         }
         filenameBuilder.append(CHECK_FILE_EXTENSION);
 
-        Path filepath = Paths.get(this.checkLoaderConfiguration.getChecksPath(), filenameBuilder.toString());
-        return getCheck(filepath);
+        Path filepath = resolveCaseInsensitivePath(
+                this.checkLoaderConfiguration.getChecksPath(),
+                filenameBuilder.toString()
+        );
+        return getCheck(metadata, filepath);
     }
 
-    public Check getCheck(Path filepath) {
+    public Check getCheck(CheckMetadata metadata, Path filepath) {
         if (filepath == null || filepath.toString().trim().isEmpty()) {
             throw new FilepathNullOrEmptyException();
         }
-
-        CheckMetadata metadata = CheckLoaderUtils.getCheckMetadataFromPath(filepath);
 
         try {
             String query = Files.readString(filepath);
@@ -85,6 +88,20 @@ public class CheckLoader {
             log.warn(FAILED_TO_LOAD_CONTENT);
             return createNameErrorCheck(metadata, FAILED_TO_LOAD_CONTENT);
         }
+    }
+
+    private Path resolveCaseInsensitivePath(String directory, String filename) {
+        try (Stream<Path> files = Files.list(Paths.get(directory))) {
+            Optional<Path> match = files
+                    .filter(path -> path.getFileName().toString().equalsIgnoreCase(filename))
+                    .findFirst();
+            if (match.isPresent()) {
+                return match.get();
+            }
+        } catch (Exception ignored) {
+            log.info("Could not resolve path or any path variations: {}/{}", directory, filename);
+        }
+        return Paths.get(directory, filename);
     }
 
 }

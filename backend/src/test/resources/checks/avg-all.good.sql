@@ -1,2 +1,2 @@
 SELECT AVG(number) AS result
-FROM calculations;
+FROM calculations

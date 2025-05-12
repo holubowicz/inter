@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static com.example.backend.check.loader.CheckLoaderUtils.CHECK_FILE_EXTENSION;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckLoaderTest {
@@ -84,40 +85,79 @@ class CheckLoaderTest {
 
     @Test
     void getCheck_whenFilepathIsNull_thenThrowsFilepathNullOrEmptyException() {
+        CheckMetadata metadata = new CheckMetadata("absolute-avg", "good");
+
         assertThrows(FilepathNullOrEmptyException.class, () ->
-                underTest.getCheck(null)
+                underTest.getCheck(metadata, null)
         );
     }
 
     @Test
     void getCheck_whenFilepathIsEmpty_thenThrowsFilepathNullOrEmptyException() {
+        CheckMetadata metadata = new CheckMetadata("absolute-avg", "good");
+
         assertThrows(FilepathNullOrEmptyException.class, () ->
-                underTest.getCheck(Paths.get(""))
+                underTest.getCheck(metadata, Paths.get(""))
         );
     }
 
     @Test
-    void getCheck_whenFilepathIsValid_thenReturnsCorrectCheck() {
-        Path filepath = Paths.get(checksPath + "/absolute-avg.good.sql");
+    void getCheck_whenFilepathInvalid_thenReturnsErrorCheck() {
+        CheckMetadata metadata = new CheckMetadata("check-not-exist", "bad");
+        Path filepath = Paths.get(
+                "path/that/does/not/exist/" +
+                        "/" +
+                        metadata.getName() +
+                        "." +
+                        metadata.getCategory()
+        );
 
-        Check result = underTest.getCheck(filepath);
+        Check result = underTest.getCheck(metadata, filepath);
 
-        assertEquals("absolute-avg", result.getMetadata().getName());
-        assertEquals("good", result.getMetadata().getCategory());
+        assertEquals(metadata.getName(), result.getMetadata().getName());
+        assertEquals(metadata.getCategory(), result.getMetadata().getCategory());
+        assertNull(result.getQuery());
+        assertNotNull(result.getError());
+    }
+
+    @Test
+    void getCheck_whenFilepathIsValidButDifferentCase_thenReturnsCorrectCheck() {
+        CheckMetadata metadata = new CheckMetadata("Absolute-Avg", "gOOd");
+        Path filepath = Paths.get(
+                checksPath +
+                        "/" +
+                        metadata.getName() +
+                        "." +
+                        metadata.getCategory() +
+                        CHECK_FILE_EXTENSION
+        );
+
+        Check result = underTest.getCheck(metadata, filepath);
+
+        assertEquals(metadata.getName(), result.getMetadata().getName());
+        assertEquals(metadata.getCategory(), result.getMetadata().getCategory());
         assertNotNull(result.getQuery());
         assertNull(result.getError());
     }
 
     @Test
-    void getCheck_whenFilepathInvalid_thenReturnsErrorCheck() {
-        Path filepath = Paths.get("path/that/does/not/exist/check-not-exist.bad");
+    void getCheck_whenFilepathIsValid_thenReturnsCorrectCheck() {
+        CheckMetadata metadata = new CheckMetadata("absolute-avg", "good");
+        Path filepath = Paths.get(
+                checksPath +
+                        "/" +
+                        metadata.getName() +
+                        "." +
+                        metadata.getCategory() +
+                        CHECK_FILE_EXTENSION
+        );
 
-        Check result = underTest.getCheck(filepath);
+        Check result = underTest.getCheck(metadata, filepath);
 
-        assertEquals("check-not-exist", result.getMetadata().getName());
-        assertEquals("bad", result.getMetadata().getCategory());
-        assertNull(result.getQuery());
-        assertNotNull(result.getError());
+        assertEquals(metadata.getName(), result.getMetadata().getName());
+        assertEquals(metadata.getCategory(), result.getMetadata().getCategory());
+        assertNotNull(result.getQuery());
+        assertNull(result.getError());
     }
 
 }
