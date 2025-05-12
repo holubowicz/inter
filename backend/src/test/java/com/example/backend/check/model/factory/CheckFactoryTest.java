@@ -1,6 +1,7 @@
 package com.example.backend.check.model.factory;
 
 import com.example.backend.check.model.Check;
+import com.example.backend.check.model.CheckMetadata;
 import org.junit.jupiter.api.Test;
 
 import static com.example.backend.check.model.factory.CheckFactory.*;
@@ -10,13 +11,14 @@ class CheckFactoryTest {
 
     @Test
     void createCheck_whenCheckNameAndQueryProvided_thenReturnCheck() {
-        String checkName = "check-name";
+        CheckMetadata metadata = new CheckMetadata("check-name", "category");
         String query = "SELECT * FROM check";
 
-        Check check = createCheck(checkName, query);
+        Check check = createCheck(metadata, query);
 
         assertNotNull(check);
-        assertEquals(checkName, check.getName());
+        assertEquals(metadata.getName(), check.getMetadata().getName());
+        assertEquals(metadata.getCategory(), check.getMetadata().getCategory());
         assertEquals(query, check.getQuery());
         assertNull(check.getError());
     }
@@ -30,20 +32,21 @@ class CheckFactoryTest {
 
         assertNotNull(check);
         assertEquals(error, check.getError());
-        assertNull(check.getName());
+        assertNull(check.getMetadata());
         assertNull(check.getQuery());
     }
 
 
     @Test
     void createNameErrorCheck_whenCheckNameAndErrorProvided_thenReturnsCheck() {
-        String checkName = "check-name";
+        CheckMetadata metadata = new CheckMetadata("check-name", "category");
         String error = "some error";
 
-        Check check = createNameErrorCheck(checkName, error);
+        Check check = createNameErrorCheck(metadata, error);
 
         assertNotNull(check);
-        assertEquals(checkName, check.getName());
+        assertEquals(metadata.getName(), check.getMetadata().getName());
+        assertEquals(metadata.getCategory(), check.getMetadata().getCategory());
         assertEquals(error, check.getError());
         assertNull(check.getQuery());
     }

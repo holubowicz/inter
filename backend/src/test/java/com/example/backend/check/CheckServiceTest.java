@@ -1,11 +1,11 @@
 package com.example.backend.check;
 
-import com.example.backend.check.common.exception.CheckInputDTOListNullException;
+import com.example.backend.check.common.exception.CheckMetadataListNullException;
 import com.example.backend.check.common.exception.NameNullOrEmptyException;
+import com.example.backend.check.model.CheckMetadata;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.dto.CheckDTO;
 import com.example.backend.check.model.dto.CheckExecutionDTO;
-import com.example.backend.check.model.dto.CheckInputDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -54,8 +54,8 @@ class CheckServiceTest {
         assertNotNull(checkDTOs);
         checkDTOs.forEach(checkDTO -> {
             assertNotNull(checkDTO);
-            assertNotNull(checkDTO.getName());
-            assertFalse(checkDTO.getName().isEmpty());
+            assertNotNull(checkDTO.getMetadata().getName());
+            assertFalse(checkDTO.getMetadata().getName().isEmpty());
         });
     }
 
@@ -80,25 +80,27 @@ class CheckServiceTest {
 
     @Test
     void runCheckDTOs_whenCheckDTOListIsNull_thenThrowsCheckInputDTOListNullException() {
-        assertThrows(CheckInputDTOListNullException.class, () ->
-                underTest.runCheckDTOs(null)
+        assertThrows(CheckMetadataListNullException.class, () ->
+                underTest.runCheckMetadataList(null)
         );
     }
 
     @Test
     void runCheckDTOs_whenCheckDTOListProvided_thenReturnsCheckResultList() {
-        List<CheckInputDTO> checkInputDTOList = List.of(
-                new CheckInputDTO("absolute-avg"),
-                new CheckInputDTO("total-count")
+        List<CheckMetadata> metadataList = List.of(
+                new CheckMetadata("absolute-avg", "good"),
+                new CheckMetadata("total-count", "good")
         );
 
-        List<CheckResult> checkResults = underTest.runCheckDTOs(checkInputDTOList);
+        List<CheckResult> checkResults = underTest.runCheckMetadataList(metadataList);
 
         assertNotNull(checkResults);
         checkResults.forEach(checkResult -> {
             assertNotNull(checkResult);
-            assertNotNull(checkResult.getName());
-            assertFalse(checkResult.getName().isEmpty());
+            assertNotNull(checkResult.getMetadata().getName());
+            assertFalse(checkResult.getMetadata().getName().isEmpty());
+            assertNotNull(checkResult.getMetadata().getCategory());
+            assertFalse(checkResult.getMetadata().getCategory().isEmpty());
             assertNotNull(checkResult.getCheck());
             assertNotNull(checkResult.getCheck().getResult());
             assertNotNull(checkResult.getCheck().getTimestamp());

@@ -5,10 +5,7 @@ import com.example.backend.check.common.exception.db.DatabaseQueryTimeoutExcepti
 import com.example.backend.check.common.exception.db.InternalDatabaseException;
 import com.example.backend.check.common.exception.db.TestedDatabaseException;
 import com.example.backend.check.common.validator.NameValidator;
-import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckExecution;
-import com.example.backend.check.model.CheckResult;
-import com.example.backend.check.model.CheckTrend;
+import com.example.backend.check.model.*;
 import com.example.backend.check.model.dto.CheckDTO;
 import com.example.backend.check.model.dto.CheckExecutionDTO;
 import com.example.backend.check.model.dto.factory.CheckExecutionDTOFactory;
@@ -27,7 +24,6 @@ import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.backend.check.model.dto.factory.CheckDTOFactory.createNameCheckDTO;
 import static com.example.backend.check.model.dto.factory.CheckExecutionDTOFactory.createCheckExecutionDTO;
 import static com.example.backend.check.model.factory.CheckResultFactory.createNameErrorCheckResult;
 
@@ -48,16 +44,16 @@ public class CheckRunner {
         this.checkExecutionRepository = checkExecutionRepository;
     }
 
-    public CheckDTO getCheckDTO(String checkName) {
-        NameValidator.validate(checkName);
+    public CheckDTO getCheckDTO(CheckMetadata metadata) {
+        NameValidator.validate(metadata.getName());
         return checkExecutionRepository
-                .findTopByCheckNameOrderByTimestampDesc(checkName)
+                .findTopByCheckNameOrderByTimestampDesc(metadata.getName())
                 .map(CheckExecutionDTOFactory::createCheckExecutionDTO)
                 .map(checkExecutionDTO -> new CheckDTO(
-                        checkName,
+                        metadata,
                         checkExecutionDTO
                 ))
-                .orElseGet(() -> createNameCheckDTO(checkName));
+                .orElseGet(() -> CheckDTO.builder().metadata(metadata).build());
     }
 
     public List<CheckExecution> getCheckExecutions(String checkName) {
@@ -70,29 +66,29 @@ public class CheckRunner {
             return runCheckInternal(check);
         } catch (RuntimeException e) {
             log.warn(e.getMessage(), e.getCause());
-            return createNameErrorCheckResult(check.getName(), e.getMessage());
+            return createNameErrorCheckResult(check.getMetadata(), e.getMessage());
         }
     }
 
     private CheckResult runCheckInternal(Check check) {
         if (check.getError() != null) {
-            return createNameErrorCheckResult(check.getName(), check.getError());
+            return createNameErrorCheckResult(check.getMetadata(), check.getError());
         }
 
         long startTime = System.currentTimeMillis();
         BigDecimal currentResult = getQueryResult(check.getQuery());
         long executionTime = System.currentTimeMillis() - startTime;
 
-        CheckTrend checkTrend = calculateTrend(check.getName(), currentResult);
+        CheckTrend checkTrend = calculateTrend(check.getMetadata().getName(), currentResult);
         CheckExecution insertCheckExecution = CheckExecution.builder()
-                .checkName(check.getName())
+                .checkName(check.getMetadata().getName())
                 .result(currentResult)
                 .executionTime(executionTime)
                 .build();
         CheckExecutionDTO currentCheckExecutionDTO = saveCheckToHistory(insertCheckExecution);
 
         return CheckResult.builder()
-                .name(check.getName())
+                .metadata(check.getMetadata())
                 .trendPercentage(checkTrend.getTrendPercentage())
                 .check(currentCheckExecutionDTO)
                 .lastCheck(checkTrend.getLastCheck())

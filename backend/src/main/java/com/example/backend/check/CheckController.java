@@ -1,9 +1,9 @@
 package com.example.backend.check;
 
+import com.example.backend.check.model.CheckMetadata;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.dto.CheckDTO;
 import com.example.backend.check.model.dto.CheckExecutionDTO;
-import com.example.backend.check.model.dto.CheckInputDTO;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_INPUT_DTO_LIST_INCORRECT;
-import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_INPUT_DTO_LIST_ITEM_INCORRECT;
+import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_METADATA_LIST_INCORRECT;
+import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_METADATA_LIST_ITEM_INCORRECT;
 
 @RestController
 @RequestMapping("api/checks")
@@ -33,19 +33,19 @@ public class CheckController {
     }
 
     @PostMapping("run")
-    public ResponseEntity<?> runCheckDTOs(@Nullable @RequestBody List<CheckInputDTO> checkInputDTOs) {
-        if (checkInputDTOs == null || checkInputDTOs.isEmpty()) {
-            return ResponseEntity.badRequest().body(CHECK_INPUT_DTO_LIST_INCORRECT);
+    public ResponseEntity<?> runCheckMetadataList(@Nullable @RequestBody List<CheckMetadata> metadataList) {
+        if (metadataList == null || metadataList.isEmpty()) {
+            return ResponseEntity.badRequest().body(CHECK_METADATA_LIST_INCORRECT);
         }
 
-        boolean allMatchCheckDTO = checkInputDTOs.stream()
+        boolean allMatchCheckDTO = metadataList.stream()
                 .allMatch(item -> item != null && item.getName() != null && !item.getName().isEmpty());
 
         if (!allMatchCheckDTO) {
-            return ResponseEntity.badRequest().body(CHECK_INPUT_DTO_LIST_ITEM_INCORRECT);
+            return ResponseEntity.badRequest().body(CHECK_METADATA_LIST_ITEM_INCORRECT);
         }
 
-        List<CheckResult> results = checkService.runCheckDTOs(checkInputDTOs);
+        List<CheckResult> results = checkService.runCheckMetadataList(metadataList);
         return ResponseEntity.ok(results);
     }
 

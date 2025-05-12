@@ -3,10 +3,7 @@ package com.example.backend.check;
 import com.example.backend.check.common.exception.NameNullOrEmptyException;
 import com.example.backend.check.common.exception.db.DatabaseBadSqlException;
 import com.example.backend.check.common.exception.db.TestedDatabaseException;
-import com.example.backend.check.model.Check;
-import com.example.backend.check.model.CheckExecution;
-import com.example.backend.check.model.CheckResult;
-import com.example.backend.check.model.CheckTrend;
+import com.example.backend.check.model.*;
 import com.example.backend.check.model.dto.CheckDTO;
 import com.example.backend.check.model.dto.CheckExecutionDTO;
 import com.example.backend.check.model.repository.CheckExecutionRepository;
@@ -63,40 +60,34 @@ class CheckRunnerTest {
     }
 
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    void getCheckDTO_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {
-        assertThrows(NameNullOrEmptyException.class, () ->
-                underTest.getCheckDTO(checkName)
-        );
-    }
-
     @Test
     void getCheckDTO_whenNoCheckExecutionSaved_thenReturnsNotFullCheckDTO() {
-        String checkName = "check-name";
+        CheckMetadata metadata = new CheckMetadata("check-name", "category");
 
-        CheckDTO checkDTO = underTest.getCheckDTO(checkName);
+        CheckDTO checkDTO = underTest.getCheckDTO(metadata);
 
         assertNotNull(checkDTO);
-        assertEquals(checkName, checkDTO.getName());
+        assertEquals(metadata.getName(), checkDTO.getMetadata().getName());
+        assertEquals(metadata.getCategory(), checkDTO.getMetadata().getCategory());
         assertNull(checkDTO.getLastCheck());
     }
 
     @Test
     void getCheckDTO_whenCheckExecutionSaved_thenReturnsNotFullCheckDTO() {
-        String checkName = "check-name";
+        CheckMetadata metadata = new CheckMetadata("check-name", "category");
         BigDecimal lastResult = BigDecimal.valueOf(10);
         Long lastExecutionTime = 10L;
         checkExecutionRepository.save(CheckExecution.builder()
-                .checkName(checkName)
+                .checkName(metadata.getName())
                 .result(lastResult)
                 .executionTime(lastExecutionTime)
                 .build());
 
-        CheckDTO checkDTO = underTest.getCheckDTO(checkName);
+        CheckDTO checkDTO = underTest.getCheckDTO(metadata);
 
         assertNotNull(checkDTO);
-        assertEquals(checkName, checkDTO.getName());
+        assertEquals(metadata.getName(), checkDTO.getMetadata().getName());
+        assertEquals(metadata.getCategory(), checkDTO.getMetadata().getCategory());
         assertNotNull(checkDTO.getLastCheck());
         assertEquals(0, lastResult.compareTo(checkDTO.getLastCheck().getResult()));
         assertNotNull(checkDTO.getLastCheck().getTimestamp());
@@ -162,13 +153,17 @@ class CheckRunnerTest {
 
     @Test
     void runCheck_whenCheckProvided_thenReturnsCheckResult() {
-        Check check = createCheck("check-name", "SELECT COUNT(*) FROM calculations");
+        Check check = createCheck(
+                new CheckMetadata("check-name", "category"),
+                "SELECT COUNT(*) FROM calculations"
+        );
         BigDecimal result = BigDecimal.valueOf(14);
 
         CheckResult checkResult = underTest.runCheck(check);
 
         assertNotNull(checkResult);
-        assertEquals(check.getName(), checkResult.getName());
+        assertEquals(check.getMetadata().getName(), checkResult.getMetadata().getName());
+        assertEquals(check.getMetadata().getCategory(), checkResult.getMetadata().getCategory());
         assertNotNull(checkResult.getCheck());
         assertEquals(0, result.compareTo(checkResult.getCheck().getResult()));
         assertNotNull(checkResult.getCheck().getExecutionTime());
@@ -176,37 +171,45 @@ class CheckRunnerTest {
 
     @Test
     void runCheck_whenCheckErrorProvided_thenReturnsErrorCheckResult() {
-        Check check = createNameErrorCheck("check-name", "some error");
+        Check check = createNameErrorCheck(
+                new CheckMetadata("check-name", "category"),
+                "some error"
+        );
 
         CheckResult checkResult = underTest.runCheck(check);
 
         assertNotNull(checkResult);
-        assertEquals(check.getName(), checkResult.getName());
+        assertEquals(check.getMetadata().getName(), checkResult.getMetadata().getName());
+        assertEquals(check.getMetadata().getCategory(), checkResult.getMetadata().getCategory());
         assertEquals(check.getError(), checkResult.getError());
     }
 
     @Test
     void runCheck_whenCheckQueryIsNull_thenReturnsErrorCheckResult() {
-        Check check = Check.builder().name("check-name").build();
+        Check check = Check.builder()
+                .metadata(new CheckMetadata("check-name", "category"))
+                .build();
 
         CheckResult checkResult = underTest.runCheck(check);
 
         assertNotNull(checkResult);
-        assertEquals(check.getName(), checkResult.getName());
+        assertEquals(check.getMetadata().getName(), checkResult.getMetadata().getName());
+        assertEquals(check.getMetadata().getCategory(), checkResult.getMetadata().getCategory());
         assertEquals(TestedDatabaseException.MESSAGE, checkResult.getError());
     }
 
     @Test
     void runCheck_whenCheckQueryIsEmpty_thenReturnsErrorCheckResult() {
         Check check = Check.builder()
-                .name("check-name")
+                .metadata(new CheckMetadata("check-name", "category"))
                 .query("")
                 .build();
 
         CheckResult checkResult = underTest.runCheck(check);
 
         assertNotNull(checkResult);
-        assertEquals(check.getName(), checkResult.getName());
+        assertEquals(check.getMetadata().getName(), checkResult.getMetadata().getName());
+        assertEquals(check.getMetadata().getCategory(), checkResult.getMetadata().getCategory());
         assertEquals(TestedDatabaseException.MESSAGE, checkResult.getError());
     }
 

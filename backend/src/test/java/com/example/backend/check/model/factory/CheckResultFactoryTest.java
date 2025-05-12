@@ -1,5 +1,6 @@
 package com.example.backend.check.model.factory;
 
+import com.example.backend.check.model.CheckMetadata;
 import com.example.backend.check.model.CheckResult;
 import org.junit.jupiter.api.Test;
 
@@ -10,12 +11,13 @@ class CheckResultFactoryTest {
 
     @Test
     void createNameErrorCheckResult_whenAllProvided_thenReturnsCheckResult() {
-        String name = "check-name";
+        CheckMetadata metadata = new CheckMetadata("check-name", "category");
         String error = "Some error";
 
-        CheckResult checkResult = createNameErrorCheckResult(name, error);
+        CheckResult checkResult = createNameErrorCheckResult(metadata, error);
 
-        assertEquals(name, checkResult.getName());
+        assertEquals(metadata.getName(), checkResult.getMetadata().getName());
+        assertEquals(metadata.getCategory(), checkResult.getMetadata().getCategory());
         assertEquals(error, checkResult.getError());
     }
 

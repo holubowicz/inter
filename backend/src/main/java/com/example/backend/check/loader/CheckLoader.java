@@ -1,24 +1,24 @@
 package com.example.backend.check.loader;
 
-import com.example.backend.check.common.exception.CheckInputDTONullException;
+import com.example.backend.check.common.exception.CheckMetadataNullException;
 import com.example.backend.check.common.exception.FilepathNullOrEmptyException;
 import com.example.backend.check.common.exception.QueryNullOrEmptyException;
 import com.example.backend.check.common.exception.io.CheckDirectoryNotFoundException;
 import com.example.backend.check.common.exception.io.ChecksNotLoadedException;
 import com.example.backend.check.model.Check;
-import com.example.backend.check.model.dto.CheckInputDTO;
+import com.example.backend.check.model.CheckMetadata;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static com.example.backend.check.common.error.message.LoadingErrorMessage.CHECK_INPUT_DTO_INCORRECT;
+import static com.example.backend.check.common.error.message.LoadingErrorMessage.CHECK_METADATA_INCORRECT;
 import static com.example.backend.check.common.error.message.LoadingErrorMessage.FAILED_TO_LOAD_CONTENT;
+import static com.example.backend.check.loader.CheckLoaderUtils.CHECK_FILE_EXTENSION;
 import static com.example.backend.check.model.factory.CheckFactory.*;
 
 
@@ -29,7 +29,7 @@ public class CheckLoader {
 
     private final CheckLoaderConfiguration checkLoaderConfiguration;
 
-    public List<String> getCheckNames() {
+    public List<CheckMetadata> getCheckMetadata() {
         Path checksPath = Paths.get(this.checkLoaderConfiguration.getChecksPath())
                 .toAbsolutePath();
 
@@ -40,27 +40,30 @@ public class CheckLoader {
         try {
             return Files.walk(checksPath)
                     .filter(Files::isRegularFile)
-                    .filter(path -> path.toString().toLowerCase().endsWith(CheckLoaderUtils.CHECK_FILE_EXTENSION))
-                    .map(CheckLoaderUtils::getCheckNameFromPath)
-                    .sorted()
+                    .filter(path -> path.toString().toLowerCase().endsWith(CHECK_FILE_EXTENSION))
+                    .map(CheckLoaderUtils::getCheckMetadataFromPath)
                     .toList();
-        } catch (SecurityException | IOException e) {
+        } catch (Exception e) {
             throw new ChecksNotLoadedException(e);
         }
     }
 
-    public Check convertIntoCheck(CheckInputDTO checkInputDTO) {
-        if (checkInputDTO == null) {
-            throw new CheckInputDTONullException();
+    public Check convertIntoCheck(CheckMetadata metadata) {
+        if (metadata == null) {
+            throw new CheckMetadataNullException();
         }
 
-        if (checkInputDTO.getName() == null || checkInputDTO.getName().isEmpty()) {
-            return createErrorCheck(CHECK_INPUT_DTO_INCORRECT);
+        if (metadata.getName() == null || metadata.getName().isEmpty()) {
+            return createErrorCheck(CHECK_METADATA_INCORRECT);
         }
 
-        String filename = checkInputDTO.getName() + CheckLoaderUtils.CHECK_FILE_EXTENSION;
-        Path filepath = Paths.get(this.checkLoaderConfiguration.getChecksPath(), filename);
+        StringBuilder filenameBuilder = new StringBuilder(metadata.getName());
+        if (metadata.getCategory() != null) {
+            filenameBuilder.append(".").append(metadata.getCategory());
+        }
+        filenameBuilder.append(CHECK_FILE_EXTENSION);
 
+        Path filepath = Paths.get(this.checkLoaderConfiguration.getChecksPath(), filenameBuilder.toString());
         return getCheck(filepath);
     }
 
@@ -69,7 +72,7 @@ public class CheckLoader {
             throw new FilepathNullOrEmptyException();
         }
 
-        String checkName = CheckLoaderUtils.getCheckNameFromPath(filepath);
+        CheckMetadata metadata = CheckLoaderUtils.getCheckMetadataFromPath(filepath);
 
         try {
             String query = Files.readString(filepath);
@@ -77,10 +80,10 @@ public class CheckLoader {
                 throw new QueryNullOrEmptyException();
             }
 
-            return createCheck(checkName, query);
+            return createCheck(metadata, query);
         } catch (Exception e) {
             log.warn(FAILED_TO_LOAD_CONTENT);
-            return createNameErrorCheck(checkName, FAILED_TO_LOAD_CONTENT);
+            return createNameErrorCheck(metadata, FAILED_TO_LOAD_CONTENT);
         }
     }
 
