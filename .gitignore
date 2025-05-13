@@ -1,4 +1,4 @@
-.env*
+.env
 
 # Windows
 Thumbs.db
