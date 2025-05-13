@@ -1,5 +1,6 @@
 package com.example.backend.check;
 
+import com.example.backend.check.common.exception.CheckCategoriesNullException;
 import com.example.backend.check.common.exception.CheckMetadataListNullException;
 import com.example.backend.check.common.exception.NameNullOrEmptyException;
 import com.example.backend.check.model.CheckMetadata;
@@ -122,6 +123,36 @@ class CheckServiceTest {
     }
 
 
-    // TODO: create unit tests for runCheckCategories()
+    @Test
+    public void runCheckCategories_whenCategoriesIsNull_thenThrowsCheckCategoriesNullException() {
+        assertThrows(CheckCategoriesNullException.class, () -> underTest.runCheckCategories(null));
+    }
+
+    @Test
+    public void runCheckCategories_whenCategoriesIsEmpty_thenReturnsEmptyList() {
+        List<String> categories = List.of();
+
+        List<CheckResult> results = underTest.runCheckCategories(categories);
+
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    public void runCheckCategories_whenCategoriesProvided_thenReturnsCheckResultList() {
+        String category = "good";
+        List<String> categories = List.of(category);
+
+        List<CheckResult> results = underTest.runCheckCategories(categories);
+
+        assertNotNull(results);
+        assertFalse(results.isEmpty());
+        results.forEach(result -> {
+            assertNotNull(result);
+            assertNotNull(result.getMetadata());
+            assertNotNull(result.getMetadata().getName());
+            assertEquals(category, result.getMetadata().getCategory());
+        });
+    }
 
 }

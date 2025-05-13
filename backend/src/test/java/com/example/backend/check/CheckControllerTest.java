@@ -15,11 +15,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_METADATA_LIST_INCORRECT;
-import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_METADATA_LIST_ITEM_INCORRECT;
+import static com.example.backend.check.common.error.message.ApiErrorMessage.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -72,7 +70,7 @@ class CheckControllerTest {
 
     @Test
     public void getCheckDTOs_whenRequestSent_thenVerifyResultValues() throws Exception {
-        final List<String> EXPECTED_NAMES = Arrays.asList(
+        final List<String> EXPECTED_NAMES = List.of(
                 "absolute-avg",
                 "avg-all",
                 "negative-count",
@@ -338,10 +336,7 @@ class CheckControllerTest {
 
     @Test
     public void getCheckCategories_whenRequestSent_thenVerifyResultValues() throws Exception {
-        final List<String> EXPECTED_CATEGORIES = Arrays.asList(
-                "good",
-                "bad"
-        );
+        final List<String> EXPECTED_CATEGORIES = List.of("good", "bad");
 
         this.mockMvc.perform(get("/api/checks/categories"))
                 .andDo(print())
@@ -353,6 +348,58 @@ class CheckControllerTest {
     }
 
 
-    // TODO: create integration test for runCheckCategories()
+    @Test
+    public void runCheckCategories_whenBodyNotProvided_thenBadRequest() throws Exception {
+        this.mockMvc.perform(post("/api/checks/categories/run"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(CATEGORIES_INCORRECT));
+    }
+
+    @Test
+    public void runCheckCategories_whenEmptyBodyProvided_thenBadRequest() throws Exception {
+        this.mockMvc.perform(post("/api/checks/categories/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ArrayList<>().toString()))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(CATEGORIES_INCORRECT));
+    }
+
+    @Test
+    public void runCheckCategories_whenSingleCheckCategoryProvided_thenVerifyResponseStructure() throws Exception {
+        final String CATEGORY = "good";
+        final String REQUEST_BODY = "[\"good\"]";
+
+        this.mockMvc.perform(post("/api/checks/categories/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(REQUEST_BODY))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andExpect(jsonPath("$[*]", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].metadata", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].metadata.name", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].metadata.category", everyItem(is(CATEGORY))));
+    }
+
+    @Test
+    public void runCheckCategories_whenMultipleCheckCategoryProvided_thenVerifyResponseStructure() throws Exception {
+        final List<String> CATEGORIES = List.of("good", "bad");
+        final String REQUEST_BODY = "[\"good\",\"bad\"]";
+
+        this.mockMvc.perform(post("/api/checks/categories/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(REQUEST_BODY))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andExpect(jsonPath("$[*]", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].metadata", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].metadata.name", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*].metadata.category", everyItem(in(CATEGORIES))));
+    }
 
 }

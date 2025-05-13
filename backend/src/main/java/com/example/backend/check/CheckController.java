@@ -58,7 +58,7 @@ public class CheckController {
         if (categories == null || categories.isEmpty()) {
             return ResponseEntity.badRequest().body(CATEGORIES_INCORRECT);
         }
-        List<CheckResult> results = checkService.runCategories(categories);
+        List<CheckResult> results = checkService.runCheckCategories(categories);
         return ResponseEntity.ok(results);
     }
 

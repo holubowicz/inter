@@ -54,7 +54,7 @@ public class CheckService {
                 .toList();
     }
 
-    public List<CheckResult> runCategories(List<String> categories) {
+    public List<CheckResult> runCheckCategories(List<String> categories) {
         if (categories == null) {
             throw new CheckCategoriesNullException();
         }
