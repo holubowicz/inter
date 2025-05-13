@@ -19,10 +19,10 @@ import {
 import { runChecks } from "@/lib/api/checks";
 import { formatDateTime } from "@/lib/utils/date";
 import { formatElapsedTime, formatNumber } from "@/lib/utils/number";
-import { CheckDTO, CheckResult } from "@/types/checks";
+import { CheckMetadata, CheckResult } from "@/types/checks";
 
 interface ResultsTableRowProps {
-  check: CheckDTO;
+  check: CheckMetadata;
   checkResult: CheckResult;
 }
 
@@ -45,7 +45,8 @@ interface RowStateCheck {
 function buildResultState(checkResult: CheckResult): RowState {
   if (checkResult.error) {
     return {
-      name: checkResult.name !== null ? checkResult.name : "-",
+      name:
+        checkResult.metadata.name !== null ? checkResult.metadata.name : "-",
       error: checkResult.error,
       trendPercentage: "-",
       isDisabled: true,
@@ -97,7 +98,7 @@ function buildResultState(checkResult: CheckResult): RowState {
   }
 
   return {
-    name: checkResult.name !== null ? checkResult.name : "-",
+    name: checkResult.metadata.name !== null ? checkResult.metadata.name : "-",
     error: "-",
     trendPercentage,
     isDisabled: false,

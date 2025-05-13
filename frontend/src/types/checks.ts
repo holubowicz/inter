@@ -1,5 +1,6 @@
-export interface CheckDTO {
+export interface CheckMetadata {
   name: string;
+  category: string;
 }
 
 export interface Check {
@@ -9,14 +10,14 @@ export interface Check {
 }
 
 export interface AvailableCheck {
-  name: string;
+  metadata: CheckMetadata;
   lastCheck: Nullable<Check>;
 }
 
 export interface CheckResult {
-  name: Nullable<string>;
   error: Nullable<string>;
   trendPercentage: Nullable<number>;
+  metadata: CheckMetadata;
   check: Nullable<Check>;
   lastCheck: Nullable<Check>;
 }

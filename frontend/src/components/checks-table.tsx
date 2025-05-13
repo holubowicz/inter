@@ -79,7 +79,10 @@ export function ChecksTable() {
 
     const selectedChecks = checks
       .filter((_, idx) => checkboxes[idx])
-      .map((check) => check.name);
+      .map((check) => ({
+        name: check.metadata.name,
+        category: check.metadata.category,
+      }));
 
     if (selectedChecks.length === 0) {
       toast("No Checks Selected", {
@@ -156,7 +159,7 @@ export function ChecksTable() {
                 </div>
               </TableCell>
 
-              <TableCell>{check.name}</TableCell>
+              <TableCell>{check.metadata.name}</TableCell>
 
               <TableCell className="hidden md:table-cell">
                 {check.lastCheck != null
@@ -181,7 +184,7 @@ export function ChecksTable() {
                   className="cursor-pointer"
                   variant="ghost"
                   disabled={check.lastCheck == null}
-                  onClick={() => handleShowHistoryGraph(check.name)}
+                  onClick={() => handleShowHistoryGraph(check.metadata.name)}
                 >
                   <ChartLine />
                 </Button>

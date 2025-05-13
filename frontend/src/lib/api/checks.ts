@@ -1,4 +1,9 @@
-import { AvailableCheck, Check, CheckDTO, CheckResult } from "@/types/checks";
+import {
+  AvailableCheck,
+  Check,
+  CheckMetadata,
+  CheckResult,
+} from "@/types/checks";
 
 function getApiBase(): string {
   const { host, protocol } = window.location;
@@ -48,7 +53,9 @@ export async function getCheckHistories(checkName: string): Promise<Check[]> {
   }));
 }
 
-export async function runChecks(checks: CheckDTO[]): Promise<CheckResult[]> {
+export async function runChecks(
+  checks: CheckMetadata[],
+): Promise<CheckResult[]> {
   const res = await fetch(getApiUrl("checks/run"), {
     headers: {
       "Content-Type": "application/json",

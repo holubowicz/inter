@@ -1,13 +1,11 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useMemo } from "react";
 import { GoBackTitle } from "@/components/go-back-title";
 import { PageLayout } from "@/components/layout/page-layout";
 import { ResultsTable } from "@/components/results-table/results-table";
-
-type ChecksArray = string[];
+import { CheckMetadata } from "@/types/checks";
 
 interface CheckResultsSearch {
-  checks: ChecksArray;
+  checks: CheckMetadata[];
 }
 
 function checkResultsValidateSearch(
@@ -15,28 +13,8 @@ function checkResultsValidateSearch(
 ): CheckResultsSearch {
   const checksSearchParam = search.checks;
 
-  if (
-    Array.isArray(checksSearchParam) &&
-    checksSearchParam.every((item) => typeof item === "string")
-  ) {
-    return {
-      checks: checksSearchParam as ChecksArray,
-    };
-  }
-
-  if (typeof checksSearchParam === "string") {
-    const checks = checksSearchParam
-      .toLocaleLowerCase()
-      .split(",")
-      .map((check) => check.trim());
-
-    return {
-      checks,
-    };
-  }
-
   return {
-    checks: [],
+    checks: checksSearchParam as CheckMetadata[],
   };
 }
 
@@ -57,19 +35,11 @@ export const Route = createFileRoute("/results")({
 function CheckResultsPage() {
   const { checks } = Route.useSearch();
 
-  const selectedChecks = useMemo(
-    () =>
-      checks.map((check) => ({
-        name: check,
-      })),
-    [checks],
-  );
-
   return (
     <PageLayout>
       <GoBackTitle>Check Results</GoBackTitle>
 
-      <ResultsTable checks={selectedChecks} />
+      <ResultsTable checks={checks} />
     </PageLayout>
   );
 }

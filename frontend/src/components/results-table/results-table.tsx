@@ -7,13 +7,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { runChecks } from "@/lib/api/checks";
-import { CheckDTO } from "@/types/checks";
+import { CheckMetadata } from "@/types/checks";
 import { ErrorState } from "../error-state";
 import { LoadingState } from "../loading-state";
 import { ResultsTableRow } from "./results-table-row";
 
 interface ResultsTableProps {
-  checks: CheckDTO[];
+  checks: CheckMetadata[];
 }
 
 const CHECK_RESULTS_KEY = "checkResults";
