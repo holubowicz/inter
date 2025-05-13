@@ -186,6 +186,7 @@ export function ChecksTable() {
                 <Button
                   className="cursor-pointer"
                   variant="ghost"
+                  size="xs"
                   disabled={check.lastCheck == null}
                   onClick={() => handleShowHistoryGraph(check.metadata.name)}
                 >

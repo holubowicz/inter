@@ -196,6 +196,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         <Button
           className="cursor-pointer"
           variant="ghost"
+          size="xs"
           disabled={state.isDisabled || refetch.isPending}
           onClick={handleRefetch}
         >
@@ -209,6 +210,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         <Button
           className="cursor-pointer"
           variant="ghost"
+          size="xs"
           disabled={state.isDisabled || refetch.isPending}
           onClick={() => handleShowHistoryGraph(check.name)}
         >
