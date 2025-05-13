@@ -8,6 +8,6 @@ app:
   loader:
     checks-path: src/test/resources/checks
   db:
-    query-timeout-seconds: ${QUERY_TIMEOUT_SECONDS}
+    query-timeout-seconds: ${QUERY_TIMEOUT_SECONDS:60}
     internal:
       init-script-path: classpath:schema/internal.sql

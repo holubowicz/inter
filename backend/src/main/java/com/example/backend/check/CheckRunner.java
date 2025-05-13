@@ -35,7 +35,7 @@ import static com.example.backend.check.model.factory.CheckResultFactory.createN
 @Component
 public class CheckRunner {
 
-    @Value("${app.db.query-timeout-seconds:60}")
+    @Value("${app.db.query-timeout-seconds}")
     private int QUERY_TIMEOUT_SECONDS;
 
     private final JdbcTemplate jdbcTemplate;
