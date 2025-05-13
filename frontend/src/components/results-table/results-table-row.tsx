@@ -69,7 +69,7 @@ function buildResultState(checkResult: CheckResult): RowState {
   let timestamp = "-";
 
   if (checkResult.check) {
-    result = formatNumber(checkResult.check.result).toString();
+    result = formatNumber(checkResult.check.result);
     executionTime = formatElapsedTime(checkResult.check.executionTime);
     timestamp = formatDateTime(checkResult.check.timestamp);
   }
@@ -79,7 +79,7 @@ function buildResultState(checkResult: CheckResult): RowState {
   let lastTimestamp = "-";
 
   if (checkResult.lastCheck) {
-    lastResult = formatNumber(checkResult.lastCheck.result).toString();
+    lastResult = formatNumber(checkResult.lastCheck.result);
     lastExecutionTime = formatElapsedTime(checkResult.lastCheck.executionTime);
     lastTimestamp = formatDateTime(checkResult.lastCheck.timestamp);
   }
@@ -88,7 +88,7 @@ function buildResultState(checkResult: CheckResult): RowState {
   let trendIcon = <MoveRight className="text-muted-foreground w-4" />;
 
   if (checkResult.trendPercentage !== null) {
-    trendPercentage = `${formatNumber(checkResult.trendPercentage)}%`;
+    trendPercentage = formatNumber(checkResult.trendPercentage) + "%";
 
     if (checkResult.trendPercentage > 0) {
       trendIcon = <TrendingUp className="w-4 text-green-600" />;

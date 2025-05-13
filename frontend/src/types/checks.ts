@@ -1,23 +1,41 @@
-export interface CheckMetadata {
-  name: string;
-  category: string;
-}
+import { z } from "zod";
 
-export interface Check {
-  result: number;
-  executionTime: number;
-  timestamp: Date;
-}
+// Check Metadata
 
-export interface AvailableCheck {
-  metadata: CheckMetadata;
-  lastCheck: Nullable<Check>;
-}
+export const CheckMetadataSchema = z.object({
+  name: z.string(),
+  category: z.string(),
+});
 
-export interface CheckResult {
-  error: Nullable<string>;
-  trendPercentage: Nullable<number>;
-  metadata: CheckMetadata;
-  check: Nullable<Check>;
-  lastCheck: Nullable<Check>;
-}
+export type CheckMetadata = z.infer<typeof CheckMetadataSchema>;
+
+// Check
+
+export const CheckSchema = z.object({
+  result: z.number(),
+  executionTime: z.number(),
+  timestamp: z.coerce.date(),
+});
+
+export type Check = z.infer<typeof CheckSchema>;
+
+// Available Check
+
+export const AvailableCheckSchema = z.object({
+  metadata: CheckMetadataSchema,
+  lastCheck: CheckSchema.nullable(),
+});
+
+export type AvailableCheck = z.infer<typeof AvailableCheckSchema>;
+
+// Check Result
+
+export const CheckResultSchema = z.object({
+  error: z.string().nullable(),
+  trendPercentage: z.number().nullable(),
+  metadata: CheckMetadataSchema,
+  check: CheckSchema.nullable(),
+  lastCheck: CheckSchema.nullable(),
+});
+
+export type CheckResult = z.infer<typeof CheckResultSchema>;

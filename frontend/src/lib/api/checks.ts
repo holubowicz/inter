@@ -1,8 +1,11 @@
 import {
   AvailableCheck,
+  AvailableCheckSchema,
   Check,
   CheckMetadata,
   CheckResult,
+  CheckResultSchema,
+  CheckSchema,
 } from "@/types/checks";
 
 function getApiBase(): string {
@@ -19,38 +22,26 @@ export async function getChecks(): Promise<AvailableCheck[]> {
   const res = await fetch(getApiUrl("checks"));
 
   if (!res.ok) {
-    const errorText = await res.text();
     throw new Error(
-      `Failed to fetch checks: ${res.status} ${res.statusText} - ${errorText}`,
+      `Failed to fetch checks: ${res.status} ${res.statusText} - ${await res.text()}`,
     );
   }
 
   const data = await res.json();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data.map((item: any) => ({
-    ...item,
-    lastCheck: item.lastCheck
-      ? { ...item.lastCheck, timestamp: new Date(item.lastCheck.timestamp) }
-      : null,
-  }));
+  return AvailableCheckSchema.array().parse(data);
 }
 
 export async function getCheckHistories(checkName: string): Promise<Check[]> {
   const res = await fetch(getApiUrl(`checks/${checkName}/history`));
 
   if (!res.ok) {
-    const errorText = await res.text();
     throw new Error(
-      `Failed to fetch check histories: ${res.status} ${res.statusText} - ${errorText}`,
+      `Failed to fetch check histories: ${res.status} ${res.statusText} - ${await res.text()}`,
     );
   }
 
   const data = await res.json();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data.map((item: any) => ({
-    ...item,
-    timestamp: new Date(item.timestamp),
-  }));
+  return CheckSchema.array().parse(data);
 }
 
 export async function runChecks(
@@ -65,21 +56,11 @@ export async function runChecks(
   });
 
   if (!res.ok) {
-    const errorText = await res.text();
     throw new Error(
-      `Failed to run checks: ${res.status} ${res.statusText} - ${errorText}`,
+      `Failed to run checks: ${res.status} ${res.statusText} - ${await res.text()}`,
     );
   }
 
   const data = await res.json();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data.map((item: any) => ({
-    ...item,
-    check: item.check
-      ? { ...item.check, timestamp: new Date(item.check.timestamp) }
-      : null,
-    lastCheck: item.lastCheck
-      ? { ...item.lastCheck, timestamp: new Date(item.lastCheck.timestamp) }
-      : null,
-  }));
+  return CheckResultSchema.array().parse(data);
 }

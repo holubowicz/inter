@@ -1,9 +1,12 @@
-export function formatNumber(num: number, decimalPoints = 2): number {
+export function formatNumber(num: number, decimalPoints = 2): string {
   const factor = 10 ** decimalPoints;
   const rounded = Math.round(num * factor) / factor;
-  return Number.isInteger(rounded)
+
+  const result = Number.isInteger(rounded)
     ? rounded
     : parseFloat(rounded.toFixed(decimalPoints));
+
+  return Intl.NumberFormat().format(result);
 }
 
 const units = [
