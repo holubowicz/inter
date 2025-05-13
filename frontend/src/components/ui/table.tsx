@@ -101,6 +101,32 @@ function TableCaption({
   );
 }
 
+function CompactTableHead({ className, ...props }: React.ComponentProps<"th">) {
+  return (
+    <th
+      data-slot="table-head"
+      className={cn(
+        "text-foreground px-2 py-1 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function CompactTableCell({ className, ...props }: React.ComponentProps<"td">) {
+  return (
+    <td
+      data-slot="table-cell"
+      className={cn(
+        "px-2 py-1 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export {
   Table,
   TableHeader,
@@ -110,4 +136,6 @@ export {
   TableRow,
   TableCell,
   TableCaption,
+  CompactTableHead,
+  CompactTableCell,
 };

@@ -5,10 +5,10 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  CompactTableCell,
+  CompactTableHead,
   Table,
   TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -101,7 +101,7 @@ export function CategoriesTable() {
       <Table>
         <TableHeader>
           <TableRow className="*:text-center *:font-bold *:capitalize">
-            <TableHead className="max-w-6">
+            <CompactTableHead className="max-w-6">
               <div className="flex items-center justify-center">
                 <Checkbox
                   className="cursor-pointer"
@@ -110,16 +110,16 @@ export function CategoriesTable() {
                   }
                 />
               </div>
-            </TableHead>
+            </CompactTableHead>
 
-            <TableHead>Name</TableHead>
+            <CompactTableHead>Name</CompactTableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {categories.map((category, idx) => (
             <TableRow key={idx} className="*:text-center">
-              <TableCell>
+              <CompactTableCell>
                 <div className="flex items-center justify-center">
                   <Checkbox
                     className="cursor-pointer"
@@ -127,9 +127,9 @@ export function CategoriesTable() {
                     onCheckedChange={() => handleCheckboxChange(idx)}
                   />
                 </div>
-              </TableCell>
+              </CompactTableCell>
 
-              <TableCell>{category}</TableCell>
+              <CompactTableCell>{category}</CompactTableCell>
             </TableRow>
           ))}
         </TableBody>

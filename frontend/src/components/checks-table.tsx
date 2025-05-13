@@ -6,10 +6,10 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  CompactTableCell,
+  CompactTableHead,
   Table,
   TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -120,7 +120,7 @@ export function ChecksTable() {
       <Table>
         <TableHeader>
           <TableRow className="*:text-center *:font-bold *:capitalize">
-            <TableHead className="max-w-6">
+            <CompactTableHead className="max-w-6">
               <div className="flex items-center justify-center">
                 <Checkbox
                   className="cursor-pointer"
@@ -129,28 +129,30 @@ export function ChecksTable() {
                   }
                 />
               </div>
-            </TableHead>
+            </CompactTableHead>
 
-            <TableHead>Name</TableHead>
+            <CompactTableHead>Name</CompactTableHead>
 
-            <TableHead className="hidden md:table-cell">Last Result</TableHead>
+            <CompactTableHead className="hidden md:table-cell">
+              Last Result
+            </CompactTableHead>
 
-            <TableHead className="hidden md:table-cell">
+            <CompactTableHead className="hidden md:table-cell">
               Last Execution
-            </TableHead>
+            </CompactTableHead>
 
-            <TableHead className="hidden xl:table-cell">
+            <CompactTableHead className="hidden xl:table-cell">
               Last Execution Time
-            </TableHead>
+            </CompactTableHead>
 
-            <TableHead>Actions</TableHead>
+            <CompactTableHead>Actions</CompactTableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {checks.map((check, idx) => (
             <TableRow key={idx} className="*:text-center">
-              <TableCell>
+              <CompactTableCell>
                 <div className="flex items-center justify-center">
                   <Checkbox
                     className="cursor-pointer"
@@ -158,29 +160,29 @@ export function ChecksTable() {
                     onCheckedChange={() => handleCheckboxChange(idx)}
                   />
                 </div>
-              </TableCell>
+              </CompactTableCell>
 
-              <TableCell>{check.metadata.name}</TableCell>
+              <CompactTableCell>{check.metadata.name}</CompactTableCell>
 
-              <TableCell className="hidden md:table-cell">
+              <CompactTableCell className="hidden md:table-cell">
                 {check.lastCheck != null
                   ? formatNumber(check.lastCheck.result)
                   : "-"}
-              </TableCell>
+              </CompactTableCell>
 
-              <TableCell className="hidden md:table-cell">
+              <CompactTableCell className="hidden md:table-cell">
                 {check.lastCheck != null
                   ? formatDateTime(check.lastCheck.timestamp)
                   : "-"}
-              </TableCell>
+              </CompactTableCell>
 
-              <TableCell className="hidden xl:table-cell">
+              <CompactTableCell className="hidden xl:table-cell">
                 {check.lastCheck != null
                   ? formatElapsedTime(check.lastCheck.executionTime)
                   : "-"}
-              </TableCell>
+              </CompactTableCell>
 
-              <TableCell>
+              <CompactTableCell>
                 <Button
                   className="cursor-pointer"
                   variant="ghost"
@@ -189,7 +191,7 @@ export function ChecksTable() {
                 >
                   <ChartLine />
                 </Button>
-              </TableCell>
+              </CompactTableCell>
             </TableRow>
           ))}
         </TableBody>

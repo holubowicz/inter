@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { JSX, useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { TableCell, TableRow } from "@/components/ui/table";
+import { CompactTableCell, TableRow } from "@/components/ui/table";
 import {
   Tooltip,
   TooltipContent,
@@ -155,7 +155,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
 
   return (
     <TableRow className="*:text-center">
-      <TableCell>
+      <CompactTableCell>
         <div className="flex items-center justify-center gap-2">
           <span>{state.name}</span>
           {state.error !== "-" && (
@@ -169,30 +169,30 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
             </Tooltip>
           )}
         </div>
-      </TableCell>
+      </CompactTableCell>
 
-      <TableCell>{state.check.result}</TableCell>
+      <CompactTableCell>{state.check.result}</CompactTableCell>
 
-      <TableCell className="hidden xl:table-cell">
+      <CompactTableCell className="hidden xl:table-cell">
         {state.check.executionTime}
-      </TableCell>
+      </CompactTableCell>
 
-      <TableCell className="hidden md:table-cell">
+      <CompactTableCell className="hidden md:table-cell">
         <div className="flex items-center justify-center gap-2">
           <span>{state.trendPercentage}</span>
           {state.trendPercentage !== "-" && state.trendIcon}
         </div>
-      </TableCell>
+      </CompactTableCell>
 
-      <TableCell className="hidden lg:table-cell">
+      <CompactTableCell className="hidden lg:table-cell">
         {state.lastCheck.result}
-      </TableCell>
+      </CompactTableCell>
 
-      <TableCell className="hidden xl:table-cell">
+      <CompactTableCell className="hidden xl:table-cell">
         {state.lastCheck.timestamp}
-      </TableCell>
+      </CompactTableCell>
 
-      <TableCell>
+      <CompactTableCell>
         <Button
           className="cursor-pointer"
           variant="ghost"
@@ -214,7 +214,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         >
           <ChartLine />
         </Button>
-      </TableCell>
+      </CompactTableCell>
     </TableRow>
   );
 }
