@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { GoBackTitle } from "@/components/go-back-title";
 import { PageLayout } from "@/components/layout/page-layout";
 import { ResultsTable } from "@/components/results-table/results-table";
-import { CheckMetadata } from "@/types/checks";
+import { GoBackTitle } from "@/components/typography/go-back-title";
+import { CheckMetadata, CheckMetadataSchema } from "@/types/checks";
 
 interface CheckResultsSearch {
   checks: CheckMetadata[];
@@ -11,16 +11,24 @@ interface CheckResultsSearch {
 function checkResultsValidateSearch(
   search: Record<string, unknown>,
 ): CheckResultsSearch {
-  const checksSearchParam = search.checks;
+  const checksMetadataSearchParam = search.checks;
+
+  const safeParsedData = CheckMetadataSchema.array().safeParse(
+    checksMetadataSearchParam,
+  );
+  if (!safeParsedData.success) {
+    return {
+      checks: [],
+    };
+  }
 
   return {
-    checks: checksSearchParam as CheckMetadata[],
+    checks: safeParsedData.data,
   };
 }
 
 function checkResultsBeforeLoad({ search }: { search: CheckResultsSearch }) {
   const { checks } = search;
-
   if (checks.length === 0) {
     throw redirect({ to: "/" });
   }

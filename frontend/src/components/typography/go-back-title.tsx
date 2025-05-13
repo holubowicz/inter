@@ -1,7 +1,7 @@
 import { Link, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { PropsWithChildren } from "react";
-import { Title } from "@/components/title";
+import { Title } from "@/components/typography/title";
 import { cn } from "@/lib/utils";
 
 interface GoBackTitleProps extends PropsWithChildren {

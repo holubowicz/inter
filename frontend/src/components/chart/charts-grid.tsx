@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { PropsWithChildren, useEffect } from "react";
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
-import { Subtitle } from "@/components/subtitle";
+import { Subtitle } from "@/components/typography/subtitle";
 import { getCheckHistories } from "@/lib/api/checks";
 import { ChartSection } from "./chart-section";
 import { ExecutionTimeChart } from "./execution-time-chart";

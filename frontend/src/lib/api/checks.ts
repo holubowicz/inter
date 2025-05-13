@@ -7,16 +7,7 @@ import {
   CheckResultSchema,
   CheckSchema,
 } from "@/types/checks";
-
-function getApiBase(): string {
-  const { host, protocol } = window.location;
-  return import.meta.env.VITE_API_URL?.trim() ?? `${protocol}//${host}/api`;
-}
-
-function getApiUrl(path: string): string {
-  const base = getApiBase();
-  return `${base.replace(/\/$/, "")}/${path.replace(/^\/+/, "")}`;
-}
+import { getApiUrl } from ".";
 
 export async function getChecks(): Promise<AvailableCheck[]> {
   const res = await fetch(getApiUrl("checks"));

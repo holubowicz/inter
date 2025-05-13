@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ChartsGrid } from "@/components/chart/charts-grid";
-import { GoBackTitle } from "@/components/go-back-title";
 import { PageLayout } from "@/components/layout/page-layout";
+import { GoBackTitle } from "@/components/typography/go-back-title";
 
 function validateCheckName(name: string): string {
   const normalized = name.trim().toLowerCase();

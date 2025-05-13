@@ -91,6 +91,7 @@ export function ChecksTable() {
       return;
     }
 
+    // TODO: fix the main checkbox is not unchecked
     setCheckboxes(Array(checks.length).fill(false));
 
     navigate({
@@ -198,7 +199,7 @@ export function ChecksTable() {
         className="w-full max-w-120 cursor-pointer self-center"
         onClick={handleSubmitButtonClick}
       >
-        Execute
+        Execute Checks
       </Button>
     </div>
   );
