@@ -47,11 +47,11 @@ export function ResultsTable({ checks }: ResultsTableProps) {
     <Table>
       <TableHeader>
         <TableRow className="*:text-center *:font-bold *:capitalize">
-          <CompactTableHead>Name</CompactTableHead>
+          <CompactTableHead className="text-left!">Name</CompactTableHead>
 
-          <CompactTableHead>Result</CompactTableHead>
+          <CompactTableHead className="text-right!">Result</CompactTableHead>
 
-          <CompactTableHead className="hidden xl:table-cell">
+          <CompactTableHead className="hidden text-right! xl:table-cell">
             Execution Time
           </CompactTableHead>
 
@@ -59,7 +59,7 @@ export function ResultsTable({ checks }: ResultsTableProps) {
             Trend
           </CompactTableHead>
 
-          <CompactTableHead className="hidden lg:table-cell">
+          <CompactTableHead className="hidden text-right! lg:table-cell">
             Last Result
           </CompactTableHead>
 

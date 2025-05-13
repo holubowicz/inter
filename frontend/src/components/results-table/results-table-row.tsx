@@ -156,7 +156,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
   return (
     <TableRow className="*:text-center">
       <CompactTableCell>
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center gap-2">
           <span>{state.name}</span>
           {state.error !== "-" && (
             <Tooltip>
@@ -171,9 +171,11 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         </div>
       </CompactTableCell>
 
-      <CompactTableCell>{state.check.result}</CompactTableCell>
+      <CompactTableCell className="text-right!">
+        {state.check.result}
+      </CompactTableCell>
 
-      <CompactTableCell className="hidden xl:table-cell">
+      <CompactTableCell className="hidden text-right! xl:table-cell">
         {state.check.executionTime}
       </CompactTableCell>
 
@@ -184,7 +186,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         </div>
       </CompactTableCell>
 
-      <CompactTableCell className="hidden lg:table-cell">
+      <CompactTableCell className="hidden text-right! lg:table-cell">
         {state.lastCheck.result}
       </CompactTableCell>
 

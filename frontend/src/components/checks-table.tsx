@@ -131,9 +131,9 @@ export function ChecksTable() {
               </div>
             </CompactTableHead>
 
-            <CompactTableHead>Name</CompactTableHead>
+            <CompactTableHead className="text-left!">Name</CompactTableHead>
 
-            <CompactTableHead className="hidden md:table-cell">
+            <CompactTableHead className="hidden text-right! md:table-cell">
               Last Result
             </CompactTableHead>
 
@@ -141,7 +141,7 @@ export function ChecksTable() {
               Last Execution
             </CompactTableHead>
 
-            <CompactTableHead className="hidden xl:table-cell">
+            <CompactTableHead className="hidden text-right! xl:table-cell">
               Last Execution Time
             </CompactTableHead>
 
@@ -162,9 +162,11 @@ export function ChecksTable() {
                 </div>
               </CompactTableCell>
 
-              <CompactTableCell>{check.metadata.name}</CompactTableCell>
+              <CompactTableCell className="text-left!">
+                {check.metadata.name}
+              </CompactTableCell>
 
-              <CompactTableCell className="hidden md:table-cell">
+              <CompactTableCell className="hidden text-right! md:table-cell">
                 {check.lastCheck != null
                   ? formatNumber(check.lastCheck.result)
                   : "-"}
@@ -176,7 +178,7 @@ export function ChecksTable() {
                   : "-"}
               </CompactTableCell>
 
-              <CompactTableCell className="hidden xl:table-cell">
+              <CompactTableCell className="hidden text-right! xl:table-cell">
                 {check.lastCheck != null
                   ? formatElapsedTime(check.lastCheck.executionTime)
                   : "-"}

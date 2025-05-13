@@ -18,6 +18,8 @@ import { getCategories } from "@/lib/api/categories";
 
 const AVAILABLE_CATEGORIES_KEY = "availableCategories";
 
+// TODO: when add new columns to the table format text and numbers same as the other tables
+
 export function CategoriesTable() {
   const navigate = useNavigate();
 
