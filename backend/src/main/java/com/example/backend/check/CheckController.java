@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_METADATA_LIST_INCORRECT;
-import static com.example.backend.check.common.error.message.ApiErrorMessage.CHECK_METADATA_LIST_ITEM_INCORRECT;
+import static com.example.backend.check.common.error.message.ApiErrorMessage.*;
 
 @RestController
 @RequestMapping("api/checks")
@@ -25,11 +24,6 @@ public class CheckController {
     @GetMapping
     public List<CheckDTO> getCheckDTOs() {
         return checkService.getCheckDTOs();
-    }
-
-    @GetMapping("categories")
-    public List<String> getCheckCategories() {
-        return checkService.getCheckCategories();
     }
 
     @GetMapping("{checkName}/history")
@@ -51,6 +45,20 @@ public class CheckController {
         }
 
         List<CheckResult> results = checkService.runCheckMetadataList(metadataList);
+        return ResponseEntity.ok(results);
+    }
+
+    @GetMapping("categories")
+    public List<String> getCheckCategories() {
+        return checkService.getCheckCategories();
+    }
+
+    @PostMapping("categories/run")
+    public ResponseEntity<?> runCheckCategories(@Nullable @RequestBody List<String> categories) {
+        if (categories == null || categories.isEmpty()) {
+            return ResponseEntity.badRequest().body(CATEGORIES_INCORRECT);
+        }
+        List<CheckResult> results = checkService.runCategories(categories);
         return ResponseEntity.ok(results);
     }
 

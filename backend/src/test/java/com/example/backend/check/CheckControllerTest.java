@@ -92,33 +92,6 @@ class CheckControllerTest {
 
 
     @Test
-    public void getCheckCategories_whenRequestSent_thenVerifyResponseStructure() throws Exception {
-        this.mockMvc.perform(get("/api/checks/categories"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[*]", everyItem(notNullValue())));
-    }
-
-    @Test
-    public void getCheckCategories_whenRequestSent_thenVerifyResultValues() throws Exception {
-        final List<String> EXPECTED_CATEGORIES = Arrays.asList(
-                "good",
-                "bad"
-        );
-
-        this.mockMvc.perform(get("/api/checks/categories"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[*]", everyItem(notNullValue())))
-                .andExpect(jsonPath("$[*]", containsInAnyOrder(EXPECTED_CATEGORIES.toArray())));
-    }
-
-
-    @Test
     public void getCheckExecutionDTOs_whenRequestSent_thenVerifyResponseStructure() throws Exception {
         this.mockMvc.perform(get("/api/checks/check-name/history"))
                 .andDo(print())
@@ -351,5 +324,35 @@ class CheckControllerTest {
                 .andExpect(jsonPath("$[2].metadata.category", equalTo(EXPECTED_CATEGORY_3)))
                 .andExpect(jsonPath("$[2].check.result", equalTo(EXPECTED_RESULT_3)));
     }
+
+
+    @Test
+    public void getCheckCategories_whenRequestSent_thenVerifyResponseStructure() throws Exception {
+        this.mockMvc.perform(get("/api/checks/categories"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[*]", everyItem(notNullValue())));
+    }
+
+    @Test
+    public void getCheckCategories_whenRequestSent_thenVerifyResultValues() throws Exception {
+        final List<String> EXPECTED_CATEGORIES = Arrays.asList(
+                "good",
+                "bad"
+        );
+
+        this.mockMvc.perform(get("/api/checks/categories"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[*]", everyItem(notNullValue())))
+                .andExpect(jsonPath("$[*]", containsInAnyOrder(EXPECTED_CATEGORIES.toArray())));
+    }
+
+
+    // TODO: create integration test for runCheckCategories()
 
 }

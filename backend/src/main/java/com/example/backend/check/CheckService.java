@@ -1,5 +1,6 @@
 package com.example.backend.check;
 
+import com.example.backend.check.common.exception.CheckCategoriesNullException;
 import com.example.backend.check.common.exception.CheckMetadataListNullException;
 import com.example.backend.check.loader.CheckLoader;
 import com.example.backend.check.model.CheckMetadata;
@@ -27,14 +28,6 @@ public class CheckService {
                 .toList();
     }
 
-    public List<String> getCheckCategories() {
-        return checkLoader.getCheckMetadataList().stream()
-                .map(CheckMetadata::getCategory)
-                .distinct()
-                .sorted()
-                .toList();
-    }
-
     public List<CheckExecutionDTO> getCheckExecutionDTOs(String checkName) {
         return checkRunner.getCheckExecutions(checkName).stream()
                 .map(CheckExecutionDTOFactory::createCheckExecutionDTO)
@@ -45,11 +38,35 @@ public class CheckService {
         if (metadataList == null) {
             throw new CheckMetadataListNullException();
         }
-
         return metadataList
-                .stream()
+                .parallelStream()
                 .map(checkLoader::convertIntoCheck)
                 .map(checkRunner::runCheck)
+                .sorted(Comparator.comparing(result -> result.getMetadata().getName()))
+                .toList();
+    }
+
+    public List<String> getCheckCategories() {
+        return checkLoader.getCheckMetadataList().stream()
+                .map(CheckMetadata::getCategory)
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
+    public List<CheckResult> runCategories(List<String> categories) {
+        if (categories == null) {
+            throw new CheckCategoriesNullException();
+        }
+        return checkLoader.getCheckMetadataList()
+                .parallelStream()
+                .filter(metadata -> categories.contains(metadata.getCategory()))
+                .map(checkLoader::convertIntoCheck)
+                .map(checkRunner::runCheck)
+                .sorted(
+                        Comparator.comparing((CheckResult result) -> result.getMetadata().getCategory())
+                                .thenComparing(result -> result.getMetadata().getName())
+                )
                 .toList();
     }
 

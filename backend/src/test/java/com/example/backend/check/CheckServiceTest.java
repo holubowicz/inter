@@ -60,19 +60,6 @@ class CheckServiceTest {
     }
 
 
-    @Test
-    public void getCheckCategories_whenApplicationContext_thenReturnsCheckCategories() {
-        List<String> categories = underTest.getCheckCategories();
-
-        assertNotNull(categories);
-        assertFalse(categories.isEmpty());
-        categories.forEach(category -> {
-            assertNotNull(category);
-            assertFalse(category.isEmpty());
-        });
-    }
-
-
     @ParameterizedTest
     @NullAndEmptySource
     public void getCheckExecutionDTOs_whenCheckNameIsNullOrEmpty_thenThrowsNameNullOrEmptyException(String checkName) {
@@ -120,5 +107,21 @@ class CheckServiceTest {
             assertNotNull(checkResult.getCheck().getExecutionTime());
         });
     }
+
+
+    @Test
+    public void getCheckCategories_whenApplicationContext_thenReturnsCheckCategories() {
+        List<String> categories = underTest.getCheckCategories();
+
+        assertNotNull(categories);
+        assertFalse(categories.isEmpty());
+        categories.forEach(category -> {
+            assertNotNull(category);
+            assertFalse(category.isEmpty());
+        });
+    }
+
+
+    // TODO: create unit tests for runCheckCategories()
 
 }
