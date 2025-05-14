@@ -121,8 +121,8 @@ export function ChecksTable() {
     <div className="flex flex-col gap-4 md:gap-6">
       <Table>
         <TableHeader>
-          <TableRow className="*:text-center *:font-bold *:capitalize">
-            <CompactTableHead className="max-w-6">
+          <TableRow className="*:font-bold *:capitalize">
+            <CompactTableHead>
               <div className="flex items-center justify-center">
                 <Checkbox
                   className="cursor-pointer"
@@ -132,29 +132,29 @@ export function ChecksTable() {
               </div>
             </CompactTableHead>
 
-            <CompactTableHead className="text-left!">Name</CompactTableHead>
+            <CompactTableHead>Name</CompactTableHead>
 
-            <CompactTableHead className="text-left!">Category</CompactTableHead>
+            <CompactTableHead>Category</CompactTableHead>
 
-            <CompactTableHead className="hidden text-right! lg:table-cell">
+            <CompactTableHead className="hidden text-right lg:table-cell">
               Last Result
             </CompactTableHead>
 
-            <CompactTableHead className="hidden md:table-cell">
+            <CompactTableHead className="hidden text-center md:table-cell">
               Last Execution
             </CompactTableHead>
 
-            <CompactTableHead className="hidden text-right! xl:table-cell">
+            <CompactTableHead className="hidden text-right xl:table-cell">
               Last Execution Time
             </CompactTableHead>
 
-            <CompactTableHead>Actions</CompactTableHead>
+            <CompactTableHead className="text-center">Actions</CompactTableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {checks.map((check, idx) => (
-            <TableRow key={idx} className="*:text-center">
+            <TableRow key={idx}>
               <CompactTableCell>
                 <div className="flex items-center justify-center">
                   <Checkbox
@@ -165,33 +165,29 @@ export function ChecksTable() {
                 </div>
               </CompactTableCell>
 
-              <CompactTableCell className="text-left!">
-                {check.metadata.name}
-              </CompactTableCell>
+              <CompactTableCell>{check.metadata.name}</CompactTableCell>
 
-              <CompactTableCell className="text-left!">
-                {check.metadata.category}
-              </CompactTableCell>
+              <CompactTableCell>{check.metadata.category}</CompactTableCell>
 
-              <CompactTableCell className="hidden text-right! lg:table-cell">
+              <CompactTableCell className="hidden text-right lg:table-cell">
                 {check.lastCheck != null
                   ? formatNumber(check.lastCheck.result)
                   : "-"}
               </CompactTableCell>
 
-              <CompactTableCell className="hidden md:table-cell">
+              <CompactTableCell className="hidden text-center md:table-cell">
                 {check.lastCheck != null
                   ? formatDateTime(check.lastCheck.timestamp)
                   : "-"}
               </CompactTableCell>
 
-              <CompactTableCell className="hidden text-right! xl:table-cell">
+              <CompactTableCell className="hidden text-right xl:table-cell">
                 {check.lastCheck != null
                   ? formatElapsedTime(check.lastCheck.executionTime)
                   : "-"}
               </CompactTableCell>
 
-              <CompactTableCell>
+              <CompactTableCell className="text-center">
                 <Button
                   className="cursor-pointer"
                   variant="ghost"

@@ -158,7 +158,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
   );
 
   return (
-    <TableRow className="*:text-center">
+    <TableRow>
       <CompactTableCell>
         <div className="flex items-center gap-2">
           <span>{state.name}</span>
@@ -175,34 +175,34 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         </div>
       </CompactTableCell>
 
-      <CompactTableCell className="hidden text-left! sm:table-cell">
+      <CompactTableCell className="hidden sm:table-cell">
         {state.category}
       </CompactTableCell>
 
-      <CompactTableCell className="text-right!">
+      <CompactTableCell className="text-right">
         {state.check.result}
       </CompactTableCell>
 
-      <CompactTableCell className="hidden text-right! xl:table-cell">
+      <CompactTableCell className="hidden text-right xl:table-cell">
         {state.check.executionTime}
       </CompactTableCell>
 
       <CompactTableCell className="hidden lg:table-cell">
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-end gap-2">
           <span>{state.trendPercentage}</span>
           {state.trendPercentage !== "-" && state.trendIcon}
         </div>
       </CompactTableCell>
 
-      <CompactTableCell className="hidden text-right! md:table-cell">
+      <CompactTableCell className="hidden text-right md:table-cell">
         {state.lastCheck.result}
       </CompactTableCell>
 
-      <CompactTableCell className="hidden xl:table-cell">
+      <CompactTableCell className="hidden text-center xl:table-cell">
         {state.lastCheck.timestamp}
       </CompactTableCell>
 
-      <CompactTableCell>
+      <CompactTableCell className="text-center">
         <Button
           className="cursor-pointer"
           variant="ghost"

@@ -46,32 +46,32 @@ export function ResultsTable({ checks }: ResultsTableProps) {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="*:text-center *:font-bold *:capitalize">
-          <CompactTableHead className="text-left!">Name</CompactTableHead>
+        <TableRow className="*:font-bold *:capitalize">
+          <CompactTableHead>Name</CompactTableHead>
 
-          <CompactTableHead className="hidden text-left! sm:table-cell">
+          <CompactTableHead className="hidden sm:table-cell">
             Category
           </CompactTableHead>
 
-          <CompactTableHead className="text-right!">Result</CompactTableHead>
+          <CompactTableHead className="text-right">Result</CompactTableHead>
 
-          <CompactTableHead className="hidden text-right! xl:table-cell">
+          <CompactTableHead className="hidden text-right xl:table-cell">
             Execution Time
           </CompactTableHead>
 
-          <CompactTableHead className="hidden lg:table-cell">
+          <CompactTableHead className="hidden text-right lg:table-cell">
             Trend
           </CompactTableHead>
 
-          <CompactTableHead className="hidden text-right! md:table-cell">
+          <CompactTableHead className="hidden text-right md:table-cell">
             Last Result
           </CompactTableHead>
 
-          <CompactTableHead className="hidden xl:table-cell">
+          <CompactTableHead className="hidden text-center xl:table-cell">
             Last Execution
           </CompactTableHead>
 
-          <CompactTableHead>Actions</CompactTableHead>
+          <CompactTableHead className="text-center">Actions</CompactTableHead>
         </TableRow>
       </TableHeader>
 

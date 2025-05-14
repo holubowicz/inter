@@ -104,8 +104,8 @@ export function CategoriesTable() {
     <div className="flex flex-col gap-4 md:gap-6">
       <Table>
         <TableHeader>
-          <TableRow className="*:text-center *:font-bold *:capitalize">
-            <CompactTableHead className="max-w-6">
+          <TableRow className="*:font-bold *:capitalize">
+            <CompactTableHead>
               <div className="flex items-center justify-center">
                 <Checkbox
                   className="cursor-pointer"
@@ -121,7 +121,7 @@ export function CategoriesTable() {
 
         <TableBody>
           {categories.map((category, idx) => (
-            <TableRow key={idx} className="*:text-center">
+            <TableRow key={idx}>
               <CompactTableCell>
                 <div className="flex items-center justify-center">
                   <Checkbox
