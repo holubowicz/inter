@@ -344,7 +344,8 @@ class CheckControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[*]", everyItem(notNullValue())))
-                .andExpect(jsonPath("$[*]", containsInAnyOrder(EXPECTED_CATEGORIES.toArray())));
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder(EXPECTED_CATEGORIES.toArray())))
+                .andExpect(jsonPath("$[*].count", everyItem(notNullValue())));
     }
 
 

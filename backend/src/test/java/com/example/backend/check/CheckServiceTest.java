@@ -3,6 +3,7 @@ package com.example.backend.check;
 import com.example.backend.check.common.exception.CheckCategoriesNullException;
 import com.example.backend.check.common.exception.CheckMetadataListNullException;
 import com.example.backend.check.common.exception.NameNullOrEmptyException;
+import com.example.backend.check.model.CheckCategory;
 import com.example.backend.check.model.CheckMetadata;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.dto.CheckDTO;
@@ -112,13 +113,14 @@ class CheckServiceTest {
 
     @Test
     public void getCheckCategories_whenApplicationContext_thenReturnsCheckCategories() {
-        List<String> categories = underTest.getCheckCategories();
+        List<CheckCategory> categories = underTest.getCheckCategories();
 
         assertNotNull(categories);
         assertFalse(categories.isEmpty());
         categories.forEach(category -> {
             assertNotNull(category);
-            assertFalse(category.isEmpty());
+            assertFalse(category.getName().isEmpty());
+            assertNotEquals(0, category.getCount());
         });
     }
 

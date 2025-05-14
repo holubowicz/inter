@@ -1,5 +1,6 @@
 package com.example.backend.check;
 
+import com.example.backend.check.model.CheckCategory;
 import com.example.backend.check.model.CheckMetadata;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.dto.CheckDTO;
@@ -49,7 +50,7 @@ public class CheckController {
     }
 
     @GetMapping("categories")
-    public List<String> getCheckCategories() {
+    public List<CheckCategory> getCheckCategories() {
         return checkService.getCheckCategories();
     }
 

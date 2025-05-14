@@ -3,6 +3,7 @@ package com.example.backend.check;
 import com.example.backend.check.common.exception.CheckCategoriesNullException;
 import com.example.backend.check.common.exception.CheckMetadataListNullException;
 import com.example.backend.check.loader.CheckLoader;
+import com.example.backend.check.model.CheckCategory;
 import com.example.backend.check.model.CheckMetadata;
 import com.example.backend.check.model.CheckResult;
 import com.example.backend.check.model.dto.CheckDTO;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +26,10 @@ public class CheckService {
     public List<CheckDTO> getCheckDTOs() {
         return checkLoader.getCheckMetadataList().stream()
                 .map(checkRunner::getCheckDTO)
-                .sorted(Comparator.comparing(dto -> dto.getMetadata().getName()))
+                .sorted(
+                        Comparator.comparing((CheckDTO dto) -> dto.getMetadata().getName())
+                                .thenComparing(dto -> dto.getMetadata().getName())
+                )
                 .toList();
     }
 
@@ -42,15 +47,23 @@ public class CheckService {
                 .parallelStream()
                 .map(checkLoader::convertIntoCheck)
                 .map(checkRunner::runCheck)
-                .sorted(Comparator.comparing(result -> result.getMetadata().getName()))
+                .sorted(
+                        Comparator.comparing((CheckResult result) -> result.getMetadata().getCategory())
+                                .thenComparing(result -> result.getMetadata().getName())
+                )
                 .toList();
     }
 
-    public List<String> getCheckCategories() {
+    public List<CheckCategory> getCheckCategories() {
         return checkLoader.getCheckMetadataList().stream()
-                .map(CheckMetadata::getCategory)
-                .distinct()
-                .sorted()
+                .collect(Collectors.groupingBy(
+                        CheckMetadata::getCategory,
+                        Collectors.counting()
+                ))
+                .entrySet()
+                .stream()
+                .map(entry -> new CheckCategory(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.comparing(CheckCategory::getName))
                 .toList();
     }
 
