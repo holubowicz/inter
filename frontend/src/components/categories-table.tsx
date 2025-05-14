@@ -1,3 +1,4 @@
+import { CheckedState } from "@radix-ui/react-checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
@@ -31,6 +32,7 @@ export function CategoriesTable() {
     queryKey: [AVAILABLE_CATEGORIES_KEY],
     queryFn: getCategories,
   });
+  const [mainCheckbox, setMainCheckbox] = useState(false);
   const [checkboxes, setCheckboxes] = useState<boolean[]>([]);
 
   useEffect(() => {
@@ -39,12 +41,13 @@ export function CategoriesTable() {
     }
   }, [categories]);
 
-  const handleAllCheckboxesChange = useCallback(
-    (checked: boolean) => {
+  const handleMainCheckboxChange = useCallback(
+    (checked: CheckedState) => {
       if (!categories) {
         return;
       }
 
+      setMainCheckbox(!!checked);
       setCheckboxes(Array(categories.length).fill(checked));
     },
     [categories],
@@ -73,8 +76,7 @@ export function CategoriesTable() {
       return;
     }
 
-    // TODO: fix the main checkbox is not unchecked
-    setCheckboxes(Array(categories.length).fill(false));
+    handleMainCheckboxChange(false);
 
     // TODO: navigate to results page
     // navigate({
@@ -83,7 +85,7 @@ export function CategoriesTable() {
     //     checks: selectedCategories,
     //   },
     // });
-  }, [categories, checkboxes, navigate]);
+  }, [navigate, categories, checkboxes, handleMainCheckboxChange]);
 
   if (isPending) {
     return <LoadingState />;
@@ -107,9 +109,8 @@ export function CategoriesTable() {
               <div className="flex items-center justify-center">
                 <Checkbox
                   className="cursor-pointer"
-                  onCheckedChange={(checked) =>
-                    handleAllCheckboxesChange(!!checked)
-                  }
+                  checked={mainCheckbox}
+                  onCheckedChange={handleMainCheckboxChange}
                 />
               </div>
             </CompactTableHead>

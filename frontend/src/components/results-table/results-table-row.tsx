@@ -28,6 +28,7 @@ interface ResultsTableRowProps {
 
 interface RowState {
   name: string;
+  category: string;
   error: string;
   trendPercentage: string;
   isDisabled: boolean;
@@ -45,8 +46,9 @@ interface RowStateCheck {
 function buildResultState(checkResult: CheckResult): RowState {
   if (checkResult.error) {
     return {
-      name:
-        checkResult.metadata.name !== null ? checkResult.metadata.name : "-",
+      name: checkResult.metadata !== null ? checkResult.metadata.name : "-",
+      category:
+        checkResult.metadata !== null ? checkResult.metadata.category : "-",
       error: checkResult.error,
       trendPercentage: "-",
       isDisabled: true,
@@ -99,6 +101,8 @@ function buildResultState(checkResult: CheckResult): RowState {
 
   return {
     name: checkResult.metadata.name !== null ? checkResult.metadata.name : "-",
+    category:
+      checkResult.metadata !== null ? checkResult.metadata.category : "-",
     error: "-",
     trendPercentage,
     isDisabled: false,
@@ -171,6 +175,10 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         </div>
       </CompactTableCell>
 
+      <CompactTableCell className="hidden text-left! sm:table-cell">
+        {state.category}
+      </CompactTableCell>
+
       <CompactTableCell className="text-right!">
         {state.check.result}
       </CompactTableCell>
@@ -179,14 +187,14 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
         {state.check.executionTime}
       </CompactTableCell>
 
-      <CompactTableCell className="hidden md:table-cell">
+      <CompactTableCell className="hidden lg:table-cell">
         <div className="flex items-center justify-center gap-2">
           <span>{state.trendPercentage}</span>
           {state.trendPercentage !== "-" && state.trendIcon}
         </div>
       </CompactTableCell>
 
-      <CompactTableCell className="hidden text-right! lg:table-cell">
+      <CompactTableCell className="hidden text-right! md:table-cell">
         {state.lastCheck.result}
       </CompactTableCell>
 

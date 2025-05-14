@@ -1,3 +1,4 @@
+import { CheckedState } from "@radix-ui/react-checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { ChartLine } from "lucide-react";
@@ -32,6 +33,7 @@ export function ChecksTable() {
     queryKey: [AVAILABLE_CHECKS_KEY],
     queryFn: getChecks,
   });
+  const [mainCheckbox, setMainCheckbox] = useState(false);
   const [checkboxes, setCheckboxes] = useState<boolean[]>([]);
 
   useEffect(() => {
@@ -40,12 +42,13 @@ export function ChecksTable() {
     }
   }, [checks]);
 
-  const handleAllCheckboxesChange = useCallback(
-    (checked: boolean) => {
+  const handleMainCheckboxChange = useCallback(
+    (checked: CheckedState) => {
       if (!checks) {
         return;
       }
 
+      setMainCheckbox(!!checked);
       setCheckboxes(Array(checks.length).fill(checked));
     },
     [checks],
@@ -91,8 +94,7 @@ export function ChecksTable() {
       return;
     }
 
-    // TODO: fix the main checkbox is not unchecked
-    setCheckboxes(Array(checks.length).fill(false));
+    handleMainCheckboxChange(false);
 
     navigate({
       to: "/results",
@@ -100,7 +102,7 @@ export function ChecksTable() {
         checks: selectedChecks,
       },
     });
-  }, [checks, checkboxes, navigate]);
+  }, [navigate, checks, checkboxes, handleMainCheckboxChange]);
 
   if (isPending) {
     return <LoadingState />;
@@ -124,16 +126,17 @@ export function ChecksTable() {
               <div className="flex items-center justify-center">
                 <Checkbox
                   className="cursor-pointer"
-                  onCheckedChange={(checked) =>
-                    handleAllCheckboxesChange(!!checked)
-                  }
+                  checked={mainCheckbox}
+                  onCheckedChange={handleMainCheckboxChange}
                 />
               </div>
             </CompactTableHead>
 
             <CompactTableHead className="text-left!">Name</CompactTableHead>
 
-            <CompactTableHead className="hidden text-right! md:table-cell">
+            <CompactTableHead className="text-left!">Category</CompactTableHead>
+
+            <CompactTableHead className="hidden text-right! lg:table-cell">
               Last Result
             </CompactTableHead>
 
@@ -166,7 +169,11 @@ export function ChecksTable() {
                 {check.metadata.name}
               </CompactTableCell>
 
-              <CompactTableCell className="hidden text-right! md:table-cell">
+              <CompactTableCell className="text-left!">
+                {check.metadata.category}
+              </CompactTableCell>
+
+              <CompactTableCell className="hidden text-right! lg:table-cell">
                 {check.lastCheck != null
                   ? formatNumber(check.lastCheck.result)
                   : "-"}
