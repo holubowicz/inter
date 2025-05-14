@@ -19,10 +19,9 @@ import {
 import { runChecks } from "@/lib/api/checks";
 import { formatDateTime } from "@/lib/utils/date";
 import { formatElapsedTime, formatNumber } from "@/lib/utils/number";
-import { CheckMetadata, CheckResult } from "@/types/checks";
+import { CheckResult } from "@/types/checks";
 
 interface ResultsTableRowProps {
-  check: CheckMetadata;
   checkResult: CheckResult;
 }
 
@@ -120,7 +119,7 @@ function buildResultState(checkResult: CheckResult): RowState {
   };
 }
 
-export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
+export function ResultsTableRow({ checkResult }: ResultsTableRowProps) {
   const navigate = useNavigate();
 
   const [state, setState] = useState(() => buildResultState(checkResult));
@@ -130,7 +129,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
   }, [checkResult]);
 
   const refetch = useMutation({
-    mutationFn: async () => (await runChecks([check]))[0],
+    mutationFn: async () => (await runChecks([checkResult.metadata]))[0],
     onSuccess: (result) => setState(buildResultState(result)),
     onError: () =>
       setState(
@@ -143,7 +142,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
 
   const handleRefetch = useCallback(() => {
     refetch.mutate();
-  }, [check]);
+  }, [checkResult]);
 
   const handleShowHistoryGraph = useCallback(
     (checkName: string) => {
@@ -222,7 +221,7 @@ export function ResultsTableRow({ check, checkResult }: ResultsTableRowProps) {
           variant="ghost"
           size="xs"
           disabled={state.isDisabled || refetch.isPending}
-          onClick={() => handleShowHistoryGraph(check.name)}
+          onClick={() => handleShowHistoryGraph(checkResult.metadata.name)}
         >
           <ChartLine />
         </Button>

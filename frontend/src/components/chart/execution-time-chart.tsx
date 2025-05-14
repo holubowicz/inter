@@ -9,6 +9,8 @@ import {
 import { formatDateTime } from "@/lib/utils/date";
 import { Check } from "@/types/checks";
 
+// TODO: format elapsed time better way, e.g. when 1000ms format to 1s, use formatElapsedTime(ms) in utils
+
 interface ExecutionTimeChartProps {
   className?: string;
   checks: Check[];

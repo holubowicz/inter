@@ -2,52 +2,74 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { PageLayout } from "@/components/layout/page-layout";
 import { ResultsTable } from "@/components/results-table/results-table";
 import { GoBackTitle } from "@/components/typography/go-back-title";
+import { Category, CategorySchema } from "@/types/categories";
 import { CheckMetadata, CheckMetadataSchema } from "@/types/checks";
 
-interface CheckResultsSearch {
+interface ResultsPageSearchChecks {
   checks: CheckMetadata[];
+  categories?: never;
 }
 
-function checkResultsValidateSearch(
-  search: Record<string, unknown>,
-): CheckResultsSearch {
-  const checksMetadataSearchParam = search.checks;
+interface ResultsPageSearchCategories {
+  checks?: never;
+  categories: Category[];
+}
 
-  const safeParsedData = CheckMetadataSchema.array().safeParse(
-    checksMetadataSearchParam,
+type ResultsPageSearch = ResultsPageSearchChecks | ResultsPageSearchCategories;
+
+function resultsPageValidateSearch(
+  search: Record<string, unknown>,
+): ResultsPageSearch {
+  const checksMetadataSafeParse = CheckMetadataSchema.array().safeParse(
+    search.checks,
   );
-  if (!safeParsedData.success) {
+  const categoriesSafeParse = CategorySchema.array().safeParse(
+    search.categories,
+  );
+
+  if (checksMetadataSafeParse.success) {
     return {
-      checks: [],
+      checks: checksMetadataSafeParse.data,
+    };
+  }
+
+  if (categoriesSafeParse.success) {
+    return {
+      categories: categoriesSafeParse.data,
     };
   }
 
   return {
-    checks: safeParsedData.data,
+    checks: [],
   };
 }
 
-function checkResultsBeforeLoad({ search }: { search: CheckResultsSearch }) {
-  const { checks } = search;
-  if (checks.length === 0) {
+function resultsPageBeforeLoad({ search }: { search: ResultsPageSearch }) {
+  const { checks, categories } = search;
+
+  if (
+    (checks && checks.length === 0) ||
+    (categories && categories.length === 0)
+  ) {
     throw redirect({ to: "/" });
   }
 }
 
 export const Route = createFileRoute("/results")({
-  validateSearch: checkResultsValidateSearch,
-  beforeLoad: checkResultsBeforeLoad,
-  component: CheckResultsPage,
+  validateSearch: resultsPageValidateSearch,
+  beforeLoad: resultsPageBeforeLoad,
+  component: ResultsPage,
 });
 
-function CheckResultsPage() {
-  const { checks } = Route.useSearch();
+function ResultsPage() {
+  const { checks, categories } = Route.useSearch();
 
   return (
     <PageLayout>
       <GoBackTitle>Check Results</GoBackTitle>
 
-      <ResultsTable checks={checks} />
+      {checks && <ResultsTable checks={checks} />}
+      {categories && <ResultsTable categories={categories} />}
     </PageLayout>
   );
 }

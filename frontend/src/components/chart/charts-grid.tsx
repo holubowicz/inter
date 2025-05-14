@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, useEffect, useMemo } from "react";
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { Subtitle } from "@/components/typography/subtitle";
@@ -17,13 +17,18 @@ const CHECK_HISTORIES_KEY = "checkHistories";
 
 export function ChartsGrid({ checkName }: ChartsGridProps) {
   const navigate = useNavigate();
+  const QUERY_KEY = useMemo(
+    () => [CHECK_HISTORIES_KEY, checkName],
+    [checkName],
+  );
 
   const {
     isPending,
     error,
     data: checks,
   } = useQuery({
-    queryKey: [CHECK_HISTORIES_KEY, checkName],
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: QUERY_KEY,
     queryFn: () => getCheckHistories(checkName),
   });
 
@@ -47,7 +52,7 @@ export function ChartsGrid({ checkName }: ChartsGridProps) {
     return (
       <ErrorState
         message="Failed to load check histories!"
-        invalidateQueryKey={[CHECK_HISTORIES_KEY, checkName]}
+        invalidateQueryKey={QUERY_KEY}
       />
     );
   }

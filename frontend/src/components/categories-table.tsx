@@ -19,8 +19,6 @@ import { getCategories } from "@/lib/api/categories";
 
 const AVAILABLE_CATEGORIES_KEY = "availableCategories";
 
-// TODO: when add new columns to the table format text and numbers same as the other tables
-
 export function CategoriesTable() {
   const navigate = useNavigate();
 
@@ -78,13 +76,12 @@ export function CategoriesTable() {
 
     handleMainCheckboxChange(false);
 
-    // TODO: navigate to results page
-    // navigate({
-    //   to: "/results",
-    //   search: {
-    //     checks: selectedCategories,
-    //   },
-    // });
+    navigate({
+      to: "/results",
+      search: {
+        categories: selectedCategories,
+      },
+    });
   }, [navigate, categories, checkboxes, handleMainCheckboxChange]);
 
   if (isPending) {
