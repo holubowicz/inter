@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { runCategories } from "@/lib/api/categories";
 import { runChecks } from "@/lib/api/checks";
-import { Category } from "@/types/categories";
+import { CategoryDTO } from "@/types/categories";
 import { CheckMetadata } from "@/types/checks";
 import { ErrorState } from "../error-state";
 import { LoadingState } from "../loading-state";
@@ -22,7 +22,7 @@ interface ResultsTablePropsChecks {
 
 interface ResultsTablePropsCategories {
   checks?: never;
-  categories: Category[];
+  categories: CategoryDTO[];
 }
 
 type ResultsTableProps = ResultsTablePropsChecks | ResultsTablePropsCategories;

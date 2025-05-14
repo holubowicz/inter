@@ -65,7 +65,9 @@ export function CategoriesTable() {
       return;
     }
 
-    const selectedCategories = categories.filter((_, idx) => checkboxes[idx]);
+    const selectedCategories = categories
+      .filter((_, idx) => checkboxes[idx])
+      .map((category) => category.name);
 
     if (selectedCategories.length === 0) {
       toast("No Category Selected", {
@@ -99,10 +101,10 @@ export function CategoriesTable() {
 
   return (
     <div className="flex flex-col gap-4 md:gap-6">
-      <Table>
+      <Table className="mx-auto max-w-120">
         <TableHeader>
           <TableRow className="*:font-bold *:capitalize">
-            <CompactTableHead className="w-8">
+            <CompactTableHead>
               <div className="flex items-center justify-center">
                 <Checkbox
                   className="cursor-pointer"
@@ -113,6 +115,10 @@ export function CategoriesTable() {
             </CompactTableHead>
 
             <CompactTableHead>Name</CompactTableHead>
+
+            <CompactTableHead className="text-right">
+              Checks Count
+            </CompactTableHead>
           </TableRow>
         </TableHeader>
 
@@ -129,14 +135,18 @@ export function CategoriesTable() {
                 </div>
               </CompactTableCell>
 
-              <CompactTableCell>{category}</CompactTableCell>
+              <CompactTableCell>{category.name}</CompactTableCell>
+
+              <CompactTableCell className="text-right">
+                {category.count}
+              </CompactTableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
       <Button
-        className="w-full max-w-120 cursor-pointer self-center"
+        className="w-full max-w-72 cursor-pointer self-center"
         onClick={handleSubmitButtonClick}
       >
         Execute Categories

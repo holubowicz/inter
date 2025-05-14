@@ -1,4 +1,4 @@
-import { Category, CategorySchema } from "@/types/categories";
+import { Category, CategoryDTO, CategorySchema } from "@/types/categories";
 import { CheckResult, CheckResultSchema } from "@/types/checks";
 import { getApiUrl } from ".";
 
@@ -16,7 +16,7 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function runCategories(
-  categories: Category[],
+  categories: CategoryDTO[],
 ): Promise<CheckResult[]> {
   const res = await fetch(getApiUrl("checks/categories/run"), {
     headers: {

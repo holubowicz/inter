@@ -204,7 +204,7 @@ export function ChecksTable() {
       </Table>
 
       <Button
-        className="w-full max-w-120 cursor-pointer self-center"
+        className="w-full max-w-72 cursor-pointer self-center"
         onClick={handleSubmitButtonClick}
       >
         Execute Checks

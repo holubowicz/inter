@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { PageLayout } from "@/components/layout/page-layout";
 import { ResultsTable } from "@/components/results-table/results-table";
 import { GoBackTitle } from "@/components/typography/go-back-title";
-import { Category, CategorySchema } from "@/types/categories";
+import { CategoryDTO, CategoryDTOSchema } from "@/types/categories";
 import { CheckMetadata, CheckMetadataSchema } from "@/types/checks";
 
 interface ResultsPageSearchChecks {
@@ -12,7 +12,7 @@ interface ResultsPageSearchChecks {
 
 interface ResultsPageSearchCategories {
   checks?: never;
-  categories: Category[];
+  categories: CategoryDTO[];
 }
 
 type ResultsPageSearch = ResultsPageSearchChecks | ResultsPageSearchCategories;
@@ -23,7 +23,7 @@ function resultsPageValidateSearch(
   const checksMetadataSafeParse = CheckMetadataSchema.array().safeParse(
     search.checks,
   );
-  const categoriesSafeParse = CategorySchema.array().safeParse(
+  const categoriesSafeParse = CategoryDTOSchema.array().safeParse(
     search.categories,
   );
 

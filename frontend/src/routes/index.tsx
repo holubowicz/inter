@@ -5,7 +5,6 @@ import { ChecksTable } from "@/components/checks-table";
 import { Container } from "@/components/container";
 import { PageLayout } from "@/components/layout/page-layout";
 import { Subtitle } from "@/components/typography/subtitle";
-import { Title } from "@/components/typography/title";
 
 export const Route = createFileRoute("/")({
   component: IndexPage,
@@ -14,17 +13,15 @@ export const Route = createFileRoute("/")({
 function IndexPage() {
   return (
     <PageLayout>
-      <Title>Selection</Title>
-
       <Container>
-        <Subtitle>Check Selection</Subtitle>
+        <Subtitle className="sm:text-center">Check Selection</Subtitle>
         <ChecksTable />
       </Container>
 
       <Separator />
 
       <Container>
-        <Subtitle>Category Selection</Subtitle>
+        <Subtitle className="sm:text-center">Category Selection</Subtitle>
         <CategoriesTable />
       </Container>
     </PageLayout>
