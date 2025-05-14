@@ -102,7 +102,7 @@ export function CategoriesTable() {
       <Table>
         <TableHeader>
           <TableRow className="*:font-bold *:capitalize">
-            <CompactTableHead>
+            <CompactTableHead className="w-8">
               <div className="flex items-center justify-center">
                 <Checkbox
                   className="cursor-pointer"
